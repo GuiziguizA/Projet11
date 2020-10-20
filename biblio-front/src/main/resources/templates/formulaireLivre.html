@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+	data-layout-decorator="template1">
+ 
+
+ 
+<head>
+<meta charset="utf-8"/>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body>
+
+<div layout:fragment="content">
+<div class="container pt-3">
+ <div class="form-group">
+ <div class="jumbotron text-center">
+ 
+ <h2>Ajouter un livre</h2>
+ </div>
+ 	</div>
+ 	</div>
+ 	 <div class="container" >
+  
+<form  th:action="@{/books}" th:object="${livre}" method="post">
+    <br>
+    <input type="text" th:field="*{nom}" id="nom"class="form-control" placeholder="nom">
+     <div  th:if="${#fields.hasErrors('nom')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{nom}"></span></div>
+   <br>
+    <input type="text" th:field="*{auteur}" id="auteur" class="form-control" placeholder="auteur">
+     <div  th:if="${#fields.hasErrors('auteur')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{auteur}"></span></div>
+      <br>
+    <input type="text" th:field="*{type}" id="type" class="form-control" placeholder="type">
+     <div  th:if="${#fields.hasErrors('type')}" class="alert alert-danger" role="alert"><span class="alert alert-primary"  th:errors="*{type}"></span></div>
+   <br>
+    <input type="text" th:field="*{section}" id="description" class="form-control" placeholder="section">
+   <div  th:if="${#fields.hasErrors('section')}" class="alert alert-danger" role="alert"> <span class="alert alert-primary" th:errors="*{section}"></span></div>
+  <br>
+    <br>
+    <input type="text" th:field="*{emplacement}" id="emplacement" class="form-control" placeholder="emplacement">
+   <div  th:if="${#fields.hasErrors('emplacement')}" class="alert alert-danger" role="alert"> <span class="alert alert-primary" th:errors="*{emplacement}"></span></div>
+  <br>
+    <br>
+    <input type="number" th:field="*{nombreExemplaire}" id="nombreExemplaire" class="form-control" placeholder="nombreExemplaire">
+   <div  th:if="${#fields.hasErrors('nombreExemplaire')}" class="alert alert-danger" role="alert"> <span class="alert alert-primary" th:errors="*{nombreExemplaire}"></span></div>
+  <br>
+    	
+    <input type="submit" class="btn btn-primary" value="Ajouter">   
+    
+</form>
+<div class="alert alert-danger"th:if="${error}"th:text="${error}" role="alert">
+</div>
+
+
+</div>
+</div>
+
+
+
+	
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+	>
+ 
+
+ 
+<head>
+<meta charset="utf-8"/>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body>
+
+<div layout:fragment="content">
+<div class="container pt-3">
+ <div class="form-group">
+ <div class="jumbotron text-center">
+ 
+ <h2>Inscription</h2>
+ </div>
+ 	</div>
+ 	</div>
+ 	 <div class="container" >
+  
+<form  th:action="@{/users}" th:object="${utilisateur}" method="post">
+    <br>
+    <input type="text" th:field="*{nom}" id="nom"class="form-control" placeholder="nom">
+     <div  th:if="${#fields.hasErrors('nom')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{nom}"></span></div>
+   <br>
+    <input type="text" th:field="*{mail}" id="mail" class="form-control" placeholder="adresse e-mail">
+     <div  th:if="${#fields.hasErrors('mail')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{mail}"></span></div>
+      <br>
+    <input type="password" th:field="*{motDePasse}" id="motDePasse" class="form-control" placeholder="mot de passe">
+   <div  th:if="${#fields.hasErrors('motDePasse')}" class="alert alert-danger" role="alert"> <span class="alert alert-primary" th:errors="*{motDePasse}"></span></div>
+  <br>
+    <input type="text" th:field="*{adresse}" id="adresse" class="form-control" placeholder="adresse">
+     <div  th:if="${#fields.hasErrors('adresse')}" class="alert alert-danger" role="alert"><span class="alert alert-primary"  th:errors="*{adresse}"></span></div>
+   <br>
+    <input type="text" th:field="*{codePostal}" id="description" class="form-control" placeholder="codePostal">
+   <div  th:if="${#fields.hasErrors('codePostal')}" class="alert alert-danger" role="alert"> <span class="alert alert-primary" th:errors="*{codePostal}"></span></div>
+  <br>
+
+   
+    <input type="submit" class="btn btn-primary" value="Ajouter">   
+    
+</form>
+  <a  th:href ="@{/login}">Page de Connexion</a>
+<div class="alert alert-danger"th:if="${error}"th:text="${error.message}" role="alert">
+</div>
+
+
+</div>
+</div>

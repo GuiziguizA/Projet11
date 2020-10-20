@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+data-layout-decorator="template1">
+ 
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body>
+
+
+
+	<div layout:fragment="content">
+	<div class="container pt-3">
+ <div class="form-group">
+ <div class="jumbotron text-center">
+ 
+ <h1>Livres</h1>
+ </div>
+ 	<br>
+ 	 <div class="col-md-3 mb-3">
+		<div>
+			<span th:if="${role!='user'} "> <a th:href="@{/books/form}"><input type="button" class="btn btn-primary"value="+Ajouter" /></a></span>
+		</div>
+		
+	<br>
+	
+	<form  th:action="@{/books}" method="get">
+
+    <br>
+<div>
+  <label for="nom">Type de recherche</label>
+   		<select th:name=type>
+   		
+   		<option th:each="o:${listTypes}"  th:text="${o.nom}" th:value= "${o.nom}"></option>
+   	</select>
+    <br>
+    <input type="text" th:name="recherche" class="form-control" placeholder="Rechercher">
+    
+   </div>
+    <br>
+    
+     <input type="submit" class="btn btn-primary" value="rechercher">   
+   <br>
+      <br>
+   
+     
+    </form>
+    </div>
+    <br>
+    <br>
+					<div>
+	<table  class="table table-striped">
+		<tr>
+			<th scope="col">Nom</th>
+				<th scope="col">Auteur</th>
+				<th scope="col">Type</th>
+				<th scope="col">Section</th>
+				<th scope="col">Emplacement</th>
+				<th scope="col">Nombre d'exemplaire</th>
+				<th th:if="${role=='user' } "></th>
+				<th></th>
+		</tr>
+		<tr th:each="book:${bookPage}" >
+				<td th:text="${book.nom}"></td>
+				<td th:text="${book.auteur}"></td>
+				<td th:text="${book.type}" ></td>
+				<td th:text="${book.section}"></td>	
+				<td th:text="${book.emplacement}"></td>	
+				<td th:text="${book.nombreExemplaire}"></td>	
+				<td  th:if="${role=='user' } "><form method="post" th:action="@{/prets(id=${book.codeLivre})}"  >
+            <button type="submit" name="submit" value="value" class="btn btn-primary">Reserver</button>
+        </form> </td>
+				
+			</tr>
+	
+	</table>
+
+<div th:if="${bookPage.totalPages > 0}" class="pagination"
+    th:each="pageNumber : ${pageNumbers}">
+    <nav aria-label="...">
+  <ul class="pagination pagination-lg">
+    <li class="page-item"> <a th:href="@{/books(page=${pageNumber-1},size=${bookPage.size},type=${type},recherche=${recherche})}"
+        th:text=${pageNumber}
+        th:class="${pageNumber==bookPage.number} ? active"></a>
+        </li>
+        </ul>
+        </nav>
+</div>
+	</div>
+	</div>
+	<div class="alert alert-success"th:if="${succes}" th:text="${succes}"role="alert" >
+</div>
+	
+
+				</div>
+				</div>		
+
+</body>

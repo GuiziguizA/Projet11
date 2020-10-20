@@ -1,0 +1,56 @@
+ 
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+	data-layout-decorator="template1">
+ 
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body>
+
+	<div layout:fragment="content">
+	<div class="container pt-3">
+ <div class="form-group">
+ <div class="jumbotron text-center">
+		<h1>livre</h1>
+	</div>
+	
+		<br>
+	<h2>Detail du Livre</h2>	
+	<div>
+	<table  class="table table-striped">
+		<tr>
+				<th scope="col">Nom</th>
+				<th scope="col">Auteur</th>
+				<th scope="col">Type</th>
+				<th scope="col">Section</th>
+				<th scope="col">Emplacement</th>
+				<th scope="col">Nombre d'exemplaire</th>
+		</tr>
+				
+		<tr >
+				<td th:text="${book.nom}"></td>
+				<td th:text="${book.auteur}"></td>
+				<td th:text="${book.type}" ></td>
+				<td th:text="${book.section}"></td>	
+				<td th:text="${book.emplacement}"></td>	
+				<td th:text="${book.nombreExemplaire}"></td>	
+		</tr>
+	
+	</table>
+					
+
+</div>
+	</div>
+	</div>
+	</div>
+
+
+
+</body>
+</html>

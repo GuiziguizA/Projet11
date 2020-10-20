@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+ 	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+ 	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8"/>		
+<title>Bibliotheque</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+ 
+<body>
+<header>
+<div class="navbar navbar-inverse" >
+<div class="container-fluid" >
+<ul class="nav navbar-nav">
+<li ><a th:href="@{/}">Home</a></li>     
+<li ><a th:href="@{/books?page=0&size=2&type=&recherche=}" >Livres</a></li>
+<li sec:authorize="hasRole('ROLE_user')"><a th:href="@{/prets?page=0&size=2}"  >prets</a></li>
+<li sec:authorize="hasAnyRole('ROLE_admin','ROLE_employe')"><a th:href="@{/allprets?page=0&size=2}"  >prets</a></li>
+</ul>
+
+<form th:action="@{/logout}" method="post">
+<div class=pull-right>
+
+<div sec:authorize="isAuthenticated()" class="text-primary">
+  e-mail: <span class="text-light" sec:authentication="name"></span></div>
+
+    <input type="submit"class="btn btn-primary" value = "se déconnecter"></input>
+    </div>
+</form>
+</div>
+</div>
+</header>
+<section layout:fragment="content"></section>
+<footer >
+<div class="navbar-fixed-bottom"></div>
+</footer>
+</body>
+</html>
