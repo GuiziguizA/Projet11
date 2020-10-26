@@ -3,6 +3,7 @@ package sid.org.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -50,8 +51,16 @@ public class PretServiceImpl implements PretService {
 	@Value("${pret.statut4}")
 	private String remis;
 
+	@Value("${pret.statut5}")
+	private String enAttente;
+
 	@Value("${pret.time}")
 	private int time;
+
+	@Value("${mail.subject}")
+	private String subject;
+	@Value("${mail.bibliotheque}")
+	private String biblioMail;
 
 	/*
 	 * Creation d'un Pret + decrementation nombreExemplaire pour le livre emprunté
@@ -84,14 +93,14 @@ public class PretServiceImpl implements PretService {
 		if (pret1.isPresent() && !pret1.get().getStatut().equals(remis)) {
 			throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
 		}
-
-		if (livre.get().getNombreExemplaire() < 1) {
+		Pret pret = new Pret();
+		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
 
 			livre.get().getListeDattente().add(mail);
+			pret.setStatut(enAttente);
 		} else {
 			Date date1 = new Date();
 
-			Pret pret = new Pret();
 			pret.setLivre(livre.get());
 			pret.setDateDeDebut(date1);
 			pret.setDateDeFin(dateService.modifierDate(date1, time));
@@ -99,9 +108,10 @@ public class PretServiceImpl implements PretService {
 			pret.setNombreLivres(1);
 			pret.setStatut(encours);
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
-			livreRepository.saveAndFlush(livre.get());
-			pretRepository.saveAndFlush(pret);
+
 		}
+		livreRepository.saveAndFlush(livre.get());
+		pretRepository.saveAndFlush(pret);
 	}
 
 	/*
@@ -288,8 +298,9 @@ public class PretServiceImpl implements PretService {
 	 *
 	 */
 	@Override
-	public void modifierPret(Long id, String methode) throws ResultNotFoundException {
-		Optional<Pret> pret = pretRepository.findById(id);
+	@Transactional
+	public void modifierPret(Long idPret, String methode) throws ResultNotFoundException {
+		Optional<Pret> pret = pretRepository.findById(idPret);
 
 		if (!pret.isPresent()) {
 			throw new ResultNotFoundException("Ce pret n'existe pas");
@@ -302,7 +313,13 @@ public class PretServiceImpl implements PretService {
 			pret.get().setStatut(remis);
 			pret.get().setDateDeRendu(new Date());
 			if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() > 0) {
-				emailService.sendMail(livre.get().getListeDattente(0), to, subject, htmlContent, locale);
+
+				Locale locale = new Locale("fr");
+				String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
+						locale);
+
+				emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 

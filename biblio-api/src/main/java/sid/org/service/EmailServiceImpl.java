@@ -1,6 +1,5 @@
 package sid.org.service;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import javax.mail.MessagingException;
@@ -16,7 +15,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import sid.org.classe.Pret;
+import sid.org.classe.Livre;
+import sid.org.dao.UtilisateurRepository;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -25,6 +25,8 @@ public class EmailServiceImpl implements EmailService {
 	private JavaMailSender emailSender;
 	@Autowired
 	private TemplateEngine templateEngine;
+	@Autowired
+	private UtilisateurRepository utilisateurRepository;
 
 	@Value("${mail.bibliotheque}")
 	private String biblioMail;
@@ -36,8 +38,7 @@ public class EmailServiceImpl implements EmailService {
 	private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
 	@Override
-	public void sendMail(String from, String to, String subject, String htmlContent, Locale locale)
-			throws MessagingException, IOException {
+	public void sendMail(String from, String to, String subject, String htmlContent, Locale locale) {
 		try {
 
 			MimeMessage mimeMessage = this.emailSender.createMimeMessage();
@@ -66,13 +67,12 @@ public class EmailServiceImpl implements EmailService {
 	 * fin du pret , le livre concerné et le nom de l'utilisateur concerné
 	 */
 	@Override
-	public Context variableEmail(final Locale locale, Pret pret) {
+	public Context variableEmail(final Locale locale, String mail, Livre livre) {
 
 		final Context ctx = new Context(locale);
 
-		ctx.setVariable("dateDeFin", pret.getDateDeFin());
-		ctx.setVariable("livre", pret.getLivre().getNom());
-		ctx.setVariable("user", pret.getUtilisateur().getNom());
+		ctx.setVariable("livre", livre.getNom());
+		ctx.setVariable("user", utilisateurRepository.findByMail(mail).get().getNom());
 		return ctx;
 
 	}
@@ -88,8 +88,8 @@ public class EmailServiceImpl implements EmailService {
 	 * pret ) et le html qui represente le squelette du pret
 	 */
 	@Override
-	public String createHtmlContent(Pret pret, Locale locale) {
-		Context ctx = variableEmail(locale, pret);
+	public String createHtmlContent(String mail, Livre livre, Locale locale) {
+		Context ctx = variableEmail(locale, mail, livre);
 
 		return templateEngine.process("email.html", ctx);
 	}

@@ -1,6 +1,9 @@
 package sid.org.controller;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -94,7 +97,7 @@ public class PretController {
 
 	@PutMapping("/prets")
 	@ApiOperation(value = "modifier statut du pret pour confirmer que le livre a été rendu", response = PretController.class)
-	public void retourLivre(@RequestParam Long id) throws ResultNotFoundException {
+	public void retourLivre(@RequestParam Long id) throws ResultNotFoundException, MessagingException, IOException {
 		pretService.modifierPret(id, "remise");
 
 	}

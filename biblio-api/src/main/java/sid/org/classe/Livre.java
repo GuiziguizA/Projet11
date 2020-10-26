@@ -3,12 +3,14 @@ package sid.org.classe;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,6 +34,8 @@ public class Livre {
 	private int nombreExemplaire;
 	@OneToMany(mappedBy = "livre", fetch = FetchType.LAZY)
 	private Collection<Pret> prets;
+	@Size(min = 0, max = 10)
+	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> listeDattente;
 
 	public Livre() {
@@ -39,7 +43,8 @@ public class Livre {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Livre(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire) {
+	public Livre(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire,
+			List<String> list) {
 		super();
 		this.nom = nom;
 		this.auteur = auteur;
@@ -47,6 +52,7 @@ public class Livre {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
+		this.listeDattente = list;
 
 	}
 
