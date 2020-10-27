@@ -76,7 +76,7 @@ public class PretServiceImpl implements PretService {
 	@Transactional
 	public void creerPret(Long idLivre, String mail)
 			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
-
+		Date date1 = new Date();
 		Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(mail);
 		Optional<Livre> livre = livreRepository.findByCodeLivre(idLivre);
 
@@ -90,28 +90,40 @@ public class PretServiceImpl implements PretService {
 		List<Pret> listpret = pretRepository.findByUtilisateurAndLivre(utilisateur.get(), livre.get());
 		Optional<Pret> pret1 = trouverPretenCours(listpret);
 
-		if (pret1.isPresent() && !pret1.get().getStatut().equals(remis)) {
+		if (pret1.isPresent() && !pret1.get().getStatut().equals(remis) && !pret1.get().getStatut().equals(enAttente)) {
 			throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
 		}
+
 		Pret pret = new Pret();
-		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
+		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20
+				&& !pret1.get().getStatut().equals(enAttente)) {
 
 			livre.get().getListeDattente().add(mail);
+			pret.setLivre(livre.get());
+			pret.setUtilisateur(utilisateur.get());
 			pret.setStatut(enAttente);
+			pretRepository.saveAndFlush(pret);
+		} else if (pret1.get().getStatut().equals(enAttente)) {
+			pret1.get().setDateDeDebut(date1);
+			pret1.get().setDateDeFin(dateService.modifierDate(date1, time));
+			pret1.get().setNombreLivres(1);
+			pret1.get().setStatut(encours);
+			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
+			pretRepository.saveAndFlush(pret1.get());
 		} else {
-			Date date1 = new Date();
 
 			pret.setLivre(livre.get());
+			pret.setUtilisateur(utilisateur.get());
 			pret.setDateDeDebut(date1);
 			pret.setDateDeFin(dateService.modifierDate(date1, time));
-			pret.setUtilisateur(utilisateur.get());
 			pret.setNombreLivres(1);
 			pret.setStatut(encours);
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
-
+			pretRepository.saveAndFlush(pret);
 		}
+
 		livreRepository.saveAndFlush(livre.get());
-		pretRepository.saveAndFlush(pret);
+
 	}
 
 	/*
@@ -330,6 +342,28 @@ public class PretServiceImpl implements PretService {
 
 		pretRepository.saveAndFlush(pret.get());
 		livreRepository.saveAndFlush(livre.get());
+	}
+
+	public void verifierPrêt(Long idPret) throws ResultNotFoundException {
+		Optional<Pret> pret = pretRepository.findById(idPret);
+		Optional<Livre> livre = livreRepository.findByNom(pret.get().getLivre().getNom());
+		if (pret.get().getStatut().equals(enAttente)) {
+			this.supprimerPret(idPret);
+
+			livre.get().getListeDattente().remove(0);
+			livreRepository.saveAndFlush(livre.get());
+			Locale locale = new Locale("fr");
+			String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
+					locale);
+
+			emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+		} else if (pret.get().getUtilisateur().getMail() == livre.get().getListeDattente().get(0)) {
+
+			livre.get().getListeDattente().remove(0);
+			livreRepository.saveAndFlush(livre.get());
+
+		}
+
 	}
 
 }

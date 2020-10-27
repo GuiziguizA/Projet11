@@ -98,6 +98,7 @@ public class BiblioAppli implements CommandLineRunner {
 		}
 
 		pretService.modifierPret(new Long(1), "remise");
+
 	}
 
 }
