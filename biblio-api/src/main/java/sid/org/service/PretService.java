@@ -30,4 +30,8 @@ public interface PretService {
 
 	public void modifierPret(Long id, String methode) throws ResultNotFoundException;
 
+	public void verifierPrêt(Long idPret) throws ResultNotFoundException;
+
+	void connectApiTimer(Long idPret);
+
 }

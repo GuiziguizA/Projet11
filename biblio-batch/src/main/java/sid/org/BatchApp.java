@@ -25,7 +25,7 @@ public class BatchApp implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		pretBatchService.TimerDisponibiliteLivre(new Long(1));
+		/* pretBatchService.TimerDisponibiliteLivre(new Long(1)); */
 
 	}
 

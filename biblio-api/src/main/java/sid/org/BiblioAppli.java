@@ -90,15 +90,24 @@ public class BiblioAppli implements CommandLineRunner {
 
 		pretService.creerPret(new Long(1), "marcel@gmail.com");
 
+		/*
+		 * pretService.modifierPret(new Long(1), "remise"); pretService.creerPret(new
+		 * Long(1), "marcel@gmail.com"); pretService.verifierPrêt(new Long(6));
+		 * pretService.creerPret(new Long(1), "jean@gmail.com");
+		 * pretService.verifierPrêt(new Long(7));
+		 */
+
+		pretService.connectApiTimer(new Long(1));
 		Optional<Livre> livre = livreRepository.findById(new Long(1));
 		if (livre.get().getListeDattente().isEmpty()) {
 			System.out.println("ca bug");
 		} else {
 			System.out.println(livre.get().getListeDattente().get(0));
 		}
-
-		pretService.modifierPret(new Long(1), "remise");
-
+		Optional<Pret> pret22 = pretRepository.findById((long) 6);
+		System.out.println(pret22.get().getStatut());
+		System.out.println(
+				"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000à");
 	}
 
 }

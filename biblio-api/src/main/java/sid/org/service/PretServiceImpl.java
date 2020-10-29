@@ -8,12 +8,19 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import sid.org.classe.Livre;
 import sid.org.classe.Pret;
@@ -28,6 +35,7 @@ import sid.org.exception.ResultNotFoundException;
 @Service
 public class PretServiceImpl implements PretService {
 
+	private static final Logger logger = LoggerFactory.getLogger(PretServiceImpl.class);
 	@Autowired
 	private PretRepository pretRepository;
 	@Autowired
@@ -38,6 +46,8 @@ public class PretServiceImpl implements PretService {
 	private LivreRepository livreRepository;
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private HttpService httpService;
 
 	@Value("${pret.statut1}")
 	private String encours;
@@ -62,6 +72,12 @@ public class PretServiceImpl implements PretService {
 	@Value("${mail.bibliotheque}")
 	private String biblioMail;
 
+	@Value("${api.url}")
+	private String apiUrl;
+	@Value("${spring.api.identifiant}")
+	private String mail;
+	@Value("${spring.api.motDePasse}")
+	private String motDePasse;
 	/*
 	 * Creation d'un Pret + decrementation nombreExemplaire pour le livre emprunté
 	 * 
@@ -95,15 +111,15 @@ public class PretServiceImpl implements PretService {
 		}
 
 		Pret pret = new Pret();
-		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20
-				&& !pret1.get().getStatut().equals(enAttente)) {
+		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
 
 			livre.get().getListeDattente().add(mail);
 			pret.setLivre(livre.get());
 			pret.setUtilisateur(utilisateur.get());
 			pret.setStatut(enAttente);
 			pretRepository.saveAndFlush(pret);
-		} else if (pret1.get().getStatut().equals(enAttente)) {
+			this.connectApiTimer(pret.getId());
+		} else if (pret1.get().getStatut().equals(enAttente) && livre.get().getNombreExemplaire() != 0) {
 			pret1.get().setDateDeDebut(date1);
 			pret1.get().setDateDeFin(dateService.modifierDate(date1, time));
 			pret1.get().setNombreLivres(1);
@@ -344,26 +360,51 @@ public class PretServiceImpl implements PretService {
 		livreRepository.saveAndFlush(livre.get());
 	}
 
+	@Override
 	public void verifierPrêt(Long idPret) throws ResultNotFoundException {
 		Optional<Pret> pret = pretRepository.findById(idPret);
 		Optional<Livre> livre = livreRepository.findByNom(pret.get().getLivre().getNom());
+
+		if (!pret.isPresent()) {
+			throw new ResultNotFoundException("le pret n'existe pas");
+		}
+		if (!livre.isPresent()) {
+			throw new ResultNotFoundException("le livre n'existe pas");
+		}
 		if (pret.get().getStatut().equals(enAttente)) {
 			this.supprimerPret(idPret);
 
 			livre.get().getListeDattente().remove(0);
-			livreRepository.saveAndFlush(livre.get());
-			Locale locale = new Locale("fr");
-			String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
-					locale);
 
-			emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+			livreRepository.saveAndFlush(livre.get());
+			logger.info("le pret a été supprimé ");
+			if (livre.get().getListeDattente().size() > 1) {
+				Locale locale = new Locale("fr");
+				String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
+						locale);
+
+				emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+				logger.info(" envoie mail personne suivante");
+			}
+
 		} else if (pret.get().getUtilisateur().getMail() == livre.get().getListeDattente().get(0)) {
 
 			livre.get().getListeDattente().remove(0);
 			livreRepository.saveAndFlush(livre.get());
 
+			logger.info("le pret a ete complété");
+
 		}
 
 	}
 
+	@Override
+	public void connectApiTimer(Long idPret) {
+		RestTemplate rt = new RestTemplate();
+		final String uri = apiUrl + "/timer";
+
+		HttpHeaders headers = httpService.creerHeadersHttpAuthentifie(mail, motDePasse);
+
+		ResponseEntity<Long> idPrets = rt.exchange(uri, HttpMethod.POST, new HttpEntity<>(idPret, headers), Long.class);
+	}
 }
