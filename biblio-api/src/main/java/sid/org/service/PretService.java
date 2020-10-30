@@ -30,8 +30,8 @@ public interface PretService {
 
 	public void modifierPret(Long id, String methode) throws ResultNotFoundException;
 
-	public void verifierPrêt(Long idPret) throws ResultNotFoundException;
+	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException;
 
-	void connectApiTimer(Long idPret);
+	public void connectApiTimer(Long idPret);
 
 }

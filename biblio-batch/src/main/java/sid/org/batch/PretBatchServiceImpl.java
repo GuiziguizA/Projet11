@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.mail.MessagingException;
 
@@ -31,6 +32,8 @@ public class PretBatchServiceImpl implements PretBatchService {
 
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private HttpService httpService;
 
 	@Autowired
 	private TemplateEngine templateEngine;
@@ -156,10 +159,39 @@ public class PretBatchServiceImpl implements PretBatchService {
 
 	@Override
 	public void TimerDisponibiliteLivre(Long idPret) {
-		Timer timer;
-		timer = new Timer();
-		timer.schedule(new MaTask(idPret), 5);
+
+		TimerTask task = new TimerTask() {
+			public void run() {
+				try {
+					connectPretEnAttente((long) 6);
+					logger.info("task est fonctionnel");
+
+				} catch (Exception e) {
+					logger.info("task n'a pas reussi a ce connecter a l'api :" + e);
+
+				}
+			}
+		};
+		Timer timer = new Timer("Timer");
+
+		long delay = 5;
+		timer.schedule(task, delay);
 
 	}
 
+	@Override
+	public void connectPretEnAttente(Long id) {
+		RestTemplate rt = new RestTemplate();
+		final String uri = apiUrl + "/pretEnAttente?idPret=" + id;
+
+		HttpHeaders headers = httpService.creerHeadersHttpAuthentifie(identifiant, motDePasse);
+		rt.exchange(uri, HttpMethod.PUT, new HttpEntity<>(headers), Long.class);
+		logger.info("app co");
+
+	}
+
+	@Override
+	public void yo() {
+		System.out.println("bobobobobobobobobobobo");
+	}
 }

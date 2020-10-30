@@ -116,9 +116,9 @@ public class PretController {
 
 	}
 
-	@PostMapping("/pretEnAttente")
+	@PutMapping("/pretEnAttente")
 	@ApiOperation(value = "supprimer le pret en attente au bout de 48h si il n'a pas été complété", response = PretController.class)
-	public void vérifierPret(@RequestBody Long idPret) throws ResultNotFoundException {
+	public void vérifierPret(@RequestParam Long idPret) throws ResultNotFoundException, EntityAlreadyExistException {
 		pretService.verifierPrêt(idPret);
 	}
 

@@ -361,16 +361,18 @@ public class PretServiceImpl implements PretService {
 	}
 
 	@Override
-	public void verifierPrêt(Long idPret) throws ResultNotFoundException {
+	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException {
 		Optional<Pret> pret = pretRepository.findById(idPret);
-		Optional<Livre> livre = livreRepository.findByNom(pret.get().getLivre().getNom());
 
 		if (!pret.isPresent()) {
 			throw new ResultNotFoundException("le pret n'existe pas");
 		}
+		Optional<Livre> livre = livreRepository.findByNom(pret.get().getLivre().getNom());
+
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("le livre n'existe pas");
 		}
+
 		if (pret.get().getStatut().equals(enAttente)) {
 			this.supprimerPret(idPret);
 
@@ -387,13 +389,18 @@ public class PretServiceImpl implements PretService {
 				logger.info(" envoie mail personne suivante");
 			}
 
-		} else if (pret.get().getUtilisateur().getMail() == livre.get().getListeDattente().get(0)) {
+		} else if (livre.get().getListeDattente().size() != 0) {
+			if (pret.get().getUtilisateur().getMail() == livre.get().getListeDattente().get(0)) {
+				livre.get().getListeDattente().remove(0);
+				logger.info("le pret a ete complété");
+			} else {
+				logger.info("ce pret n'est pas en rapport avec un pret en attente");
 
-			livre.get().getListeDattente().remove(0);
+			}
 			livreRepository.saveAndFlush(livre.get());
 
-			logger.info("le pret a ete complété");
-
+		} else {
+			throw new EntityAlreadyExistException("le pret n'a pas e étre complété");
 		}
 
 	}

@@ -17,4 +17,8 @@ public interface PretBatchService {
 
 	void TimerDisponibiliteLivre(Long idPret);
 
+	void connectPretEnAttente(Long id);
+
+	void yo();
+
 }

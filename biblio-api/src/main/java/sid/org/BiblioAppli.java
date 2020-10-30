@@ -2,7 +2,6 @@ package sid.org;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,18 +95,16 @@ public class BiblioAppli implements CommandLineRunner {
 		 * pretService.creerPret(new Long(1), "jean@gmail.com");
 		 * pretService.verifierPrêt(new Long(7));
 		 */
-
-		pretService.connectApiTimer(new Long(1));
-		Optional<Livre> livre = livreRepository.findById(new Long(1));
-		if (livre.get().getListeDattente().isEmpty()) {
-			System.out.println("ca bug");
-		} else {
-			System.out.println(livre.get().getListeDattente().get(0));
-		}
-		Optional<Pret> pret22 = pretRepository.findById((long) 6);
-		System.out.println(pret22.get().getStatut());
-		System.out.println(
-				"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000à");
+		/*
+		 * pretService.connectApiTimer(new Long(1)); Optional<Livre> livre =
+		 * livreRepository.findById(new Long(1)); if
+		 * (livre.get().getListeDattente().isEmpty()) { System.out.println("ca bug"); }
+		 * else { System.out.println(livre.get().getListeDattente().get(0)); }
+		 * Optional<Pret> pret22 = pretRepository.findById((long) 6);
+		 * System.out.println(pret22.get().getStatut()); System.out.println(
+		 * "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000à"
+		 * );
+		 */
 	}
 
 }
