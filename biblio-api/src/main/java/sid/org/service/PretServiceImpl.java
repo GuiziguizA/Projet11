@@ -109,6 +109,9 @@ public class PretServiceImpl implements PretService {
 		if (pret1.isPresent() && !pret1.get().getStatut().equals(remis) && !pret1.get().getStatut().equals(enAttente)) {
 			throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
 		}
+		if (pret1.isPresent() && livre.get().getNombreExemplaire() == 0 && pret1.get().getStatut().equals(enAttente)) {
+			throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
+		}
 
 		Pret pret = new Pret();
 		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
