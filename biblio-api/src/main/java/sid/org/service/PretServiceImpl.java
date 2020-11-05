@@ -1,6 +1,7 @@
 package sid.org.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -93,6 +94,7 @@ public class PretServiceImpl implements PretService {
 	public void creerPret(Long idLivre, String mail)
 			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
 		Date date1 = new Date();
+		Pret pret = new Pret();
 		Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(mail);
 		Optional<Livre> livre = livreRepository.findByCodeLivre(idLivre);
 
@@ -105,10 +107,9 @@ public class PretServiceImpl implements PretService {
 
 		List<Pret> listpret = pretRepository.findByUtilisateurAndLivre(utilisateur.get(), livre.get());
 		Optional<Pret> pret1 = trouverPretenCours(listpret);
+
 		if (!pret1.equals(Optional.empty())) {
-			if (livre.get().getNombreExemplaire() == 1) {
-				livre.get().setDateDeRetour(dateService.modifierDate(date1, time));
-			}
+
 			if (pret1.isPresent() && !pret1.get().getStatut().equals(remis)
 					&& !pret1.get().getStatut().equals(enAttente)) {
 				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
@@ -118,7 +119,10 @@ public class PretServiceImpl implements PretService {
 				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre 1");
 			}
 		}
-		Pret pret = new Pret();
+		if (livre.get().getNombreExemplaire() == 1) {
+			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get()));
+		}
+
 		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
 
 			livre.get().getListeDattente().add(mail);
@@ -127,6 +131,16 @@ public class PretServiceImpl implements PretService {
 			pret.setStatut(enAttente);
 			pretRepository.saveAndFlush(pret);
 
+		} else if (pret1.equals(Optional.empty())) {
+
+			pret.setLivre(livre.get());
+			pret.setUtilisateur(utilisateur.get());
+			pret.setDateDeDebut(date1);
+			pret.setDateDeFin(dateService.modifierDate(date1, time));
+			pret.setNombreLivres(1);
+			pret.setStatut(encours);
+			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
+			pretRepository.saveAndFlush(pret);
 		} else if (pret1.get().getStatut().equals(enAttente) && livre.get().getNombreExemplaire() != 0) {
 			pret1.get().setDateDeDebut(date1);
 			pret1.get().setDateDeFin(dateService.modifierDate(date1, time));
@@ -135,7 +149,7 @@ public class PretServiceImpl implements PretService {
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
 			pretRepository.saveAndFlush(pret1.get());
 
-		} else if (pret1.equals(Optional.empty())) {
+		} else {
 
 			pret.setLivre(livre.get());
 			pret.setUtilisateur(utilisateur.get());
@@ -363,15 +377,16 @@ public class PretServiceImpl implements PretService {
 				this.connectApiTimer(pretenAttente.getId());
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
-
+			pretRepository.saveAndFlush(pret.get());
 		} else if (!pret.get().getStatut().equals(enAttente)) {
 			pret.get().setStatut(prolonge);
 			pret.get().setDateDeFin(dateService.modifierDate(pret.get().getDateDeFin(), time));
+			pretRepository.saveAndFlush(pret.get());
+			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get()));
 		} else {
 			throw new EntityAlreadyExistException("Ce pret ne peu pas etre modifier par le méthode modifier pret");
 		}
 
-		pretRepository.saveAndFlush(pret.get());
 		livreRepository.saveAndFlush(livre.get());
 	}
 
@@ -440,4 +455,27 @@ public class PretServiceImpl implements PretService {
 		return pret;
 	}
 
+	private Pret creationDuPret(Pret pret, String methode, Utilisateur utilisateur, Livre livre) {
+		pret.setLivre(livre);
+		pret.setUtilisateur(utilisateur);
+		pret.setStatut(enAttente);
+		return pret;
+	}
+
+	private Date modifierLaDateDeRetour(Livre livre) throws ResultNotFoundException {
+
+		List<Pret> listPret = pretRepository.findByLivre(livre);
+		List<Date> listdates = new ArrayList<Date>();
+		if (listPret.isEmpty()) {
+			throw new ResultNotFoundException("il n'y a aucun prets");
+		}
+		for (Pret pret : listPret) {
+
+			listdates.add(pret.getDateDeFin());
+		}
+		Date date = Collections.min(listdates);
+		livre.setDateDeRetour(date);
+		return date;
+
+	}
 }

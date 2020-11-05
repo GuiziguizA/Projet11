@@ -20,4 +20,6 @@ public interface PretRepository extends JpaRepository<Pret, Long> {
 
 	public List<Pret> findByStatutAndLivre(String statut, Livre livre);
 
+	public List<Pret> findByLivre(Livre livre);
+
 }
