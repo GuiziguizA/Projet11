@@ -21,7 +21,7 @@ public class LivreDto {
 	private String emplacement;
 	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
 	private int nombreExemplaire;
-
+	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
 	private List<String> listeDattente;
 
 	public LivreDto(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire,
@@ -33,7 +33,7 @@ public class LivreDto {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
-		this.listeDattente = list;
+		this.listeDattente = null;
 	}
 
 	public String getNom() {
@@ -82,6 +82,14 @@ public class LivreDto {
 
 	public void setNombreExemplaire(int nombreExemplaire) {
 		this.nombreExemplaire = nombreExemplaire;
+	}
+
+	public List<String> getListeDattente() {
+		return listeDattente;
+	}
+
+	public void setListeDattente(List<String> listeDattente) {
+		this.listeDattente = listeDattente;
 	}
 
 }

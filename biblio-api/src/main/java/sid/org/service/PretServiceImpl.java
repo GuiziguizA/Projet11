@@ -105,14 +105,19 @@ public class PretServiceImpl implements PretService {
 
 		List<Pret> listpret = pretRepository.findByUtilisateurAndLivre(utilisateur.get(), livre.get());
 		Optional<Pret> pret1 = trouverPretenCours(listpret);
-
-		if (pret1.isPresent() && !pret1.get().getStatut().equals(remis) && !pret1.get().getStatut().equals(enAttente)) {
-			throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
+		if (!pret1.equals(Optional.empty())) {
+			if (livre.get().getNombreExemplaire() == 1) {
+				livre.get().setDateDeRetour(dateService.modifierDate(date1, time));
+			}
+			if (pret1.isPresent() && !pret1.get().getStatut().equals(remis)
+					&& !pret1.get().getStatut().equals(enAttente)) {
+				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
+			}
+			if (pret1.isPresent() && livre.get().getNombreExemplaire() == 0 && pret1.get().getStatut().equals(enAttente)
+					&& !pret1.get().getStatut().equals(remis)) {
+				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre 1");
+			}
 		}
-		if (pret1.isPresent() && livre.get().getNombreExemplaire() == 0 && pret1.get().getStatut().equals(enAttente)) {
-			throw new EntityAlreadyExistException("La reservation existe deja pour ce livre");
-		}
-
 		Pret pret = new Pret();
 		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
 
@@ -121,7 +126,7 @@ public class PretServiceImpl implements PretService {
 			pret.setUtilisateur(utilisateur.get());
 			pret.setStatut(enAttente);
 			pretRepository.saveAndFlush(pret);
-			this.connectApiTimer(pret.getId());
+
 		} else if (pret1.get().getStatut().equals(enAttente) && livre.get().getNombreExemplaire() != 0) {
 			pret1.get().setDateDeDebut(date1);
 			pret1.get().setDateDeFin(dateService.modifierDate(date1, time));
@@ -129,7 +134,8 @@ public class PretServiceImpl implements PretService {
 			pret1.get().setStatut(encours);
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
 			pretRepository.saveAndFlush(pret1.get());
-		} else {
+
+		} else if (pret1.equals(Optional.empty())) {
 
 			pret.setLivre(livre.get());
 			pret.setUtilisateur(utilisateur.get());
@@ -153,6 +159,7 @@ public class PretServiceImpl implements PretService {
 	 *
 	 * @return Optional<Pret>
 	 */
+	@Override
 	public Optional<Pret> trouverPretenCours(List<Pret> prets) {
 
 		List<Pret> listPret = new ArrayList<Pret>();
@@ -330,7 +337,7 @@ public class PretServiceImpl implements PretService {
 	 */
 	@Override
 	@Transactional
-	public void modifierPret(Long idPret, String methode) throws ResultNotFoundException {
+	public void modifierPret(Long idPret, String methode) throws ResultNotFoundException, EntityAlreadyExistException {
 		Optional<Pret> pret = pretRepository.findById(idPret);
 
 		if (!pret.isPresent()) {
@@ -340,7 +347,7 @@ public class PretServiceImpl implements PretService {
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("Ce livre n'existe pas");
 		}
-		if (methode.equals("remise")) {
+		if (methode.equals("remise") && !pret.get().getStatut().equals(enAttente)) {
 			pret.get().setStatut(remis);
 			pret.get().setDateDeRendu(new Date());
 			if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() > 0) {
@@ -351,12 +358,17 @@ public class PretServiceImpl implements PretService {
 
 				emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
 
+				Pret pretenAttente = trouverPretEnAttente(livre.get());
+
+				this.connectApiTimer(pretenAttente.getId());
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 
-		} else {
+		} else if (!pret.get().getStatut().equals(enAttente)) {
 			pret.get().setStatut(prolonge);
 			pret.get().setDateDeFin(dateService.modifierDate(pret.get().getDateDeFin(), time));
+		} else {
+			throw new EntityAlreadyExistException("Ce pret ne peu pas etre modifier par le méthode modifier pret");
 		}
 
 		pretRepository.saveAndFlush(pret.get());
@@ -417,4 +429,15 @@ public class PretServiceImpl implements PretService {
 
 		ResponseEntity<Long> idPrets = rt.exchange(uri, HttpMethod.POST, new HttpEntity<>(idPret, headers), Long.class);
 	}
+
+	public Pret trouverPretEnAttente(Livre livre) throws ResultNotFoundException {
+		List<Pret> pretsEnAttente = pretRepository.findByStatutAndLivre(enAttente, livre);
+		if (pretsEnAttente.isEmpty()) {
+			throw new ResultNotFoundException("il n'y a pas de livre en attente");
+		}
+		Pret pret = pretsEnAttente.get(0);
+
+		return pret;
+	}
+
 }

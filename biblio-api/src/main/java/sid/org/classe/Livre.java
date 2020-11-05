@@ -1,6 +1,7 @@
 package sid.org.classe;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -37,6 +38,7 @@ public class Livre {
 	@Size(min = 0, max = 10)
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> listeDattente;
+	private Date dateDeRetour;
 
 	public Livre() {
 		super();
@@ -114,6 +116,14 @@ public class Livre {
 
 	public Long getCodeLivre() {
 		return codeLivre;
+	}
+
+	public Date getDateDeRetour() {
+		return dateDeRetour;
+	}
+
+	public void setDateDeRetour(Date dateDeRetour) {
+		this.dateDeRetour = dateDeRetour;
 	}
 
 }

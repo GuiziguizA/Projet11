@@ -163,8 +163,9 @@ public class PretBatchServiceImpl implements PretBatchService {
 		TimerTask task = new TimerTask() {
 			public void run() {
 				try {
-					connectPretEnAttente((long) 6);
+					connectPretEnAttente(idPret);
 					logger.info("task est fonctionnel");
+					logger.info("l'id du pret :" + idPret);
 
 				} catch (Exception e) {
 					logger.info("task n'a pas reussi a ce connecter a l'api :" + e);
@@ -174,7 +175,7 @@ public class PretBatchServiceImpl implements PretBatchService {
 		};
 		Timer timer = new Timer("Timer");
 
-		long delay = 5;
+		long delay = 50000;
 		timer.schedule(task, delay);
 
 	}

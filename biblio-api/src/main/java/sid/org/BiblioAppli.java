@@ -2,6 +2,7 @@ package sid.org;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ public class BiblioAppli implements CommandLineRunner {
 		utilisateurService.creerUtilisateur(new UtilisateurDto("batch", "batch", " adresse7", "batch", "codePostal7"),
 				"user");
 		Livre livre1 = livreService.createLivre(new LivreDto("les trois mousquetaires", "Alexandre DUMAS", "type1",
-				"section1", "emplacement1", 0, list));
+				"section1", "emplacement1", 1, list));
 		Livre livre2 = livreService.createLivre(
 				new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 4, list));
 		Livre livre3 = livreService.createLivre(
@@ -87,7 +88,15 @@ public class BiblioAppli implements CommandLineRunner {
 		Pret pret3 = pretRepository.save(new Pret(new Date(), new Date(), "encours", 1, livre3, user1));
 		Pret pret5 = pretRepository.save(new Pret(new Date(), new Date(), "depasse", 1, livre1, user1));
 
-		pretService.creerPret(new Long(1), "marcel@gmail.com");
+		/* pretService.creerPret(new Long(1), "marcel@gmail.com"); */
+		List<Pret> listpret = pretRepository.findByUtilisateurAndLivre(user3, livre1);
+		Optional<Pret> pret11 = pretService.trouverPretenCours(listpret);
+		System.out.println(pret11);
+		if (!listpret.isEmpty()) {
+
+		} else {
+			System.out.println("yolo");
+		}
 
 		/*
 		 * pretService.modifierPret(new Long(1), "remise"); pretService.creerPret(new

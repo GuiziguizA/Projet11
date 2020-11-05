@@ -1,5 +1,7 @@
 package sid.org.biblio.front.classe;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -17,10 +19,11 @@ public class Livre {
 	private String emplacement;
 	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
 	private int nombreExemplaire;
-	
+
+	private List<String> listeDattente;
 
 	public Livre(Long codeLivre, String nom, String auteur, String type, String section, String emplacement,
-			int nombreExemplaire) {
+			int nombreExemplaire, List<String> list) {
 		super();
 		this.codeLivre = codeLivre;
 		this.nom = nom;
@@ -29,6 +32,7 @@ public class Livre {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
+		this.listeDattente = null;
 	}
 
 	public Livre() {
@@ -90,6 +94,14 @@ public class Livre {
 
 	public void setNombreExemplaire(int nombreExemplaire) {
 		this.nombreExemplaire = nombreExemplaire;
+	}
+
+	public List<String> getListDattente() {
+		return listeDattente;
+	}
+
+	public void setListDattente(List<String> listeDattente) {
+		this.listeDattente = listeDattente;
 	}
 
 }

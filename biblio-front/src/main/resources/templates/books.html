@@ -58,28 +58,31 @@ data-layout-decorator="template1">
 	<table  class="table table-striped">
 		<tr>
 			<th scope="col">Nom</th>
-				<th scope="col">Auteur</th>
-				<th scope="col">Type</th>
-				<th scope="col">Section</th>
-				<th scope="col">Emplacement</th>
-				<th scope="col">Nombre d'exemplaire</th>
-				<th th:if="${role=='user' } "></th>
-				<th></th>
-		</tr>
-		<tr th:each="book:${bookPage}" >
-				<td th:text="${book.nom}"></td>
-				<td th:text="${book.auteur}"></td>
-				<td th:text="${book.type}" ></td>
-				<td th:text="${book.section}"></td>	
-				<td th:text="${book.emplacement}"></td>	
-				<td th:text="${book.nombreExemplaire}"></td>	
-				<td  th:if="${role=='user' } "><form method="post" th:action="@{/prets(id=${book.codeLivre})}"  >
-            <button type="submit" name="submit" value="value" class="btn btn-primary">Reserver</button>
-        </form> </td>
-				
+					<th scope="col">Auteur</th>
+					<th scope="col">Type</th>
+					<th scope="col">Section</th>
+					<th scope="col">Emplacement</th>
+					<th scope="col">Nombre d'exemplaire</th>
+					<th th:if="${role=='user'} " scope="col">Nombre de reservations</th>
+					
+					<th th:if="${role=='user' } "></th>
+					<th></th>
 			</tr>
-	
-	</table>
+			<tr th:each="book:${bookPage}" >
+					<td th:text="${book.nom}"></td>
+					<td th:text="${book.auteur}"></td>
+					<td th:text="${book.type}" ></td>
+					<td th:text="${book.section}"></td>	
+					<td th:text="${book.emplacement}"></td>	
+					<td th:text="${book.nombreExemplaire}"></td>	
+					<!-- <td th:if="${role=='user' and book.nombreExemplaire==0  } " th:text="${book.listeDattente!=null}?${#lists.size(book.listeDattente)}"></td>	 -->
+					<td  th:if="${role=='user' } "><form method="post" th:action="@{/prets(id=${book.codeLivre})}"  >
+	            <button type="submit" name="submit" value="value" class="btn btn-primary">Reserver</button>
+	        </form> </td>
+					
+				</tr>
+		
+		</table>
 
 <div th:if="${bookPage.totalPages > 0}" class="pagination"
     th:each="pageNumber : ${pageNumbers}">

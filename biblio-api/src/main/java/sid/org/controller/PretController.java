@@ -97,14 +97,15 @@ public class PretController {
 
 	@PutMapping("/prets")
 	@ApiOperation(value = "modifier statut du pret pour confirmer que le livre a été rendu", response = PretController.class)
-	public void retourLivre(@RequestParam Long id) throws ResultNotFoundException, MessagingException, IOException {
+	public void retourLivre(@RequestParam Long id)
+			throws ResultNotFoundException, MessagingException, IOException, EntityAlreadyExistException {
 		pretService.modifierPret(id, "remise");
 
 	}
 
 	@PutMapping("/pret")
 	@ApiOperation(value = "modifier statut du pret pour renouvelé la periode de pret", response = PretController.class)
-	public void prolongerLivre(@RequestParam Long id) throws ResultNotFoundException {
+	public void prolongerLivre(@RequestParam Long id) throws ResultNotFoundException, EntityAlreadyExistException {
 		pretService.modifierPret(id, "renouvelement");
 
 	}

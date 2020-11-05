@@ -1,6 +1,7 @@
 package sid.org.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
@@ -28,10 +29,12 @@ public interface PretService {
 
 	public void modifierStatutsPrets() throws ResultNotFoundException;
 
-	public void modifierPret(Long id, String methode) throws ResultNotFoundException;
+	public void modifierPret(Long id, String methode) throws ResultNotFoundException, EntityAlreadyExistException;
 
 	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException;
 
 	public void connectApiTimer(Long idPret);
+
+	Optional<Pret> trouverPretenCours(List<Pret> prets);
 
 }
