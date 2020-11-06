@@ -38,6 +38,7 @@ public class Livre {
 	@Size(min = 0, max = 10)
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> listeDattente;
+	private int nombreListeDattente = 0;
 	private Date dateDeRetour;
 
 	public Livre() {
@@ -124,6 +125,14 @@ public class Livre {
 
 	public void setDateDeRetour(Date dateDeRetour) {
 		this.dateDeRetour = dateDeRetour;
+	}
+
+	public int getNombreListeDattente() {
+		return nombreListeDattente;
+	}
+
+	public void setNombreListeDattente(int nombreListeDattente) {
+		this.nombreListeDattente = nombreListeDattente;
 	}
 
 }

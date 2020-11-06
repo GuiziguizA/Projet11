@@ -1,6 +1,5 @@
 package sid.org;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import sid.org.classe.Livre;
-import sid.org.classe.Pret;
 import sid.org.classe.Roles;
 import sid.org.classe.Utilisateur;
 import sid.org.dao.LivreRepository;
@@ -80,12 +78,12 @@ public class BiblioAppli implements CommandLineRunner {
 				new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 2, list));
 		Livre livre3 = livreService.createLivre(
 				new LivreDto("le bossu de notre dame", "Henry Polac ", "type1", "section1", "emplacement1", 5, list));
-
-		Pret pret = pretRepository.save(new Pret(new Date(), new Date(), "encours", 1, livre1, user2));
-		Pret pret1 = pretRepository.save(new Pret(new Date(), new Date(), "encours", 1, livre1, user2));
-		Pret pret2 = pretRepository.save(new Pret(new Date(), new Date(), "encours", 1, livre2, user1));
-		Pret pret3 = pretRepository.save(new Pret(new Date(), new Date(), "encours", 1, livre3, user1));
-		Pret pret5 = pretRepository.save(new Pret(new Date(), new Date(), "depasse", 1, livre1, user1));
+		/*
+		 * Pret pret2 = pretRepository.save(new Pret(new Date(), new Date(), "encours",
+		 * 1, livre2, user1)); Pret pret3 = pretRepository.save(new Pret(new Date(), new
+		 * Date(), "encours", 1, livre3, user1)); Pret pret5 = pretRepository.save(new
+		 * Pret(new Date(), new Date(), "depasse", 1, livre1, user1));
+		 */
 
 		/* pretService.creerPret(new Long(1), "marcel@gmail.com"); */
 

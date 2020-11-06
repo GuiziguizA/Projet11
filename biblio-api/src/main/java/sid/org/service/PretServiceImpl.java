@@ -1,7 +1,6 @@
 package sid.org.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -120,15 +119,19 @@ public class PretServiceImpl implements PretService {
 			}
 		}
 		if (livre.get().getNombreExemplaire() == 1) {
-			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get()));
+			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get(), remis));
 		}
 
 		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
 
 			livre.get().getListeDattente().add(mail);
+
+			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() + 1);
+
 			pret.setLivre(livre.get());
 			pret.setUtilisateur(utilisateur.get());
 			pret.setStatut(enAttente);
+			pret.setPosition(livre.get().getNombreListeDattente() + 1);
 			pretRepository.saveAndFlush(pret);
 
 		} else if (pret1.equals(Optional.empty())) {
@@ -378,11 +381,12 @@ public class PretServiceImpl implements PretService {
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 			pretRepository.saveAndFlush(pret.get());
+			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre());
 		} else if (!pret.get().getStatut().equals(enAttente)) {
 			pret.get().setStatut(prolonge);
 			pret.get().setDateDeFin(dateService.modifierDate(pret.get().getDateDeFin(), time));
 			pretRepository.saveAndFlush(pret.get());
-			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get()));
+			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get(), remis));
 		} else {
 			throw new EntityAlreadyExistException("Ce pret ne peu pas etre modifier par le méthode modifier pret");
 		}
@@ -462,20 +466,36 @@ public class PretServiceImpl implements PretService {
 		return pret;
 	}
 
-	private Date modifierLaDateDeRetour(Livre livre) throws ResultNotFoundException {
+	private Date modifierLaDateDeRetour(Livre livre, String statut) throws ResultNotFoundException {
 
-		List<Pret> listPret = pretRepository.findByLivre(livre);
-		List<Date> listdates = new ArrayList<Date>();
-		if (listPret.isEmpty()) {
-			throw new ResultNotFoundException("il n'y a aucun prets");
-		}
-		for (Pret pret : listPret) {
+		List<Pret> listPret = pretRepository.findLivreandStatutNotByOrderByDateDeFinAsc(livre, statut);
 
-			listdates.add(pret.getDateDeFin());
-		}
-		Date date = Collections.min(listdates);
+		Date date = listPret.get(0).getDateDeFin();
 		livre.setDateDeRetour(date);
 		return date;
 
 	}
+
+	private void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException {
+		Optional<Livre> livre = livreRepository.findById(idLivre);
+		if (!livre.isPresent()) {
+			throw new ResultNotFoundException("le livre est introuvable");
+		}
+		List<String> listMail = livre.get().getListeDattente();
+
+		for (int i = 0; i < listMail.size(); i++) {
+			Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(listMail.get(i));
+			if (!utilisateur.isPresent()) {
+				throw new ResultNotFoundException("l'utilisateur est introuvable");
+			}
+			Optional<Pret> pret = pretRepository.findByUtilisateurAndLivreAndStatut(utilisateur.get(), livre.get(),
+					enAttente);
+
+			pret.get().setPosition(pret.get().getPosition() - 1);
+			pretRepository.saveAndFlush(pret.get());
+
+		}
+
+	}
+
 }
