@@ -118,8 +118,8 @@ public class PretServiceImpl implements PretService {
 				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre 1");
 			}
 		}
-		if (livre.get().getNombreExemplaire() == 1) {
-			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get(), remis));
+		if (livre.get().getNombreExemplaire() == 1 && !livre.get().getListeDattente().isEmpty()) {
+
 		}
 
 		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
@@ -132,6 +132,7 @@ public class PretServiceImpl implements PretService {
 			pret.setUtilisateur(utilisateur.get());
 			pret.setStatut(enAttente);
 			pret.setPosition(livre.get().getNombreListeDattente() + 1);
+
 			pretRepository.saveAndFlush(pret);
 
 		} else if (pret1.equals(Optional.empty())) {
@@ -163,7 +164,9 @@ public class PretServiceImpl implements PretService {
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);
 			pretRepository.saveAndFlush(pret);
 		}
-
+		if (livre.get().getDateDeRetour() == null) {
+			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get(), remis));
+		}
 		livreRepository.saveAndFlush(livre.get());
 
 	}
@@ -471,7 +474,6 @@ public class PretServiceImpl implements PretService {
 		List<Pret> listPret = pretRepository.findLivreandStatutNotByOrderByDateDeFinAsc(livre, statut);
 
 		Date date = listPret.get(0).getDateDeFin();
-		livre.setDateDeRetour(date);
 		return date;
 
 	}

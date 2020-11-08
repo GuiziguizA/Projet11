@@ -31,6 +31,7 @@ public class Pret {
 	@JoinColumn(name = "ID_UTILISATEUR")
 	private Utilisateur utilisateur;
 	private Date dateDeRendu;
+
 	private int position;
 
 	public Pret() {
