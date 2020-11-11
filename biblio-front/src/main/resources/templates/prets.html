@@ -2,13 +2,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
-	data-layout-decorator="template1">
+	data-layout-decorate="template1">
  
 <head>
-	<meta charset="utf-8"/>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<meta charset="UTF-8">
+	<script type ="text/javascript" 
+	 src="webjars/jquery/2.2.3/jquery.min.js"></script>
+  	<script  type ="text/javascript"
+  	 src="webjars/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+  	<script type="text/javascript"  th:src= "@{js/main.js}"  src="../static/js/main.js"></script>
+  	
+  	<link rel="stylesheet"
+  	href="webjars/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
 </head>
  
 <body>
@@ -42,16 +47,16 @@
 				<td th:text="${pret.statut}"></td>
 				<td th:text="${#dates.format(pret.DateDeDebut, 'dd-MM-yyyy')}" ></td>
 					<td th:text="${#dates.format(pret.DateDeFin, 'dd-MM-yyyy')}" ></td>
-		<td th:text="${pret.utilisateur.nom}" th:if="${role!='user'} "></td>
 	
-							<td th:text="${#dates.format(pret.livre.dateDeRetour, 'dd-MM-yyyy')}" th:if="${ pret.statut =='enattente'} "></td>
-								<td th:text="${#dates.format(pret.DateDeRendu, 'dd-MM-yyyy')}" th:if="${ pret.statut =='remis'} "></td>
-			<td th:text="${pret.position}" th:if="${ pret.statut =='enattente'} "></td>
-				<td th:text="${#dates.format(pret.DateDeRendu, 'dd-MM-yyyy')}" th:if="${ pret.statut =='remis'} "></td>
-									<td th:text="${pret.position}" th:if="${ pret.statut =='enattente'} "></td>
+	
+							
+				<td th:text="${#dates.format(pret.DateDeRendu, 'dd-MM-yyyy')}"></td>
+				<td th:text="${pret.position}" th:if="${ pret.statut =='enattente'} "></td>
+				<td th:text="${#dates.format(pret.livre.DateDeRetour, 'dd-MM-yyyy')}" ></td>
+								
 					<td><span th:if="${role!='user' and pret.statut !='remis' and pret.statut !='enattente'} "><a th:href="@{/pretstatut/{id}(id=${pret.id})}"th:method="put"><input  type="button"   class="btn btn-primary" value="remettre" /></a></span></td>
 						<td><span th:if="${role=='user' and pret.statut =='encours'} "><a th:href="@{/prolongerPret/{id}(id=${pret.id})}"th:method="put"><input  type="button"   class="btn btn-primary" value="prolonger" /></a></span></td>
-								
+								<td><a th:href="@{deletePret/{id}(id=${pret.id})}" th:method="get" class="btn btn-danger " >Delete</a></td>
 								</tr>
 	
 	</table>
@@ -73,4 +78,28 @@
 	</div>
 			</div>		
 					</div>
+
 </div>	
+
+<div class="myForm">
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <p class="alert alert-danger">Etes-vous sûr de vouloir supprimer ce prêt en Attente</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">annuler</button>
+        <a href="" class="btn btn-danger" id="delRef">Ok</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
