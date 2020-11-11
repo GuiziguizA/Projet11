@@ -296,8 +296,8 @@ public class PretServiceImpl implements PretService {
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("Ce livre n'existe pas");
 		}
-		if (pret.get().getStatut().equals(remis)) {
-			throw new EntityAlreadyExistException("Le pret est a deja ete remis");
+		if (pret.get().getStatut().equals(remis) || pret.get().getStatut().equals(depasse)) {
+			throw new EntityAlreadyExistException("Le pret ne peut pas etre prolongé");
 		}
 		if (methode.equals("remise")) {
 			pret.get().setStatut(remis);
