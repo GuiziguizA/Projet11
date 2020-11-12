@@ -56,7 +56,7 @@
 								
 					<td><span th:if="${role!='user' and pret.statut !='remis' and pret.statut !='enattente'} "><a th:href="@{/pretstatut/{id}(id=${pret.id})}"th:method="put"><input  type="button"   class="btn btn-primary" value="remettre" /></a></span></td>
 						<td><span th:if="${role=='user' and pret.statut =='encours'} "><a th:href="@{/prolongerPret/{id}(id=${pret.id})}"th:method="put"><input  type="button"   class="btn btn-primary" value="prolonger" /></a></span></td>
-								<td><a th:href="@{deletePret/{id}(id=${pret.id})}" th:method="get" class="btn btn-danger " >Delete</a></td>
+								<td><a th:href="@{deletePret/{id}(id=${pret.id})}" th:method="get" class="btn btn-danger delBtn" >Delete</a></td>
 								</tr>
 	
 	</table>

@@ -55,9 +55,9 @@ public class PretController {
 	}
 
 	/* @Secured(value = { "ROLE_admin", "ROLE_employe" }) */
-	@DeleteMapping("/prets/{id}")
+	@DeleteMapping("/prets")
 	@ApiOperation(value = "supprime le pret et reincremente le stock du livre", response = PretController.class)
-	public void supprimerUnPret(@PathVariable Long id) throws ResultNotFoundException {
+	public void supprimerUnPret(@RequestParam Long id) throws ResultNotFoundException {
 
 		pretService.supprimerPret(id);
 

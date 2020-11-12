@@ -4,17 +4,21 @@
  	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
  	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-<meta charset="utf-8"/>		
-<title>Bibliotheque</title>
-	 	<script type ="text/javascript"  src="webjars/jquery/3.5.1/jquery.min.js"></script>
-  	<script  type ="text/javascript" src="webjars/bootstrap/4.5.3/css/bootstrap.min.css"></script>
+<meta charset="UTF-8">
+	<script type ="text/javascript" 
+	 src="webjars/jquery/2.2.3/jquery.min.js"></script>
+  	<script  type ="text/javascript"
+  	 src="webjars/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>
+  	<script type="text/javascript"  th:src= "@{js/main.js}"  src="../static/js/main.js"></script>
+  	
   	<link rel="stylesheet"
-  	href="webjars/bootstrap/4.5.3/css/bootstrap.min.css"/>
+  	href="webjars/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"/>
 </head>
+ 
  
 <body>
 <header>
-<div class="navbar navbar-inverse" >
+<div class="navbar navbar-dark bg-dark" >
 <div class="container-fluid" >
 <ul class="nav navbar-nav">
 <li ><a th:href="@{/}">Home</a></li>     
