@@ -19,6 +19,7 @@ public interface PretService {
 
 	public void renouvelerUnPret(Long Id, String mail, String motDePasse) throws HttpStatusCodeException;
 
-	public void supprimerPret(Long id, String mail, String motDePasse) throws HttpStatusCodeException;
+	public void supprimerPret(Long id, String mail, String motDePasse, String statutPret)
+			throws HttpStatusCodeException;
 
 }

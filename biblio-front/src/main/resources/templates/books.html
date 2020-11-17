@@ -2,13 +2,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
-data-layout-decorator="template1">
+data-layout-decorate="template1">
  
 <head>
-	<meta charset="utf-8"/>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<meta charset="UTF-8">
+	<script type ="text/javascript" 
+	 src="webjars/jquery/3.5.1/jquery.min.js"></script>
+  	<script  type ="text/javascript"
+  	 src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+  	<script type="text/javascript"  th:src= "@{js/main.js}"  src="../static/js/main.js"></script>
+  	
+  	<link rel="stylesheet"
+  	href="webjars/bootstrap/4.5.3/css/bootstrap.min.css"/>
 </head>
  
 <body>
@@ -54,7 +59,7 @@ data-layout-decorator="template1">
     </div>
     <br>
     <br>
-					<div>
+					<div class="border rounded">
 	<table  class="table table-striped">
 		<tr>
 			<th scope="col">Nom</th>
@@ -86,20 +91,21 @@ data-layout-decorator="template1">
 				</tr>
 		
 		</table>
-
-<div th:if="${bookPage.totalPages > 0}" class="pagination"
-    th:each="pageNumber : ${pageNumbers}">
+</div>
+	</div>
+<div th:if="${bookPage.totalPages > 0}"
+    th:each="pageNumber : ${pageNumbers}" class="pagination">
     <nav aria-label="...">
-  <ul class="pagination pagination-lg">
-    <li class="page-item"> <a th:href="@{/books(page=${pageNumber-1},size=${bookPage.size},type=${type},recherche=${recherche})}"
+  <ul class="pagination pagination-sm">
+    <li class="page-item"> <a class="page-link"th:href="@{/books(page=${pageNumber-1},size=${bookPage.size},type=${type},recherche=${recherche})}"
         th:text=${pageNumber}
         th:class="${pageNumber==bookPage.number} ? active"></a>
         </li>
         </ul>
         </nav>
 </div>
-	</div>
-	</div>
+	
+
 	<div class="alert alert-success"th:if="${succes}" th:text="${succes}"role="alert" >
 </div>
 	

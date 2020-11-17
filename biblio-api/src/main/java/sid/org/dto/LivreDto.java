@@ -1,7 +1,5 @@
 package sid.org.dto;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -21,11 +19,8 @@ public class LivreDto {
 	private String emplacement;
 	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
 	private int nombreExemplaire;
-	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
-	private List<String> listeDattente;
 
-	public LivreDto(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire,
-			List<String> list) {
+	public LivreDto(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire) {
 		super();
 		this.nom = nom;
 		this.auteur = auteur;
@@ -33,7 +28,7 @@ public class LivreDto {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
-		this.listeDattente = null;
+
 	}
 
 	public String getNom() {
@@ -82,14 +77,6 @@ public class LivreDto {
 
 	public void setNombreExemplaire(int nombreExemplaire) {
 		this.nombreExemplaire = nombreExemplaire;
-	}
-
-	public List<String> getListeDattente() {
-		return listeDattente;
-	}
-
-	public void setListeDattente(List<String> listeDattente) {
-		this.listeDattente = listeDattente;
 	}
 
 }

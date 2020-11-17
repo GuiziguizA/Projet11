@@ -9,16 +9,14 @@ import sid.org.classe.Pret;
 
 public interface PretBatchService {
 
-	void envoieMails(Locale locale) throws MessagingException, IOException;
+	public void envoieMails(Locale locale) throws MessagingException, IOException;
 
-	void modifierStatutPrets();
+	public void modifierStatutPrets();
 
-	String createHtmlContent(Pret pret, Locale locale);
+	public String createHtmlContent(Pret pret, Locale locale);
 
-	void TimerDisponibiliteLivre(Long idPret);
+	public void TimerDisponibiliteLivre(Long idPret);
 
-	void connectPretEnAttente(Long id);
-
-	void yo();
+	public void connectPretEnAttente(Long id);
 
 }

@@ -130,7 +130,7 @@ public class LivreServiceImpl implements LivreService {
 		livre.setNombreExemplaire(livreDto.getNombreExemplaire());
 		livre.setSection(livreDto.getSection());
 		livre.setType(livreDto.getType());
-		livre.setListeDattente(livreDto.getListeDattente());
+		livre.setListeDattente(null);
 		return livre;
 
 	}

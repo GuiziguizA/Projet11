@@ -152,11 +152,12 @@ public class PretServiceImpl implements PretService {
 	}
 
 	@Override
-	public void supprimerPret(Long id, String mail, String motDePasse) throws HttpStatusCodeException {
+	public void supprimerPret(Long id, String mail, String motDePasse, String statutPret)
+			throws HttpStatusCodeException {
 
 		RestTemplate rt = new RestTemplate();
 
-		final String uri = apiUrl + "/prets?id=" + id;
+		final String uri = apiUrl + "/pretEnAttente?id=" + id + " & statutPret=" + statutPret;
 
 		HttpHeaders headers = httpService.creerHeadersHttpAuthentifie(mail, motDePasse);
 

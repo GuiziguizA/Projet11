@@ -28,6 +28,7 @@ import sid.org.classe.Utilisateur;
 import sid.org.dao.LivreRepository;
 import sid.org.dao.PretRepository;
 import sid.org.dao.UtilisateurRepository;
+import sid.org.exception.BadException;
 import sid.org.exception.EntityAlreadyExistException;
 import sid.org.exception.LivreIndisponibleException;
 import sid.org.exception.ResultNotFoundException;
@@ -211,15 +212,32 @@ public class PretServiceImpl implements PretService {
 	 */
 	@Transactional
 	@Override
-	public void supprimerPret(Long id) throws ResultNotFoundException {
+	public void supprimerPret(Long id, Optional<String> statutPret) throws ResultNotFoundException, BadException {
 		Optional<Pret> pret = pretRepository.findById(id);
+
+		logger.info(statutPret.get());
+		logger.info(enAttente);
+
+		if (!statutPret.get().equals("encours1")) {
+			if (!pret.isPresent()) {
+				throw new ResultNotFoundException("ce pret n'existe pas");
+			}
+			logger.info(pret.get().getStatut());
+			if (!pret.get().getStatut().equals(enAttente)) {
+				throw new BadException("le pret ne peut pas etre supprimer");
+			}
+		}
 
 		if (!pret.isPresent()) {
 			throw new ResultNotFoundException("ce pret n'existe pas");
 		}
+
 		Optional<Livre> livre = livreRepository.findById(pret.get().getLivre().getCodeLivre());
-		if (!pret.get().getStatut().equals(remis)) {
+
+		if (!pret.get().getStatut().equals(enAttente) && !pret.get().getStatut().equals(remis)) {
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + pret.get().getNombreLivres());
+			livre.get().setNombreListeDattente(0);
+			livre.get().setDateDeRetour(null);
 		}
 		livreRepository.saveAndFlush(livre.get());
 		pretRepository.delete(pret.get());
@@ -367,6 +385,10 @@ public class PretServiceImpl implements PretService {
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("Ce livre n'existe pas");
 		}
+
+		if (pret.get().getStatut().equals(remis) || pret.get().getStatut().equals(depasse)) {
+			throw new EntityAlreadyExistException("Le pret ne peut pas etre prolongé");
+		}
 		if (methode.equals("remise") && !pret.get().getStatut().equals(enAttente)) {
 			pret.get().setStatut(remis);
 			pret.get().setDateDeRendu(new Date());
@@ -398,7 +420,7 @@ public class PretServiceImpl implements PretService {
 	}
 
 	@Override
-	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException {
+	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException, BadException {
 		Optional<Pret> pret = pretRepository.findById(idPret);
 
 		if (!pret.isPresent()) {
@@ -411,7 +433,7 @@ public class PretServiceImpl implements PretService {
 		}
 
 		if (pret.get().getStatut().equals(enAttente)) {
-			this.supprimerPret(idPret);
+			this.supprimerPret(idPret, null);
 
 			livre.get().getListeDattente().remove(0);
 

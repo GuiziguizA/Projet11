@@ -156,8 +156,8 @@ public class PretsController {
 	}
 
 	@GetMapping(value = "deletePret/{id}")
-	public String supprimerUnPrets(@PathVariable Long id, Model model, Principal principal,
-			HttpServletRequest request) {
+	public String supprimerUnPrets(@RequestParam Long id, Model model, Principal principal, HttpServletRequest request,
+			@RequestParam String statutPret) {
 
 		HttpSession session = request.getSession();
 		String motDePasse = (String) session.getAttribute("password");
@@ -165,9 +165,9 @@ public class PretsController {
 		Utilisateur user = utilisateurService.infosUtilisateur(mail, motDePasse);
 		model.addAttribute("role", user.getRoles().getNom());
 		try {
-			pretService.supprimerPret(id, mail, motDePasse);
+			pretService.supprimerPret(id, mail, motDePasse, statutPret);
 
-			return "succesOperations";
+			return "redirect:/prets";
 		} catch (HttpStatusCodeException e) {
 			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);

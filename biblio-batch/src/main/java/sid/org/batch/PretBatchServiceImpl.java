@@ -19,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.TemplateEngine;
@@ -146,7 +147,7 @@ public class PretBatchServiceImpl implements PretBatchService {
 	 * Methode appelant modifierStatutPrets() et envoieMails() de maniere repeté
 	 * 
 	 */
-
+	@Scheduled(fixedRate = 5000000)
 	public void effectuerLesEnvoies() throws Exception {
 
 		Locale locale = new Locale("fr");
@@ -191,8 +192,4 @@ public class PretBatchServiceImpl implements PretBatchService {
 
 	}
 
-	@Override
-	public void yo() {
-		System.out.println("bobobobobobobobobobobo");
-	}
 }

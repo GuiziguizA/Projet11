@@ -2,11 +2,13 @@ package sid.org.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import sid.org.classe.Pret;
 import sid.org.dto.PretDto;
+import sid.org.exception.BadException;
 import sid.org.exception.EntityAlreadyExistException;
 import sid.org.exception.LivreIndisponibleException;
 import sid.org.exception.ResultNotFoundException;
@@ -51,15 +54,6 @@ public class PretController {
 		pretService.creerPret(pretDto.getId(), mail);
 
 		;
-
-	}
-
-	/* @Secured(value = { "ROLE_admin", "ROLE_employe" }) */
-	@DeleteMapping("/prets")
-	@ApiOperation(value = "supprime le pret et reincremente le stock du livre", response = PretController.class)
-	public void supprimerUnPret(@RequestParam Long id) throws ResultNotFoundException {
-
-		pretService.supprimerPret(id);
 
 	}
 
@@ -118,8 +112,27 @@ public class PretController {
 
 	@PutMapping("/pretEnAttente")
 	@ApiOperation(value = "supprimer le pret en attente au bout de 48h si il n'a pas été complété", response = PretController.class)
-	public void vérifierPret(@RequestParam Long idPret) throws ResultNotFoundException, EntityAlreadyExistException {
+	public void vérifierPret(@RequestParam Long idPret)
+			throws ResultNotFoundException, EntityAlreadyExistException, BadException {
 		pretService.verifierPrêt(idPret);
+	}
+
+	@Secured(value = { "ROLE_admin", "ROLE_employe" })
+	@DeleteMapping("/prets")
+	@ApiOperation(value = "supprime le pret et reincremente le stock du livre", response = PretController.class)
+	public void supprimerUnPret(@RequestParam Long id) throws ResultNotFoundException, BadException {
+		Optional<String> statut = Optional.of("encours1");
+		pretService.supprimerPret(id, statut);
+
+	}
+
+	@DeleteMapping("/pretEnAttente")
+	@ApiOperation(value = "supprime le pret et reincremente le stock du livre", response = PretController.class)
+	public void supprimerUnPretenAttente(@RequestParam Long id, @RequestParam String statutPret)
+			throws ResultNotFoundException, BadException {
+		Optional<String> statut = Optional.of(statutPret);
+		pretService.supprimerPret(id, statut);
+
 	}
 
 }

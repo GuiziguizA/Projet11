@@ -70,22 +70,20 @@ public class BiblioAppli implements CommandLineRunner {
 		Utilisateur user3 = utilisateurService.creerUtilisateur(
 				new UtilisateurDto("Marcel", "marcel@gmail.com", "14 avenue du chene", "marcel", "65123"), "user");
 
-		utilisateurService.creerUtilisateur(new UtilisateurDto("batch", "batch", " adresse7", "batch", "codePostal7"),
+		utilisateurService.creerUtilisateur(new UtilisateurDto("batch", "batch", " adresse7", "batch", "56776"),
 				"user");
-		Livre livre1 = livreService.createLivre(new LivreDto("les trois mousquetaires", "Alexandre DUMAS", "type1",
-				"section1", "emplacement1", 1, list));
-		Livre livre2 = livreService.createLivre(
-				new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 2, list));
+		Livre livre1 = livreService.createLivre(
+				new LivreDto("les trois mousquetaires", "Alexandre DUMAS", "type1", "section1", "emplacement1", 1));
+		Livre livre2 = livreService
+				.createLivre(new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 2));
 		Livre livre3 = livreService.createLivre(
-				new LivreDto("le bossu de notre dame", "Henry Polac ", "type1", "section1", "emplacement1", 5, list));
+				new LivreDto("le bossu de notre dame", "Henry Polac ", "type1", "section1", "emplacement1", 5));
 		/*
-		 * Pret pret2 = pretRepository.save(new Pret(new Date(), new Date(), "encours",
-		 * 1, livre2, user1)); Pret pret3 = pretRepository.save(new Pret(new Date(), new
-		 * Date(), "encours", 1, livre3, user1)); Pret pret5 = pretRepository.save(new
-		 * Pret(new Date(), new Date(), "depasse", 1, livre1, user1));
+		 * pretService.creerPret(new Long(1), "bob@Laposte.com");
+		 * pretService.creerPret(new Long(1), "michel@gmail.com");
 		 */
-
-		/* pretService.creerPret(new Long(1), "marcel@gmail.com"); */
+		/* Optional<String> opt = Optional.of("enattente"); */
+		/* pretService.supprimerPret(new Long(2), opt); */
 
 		/*
 		 * pretService.modifierPret(new Long(1), "remise"); pretService.creerPret(new
