@@ -157,7 +157,7 @@ public class PretServiceImpl implements PretService {
 
 		RestTemplate rt = new RestTemplate();
 
-		final String uri = apiUrl + "/pretEnAttente?id=" + id + " & statutPret=" + statutPret;
+		final String uri = apiUrl + "/pretEnAttente?id=" + id + "&statutPret=" + statutPret;
 
 		HttpHeaders headers = httpService.creerHeadersHttpAuthentifie(mail, motDePasse);
 

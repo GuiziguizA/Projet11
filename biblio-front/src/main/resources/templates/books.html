@@ -1,87 +1,83 @@
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
-data-layout-decorate="template1">
- 
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+	data-layout-decorate="template1">
+
 <head>
 	<meta charset="UTF-8">
-	<script type ="text/javascript" 
-	 src="webjars/jquery/3.5.1/jquery.min.js"></script>
-  	<script  type ="text/javascript"
-  	 src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
-  	<script type="text/javascript"  th:src= "@{js/main.js}"  src="../static/js/main.js"></script>
-  	
-  	<link rel="stylesheet"
-  	href="webjars/bootstrap/4.5.3/css/bootstrap.min.css"/>
+	<script type="text/javascript" src="webjars/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+	<script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
+
+	<link rel="stylesheet" href="webjars/bootstrap/4.5.3/css/bootstrap.min.css" />
 </head>
- 
+
 <body>
 
 
 
 	<div layout:fragment="content">
-	<div class="container pt-3">
- <div class="form-group">
- <div class="jumbotron text-center">
- 
- <h1>Livres</h1>
- </div>
- 	<br>
- 	 <div class="col-md-3 mb-3">
-		<div>
-			<span th:if="${role!='user'} "> <a th:href="@{/books/form}"><input type="button" class="btn btn-primary"value="+Ajouter" /></a></span>
-		</div>
-		
-	<br>
-	
-	<form  th:action="@{/books}" method="get">
+		<div class="container pt-3">
+			<div class="form-group">
+				<div class="jumbotron text-center">
 
-    <br>
-<div>
-  <label for="nom">Type de recherche</label>
-   		<select th:name=type>
-   		
-   		<option th:each="o:${listTypes}"  th:text="${o.nom}" th:value= "${o.nom}"></option>
-   	</select>
-    <br>
-    <input type="text" th:name="recherche" class="form-control" placeholder="Rechercher">
-    
-   </div>
-    <br>
-    
-     <input type="submit" class="btn btn-primary" value="rechercher">   
-   <br>
-      <br>
-   
-     
-    </form>
-    </div>
-    <br>
-    <br>
-					<div class="border rounded">
-	<table  class="table table-striped">
-		<tr>
-			<th scope="col">Nom</th>
-					<th scope="col">Auteur</th>
-					<th scope="col">Type</th> 
-					<th scope="col">Section</th>
-					<th scope="col">Emplacement</th>
-					<th scope="col">Nombre d'exemplaire</th>
-						<th th:if="${role=='user'} " scope="col">Date de retour</th>
-					<th th:if="${role=='user'} " scope="col">file d'attente</th>
-				
-					<th th:if="${role=='user' } "></th>
-					<th></th>
-			</tr>
-			<tr th:each="book:${bookPage}" >
-					<td th:text="${book.nom}"></td>
-					<td th:text="${book.auteur}"></td>
-					<td th:text="${book.type}" ></td>
-					<td th:text="${book.section}"></td>	
-					<td th:text="${book.emplacement}"></td>	
-					<td th:text="${book.nombreExemplaire}"></td>	
-					 <td th:if="${role=='user'   } " th:text="${#dates.format(book.dateDeRetour, 'dd-MM-yyyy')}"></td>	 
+					<h1>Livres</h1>
+				</div>
+				<br>
+				<div class="col-md-3 mb-3">
+					<div>
+						<span th:if="${role!='user'} "> <a th:href="@{/books/form}"><input type="button"
+									class="btn btn-primary" value="+Ajouter" /></a></span>
+					</div>
+
+					<br>
+
+					<form th:action="@{/books}" method="get">
+
+						<br>
+						<div>
+							<label for="nom">Type de recherche</label>
+							<select th:name=type>
+
+								<option th:each="o:${listTypes}" th:text="${o.nom}" th:value="${o.nom}"></option>
+							</select>
+							<br>
+							<input type="text" th:name="recherche" class="form-control" placeholder="Rechercher">
+
+						</div>
+						<br>
+
+						<input type="submit" class="btn btn-primary" value="rechercher">
+						<br>
+						<br>
+
+
+					</form>
+				</div>
+				<br>
+				<br>
+				<div class="border rounded">
+					<table class="table table-striped">
+						<tr>
+							<th scope="col">Nom</th>
+							<th scope="col">Auteur</th>
+							<th scope="col">Type</th>
+							<th scope="col">Section</th>
+							<th scope="col">Emplacement</th>
+							<th scope="col">Nombre d'exemplaire</th>
+							<th th:if="${role=='user'} " scope="col">Date de retour</th>
+							<th th:if="${role=='user'} " scope="col">file d'attente</th>
+
+							<th th:if="${role=='user' } "></th>
+							<th></th>
+						</tr>
+						<tr th:each="book:${bookPage}">
+							<td th:text="${book.nom}"></td>
+							<td th:text="${book.auteur}"></td>
+							<td th:text="${book.type}"></td>
+							<td th:text="${book.section}"></td>
+							<td th:text="${book.emplacement}"></td>
+							<td th:text="${book.nombreExemplaire}"></td>
+							<td th:if="${role=='user'   } " th:text="${#dates.format(book.dateDeRetour, 'dd-MM-yyyy')}"></td>	 
 					 <td th:if="${role=='user'   } " th:text="${book.nombreListeDattente}"></td>	 
 					 
 					<td  th:if="${role=='user' } "><form method="post" th:action="@{/prets(id=${book.codeLivre})}"  >
@@ -113,4 +109,4 @@ data-layout-decorate="template1">
 				</div>
 				</div>		
 
-</body>
+</body>

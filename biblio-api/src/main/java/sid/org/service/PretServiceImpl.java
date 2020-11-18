@@ -116,7 +116,7 @@ public class PretServiceImpl implements PretService {
 			}
 			if (pret1.isPresent() && livre.get().getNombreExemplaire() == 0 && pret1.get().getStatut().equals(enAttente)
 					&& !pret1.get().getStatut().equals(remis)) {
-				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre 1");
+				throw new EntityAlreadyExistException("La reservation existe deja pour ce livre ");
 			}
 		}
 		if (livre.get().getNombreExemplaire() == 1 && !livre.get().getListeDattente().isEmpty()) {
@@ -405,6 +405,7 @@ public class PretServiceImpl implements PretService {
 				this.connectApiTimer(pretenAttente.getId());
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
+			livre.get().setDateDeRetour(null);
 			pretRepository.saveAndFlush(pret.get());
 			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre());
 		} else if (!pret.get().getStatut().equals(enAttente)) {

@@ -77,7 +77,7 @@ public class PretsController {
 		String mail = (String) session.getAttribute("username");
 		try {
 			pretService.creerPret(pret, mail, motDePasse);
-			return "succesOperation";
+			return "redirect:/prets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
 
 			String error = httpService.traiterLesExceptionsApi(e);
@@ -98,7 +98,7 @@ public class PretsController {
 		try {
 			pretService.modifierUnPret(id, mail, motDePasse);
 
-			return "succesOperation";
+			return "redirect:/prets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
 			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
@@ -117,7 +117,7 @@ public class PretsController {
 		try {
 			pretService.renouvelerUnPret(id, mail, motDePasse);
 
-			return "succesOperation";
+			return "redirect:/prets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
 			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
@@ -155,9 +155,9 @@ public class PretsController {
 		return "prets";
 	}
 
-	@GetMapping(value = "deletePret/{id}")
-	public String supprimerUnPrets(@RequestParam Long id, Model model, Principal principal, HttpServletRequest request,
-			@RequestParam String statutPret) {
+	@GetMapping(value = "deletePret")
+	public String supprimerUnPrets(@RequestParam Long id, @RequestParam String statutPret, Model model,
+			Principal principal, HttpServletRequest request) {
 
 		HttpSession session = request.getSession();
 		String motDePasse = (String) session.getAttribute("password");
@@ -167,7 +167,7 @@ public class PretsController {
 		try {
 			pretService.supprimerPret(id, mail, motDePasse, statutPret);
 
-			return "redirect:/prets";
+			return "redirect:/prets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
 			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
