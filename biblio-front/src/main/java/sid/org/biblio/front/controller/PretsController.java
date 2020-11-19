@@ -11,21 +11,14 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 
 import sid.org.biblio.front.classe.Pret;
 import sid.org.biblio.front.classe.Utilisateur;
@@ -41,25 +34,23 @@ public class PretsController {
 	private UtilisateurService utilisateurService;
 	@Autowired
 	private HttpService httpService;
-	
-	
-	
-	 @Secured(value= {"ROLE_user"}) 
+
+	@Secured(value = { "ROLE_user" })
 	@GetMapping(value = "/prets")
 	public String pretUtilisateur(Model model, @RequestParam("page") Optional<Integer> page,
-			@RequestParam("size") Optional<Integer> size,HttpServletRequest request) {
+			@RequestParam("size") Optional<Integer> size, HttpServletRequest request) {
 		int currentPage = page.orElse(0);
 		int pageSize = size.orElse(2);
 		HttpSession session = request.getSession();
-		String motDePasse=(String) session.getAttribute("password");
-		String mail=(String) session.getAttribute("username");
+		String motDePasse = (String) session.getAttribute("password");
+		String mail = (String) session.getAttribute("username");
 
 		try {
-			Page<Pret> prets = pretService.pretsUtilisateur(mail, currentPage, pageSize,motDePasse);
+			Page<Pret> prets = pretService.pretsUtilisateur(mail, currentPage, pageSize, motDePasse);
 			model.addAttribute("prets", prets);
-			
-			Utilisateur user=utilisateurService.infosUtilisateur(mail,motDePasse );
-			model.addAttribute("role",user.getRoles().getNom());
+
+			Utilisateur user = utilisateurService.infosUtilisateur(mail, motDePasse);
+			model.addAttribute("role", user.getRoles().getNom());
 			int totalPages = prets.getTotalPages();
 			if (totalPages > 0) {
 				List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
@@ -68,7 +59,7 @@ public class PretsController {
 
 		} catch (HttpStatusCodeException e) {
 
-			String error=httpService.traiterLesExceptionsApi(e);
+			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
 		}
 
@@ -76,102 +67,112 @@ public class PretsController {
 	}
 
 	@PostMapping(value = "/prets", consumes = "application/x-www-form-urlencoded")
-	public String creerUnPret(@RequestParam Long id, Model model,Principal principal,HttpServletRequest request) throws Exception {
+	public String creerUnPret(@RequestParam Long id, Model model, Principal principal, HttpServletRequest request)
+			throws Exception {
 		Pret pret = new Pret();
 		pret.setId(id);
-		
+
 		HttpSession session = request.getSession();
-		String motDePasse=(String) session.getAttribute("password");
-		String mail=(String) session.getAttribute("username");
+		String motDePasse = (String) session.getAttribute("password");
+		String mail = (String) session.getAttribute("username");
 		try {
-			pretService.creerPret(pret,mail,motDePasse);
-			return "succesOperation";
+			pretService.creerPret(pret, mail, motDePasse);
+			return "redirect:/prets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
 
-			String error=httpService.traiterLesExceptionsApi(e);
+			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
 			return "error";
 		}
 
 	}
-	
+
 	@GetMapping(value = "/pretstatut/{id}")
-	public String modifierPrets(@PathVariable Long id,Model model,Principal principal,HttpServletRequest request) {
-		
-		
+	public String modifierPrets(@PathVariable Long id, Model model, Principal principal, HttpServletRequest request) {
+
 		HttpSession session = request.getSession();
-		String motDePasse=(String) session.getAttribute("password");
-		String mail=(String) session.getAttribute("username");
-		Utilisateur user=utilisateurService.infosUtilisateur(mail,motDePasse );
-		model.addAttribute("role",user.getRoles().getNom());
+		String motDePasse = (String) session.getAttribute("password");
+		String mail = (String) session.getAttribute("username");
+		Utilisateur user = utilisateurService.infosUtilisateur(mail, motDePasse);
+		model.addAttribute("role", user.getRoles().getNom());
 		try {
 			pretService.modifierUnPret(id, mail, motDePasse);
-		
-			return "succesOperation";
+
+			return "redirect:/allprets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
-			String error=httpService.traiterLesExceptionsApi(e);
+			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
-			return"error";
+			return "error";
 		}
 	}
-	
+
 	@GetMapping(value = "/prolongerPret/{id}")
-	public String renouvelerPrets(@PathVariable Long id,Model model,Principal principal,HttpServletRequest request) {
-		
-		
+	public String renouvelerPrets(@PathVariable Long id, Model model, Principal principal, HttpServletRequest request) {
+
 		HttpSession session = request.getSession();
-		String motDePasse=(String) session.getAttribute("password");
-		String mail=(String) session.getAttribute("username");
-		Utilisateur user=utilisateurService.infosUtilisateur(mail,motDePasse );
-		model.addAttribute("role",user.getRoles().getNom());
+		String motDePasse = (String) session.getAttribute("password");
+		String mail = (String) session.getAttribute("username");
+		Utilisateur user = utilisateurService.infosUtilisateur(mail, motDePasse);
+		model.addAttribute("role", user.getRoles().getNom());
 		try {
 			pretService.renouvelerUnPret(id, mail, motDePasse);
-		
-			return "succesOperation";
+
+			return "redirect:/prets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
-			String error=httpService.traiterLesExceptionsApi(e);
+			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);
-			return"error";
+			return "error";
 		}
 	}
-	
-	 @Secured(value= {"ROLE_admin","ROLE_employe"}) 
-		@GetMapping(value = "/allprets")
-		public String TousLesPrets(Model model, @RequestParam("page") Optional<Integer> page,
-				@RequestParam("size") Optional<Integer> size,HttpServletRequest request) {
-			int currentPage = page.orElse(0);
-			int pageSize = size.orElse(2);
-			HttpSession session = request.getSession();
-			String motDePasse=(String) session.getAttribute("password");
-			String mail=(String) session.getAttribute("username");
 
-			try {
-				Page<Pret> prets = pretService.AfficherToutLesPrets(currentPage, pageSize, mail, motDePasse);
-				model.addAttribute("prets", prets);
-				
-				Utilisateur user=utilisateurService.infosUtilisateur(mail,motDePasse );
-				model.addAttribute("role",user.getRoles().getNom());
-				int totalPages = prets.getTotalPages();
-				if (totalPages > 0) {
-					List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-					model.addAttribute("pageNumbers", pageNumbers);
-				}
+	@Secured(value = { "ROLE_admin", "ROLE_employe" })
+	@GetMapping(value = "/allprets")
+	public String TousLesPrets(Model model, @RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size, HttpServletRequest request) {
+		int currentPage = page.orElse(0);
+		int pageSize = size.orElse(2);
+		HttpSession session = request.getSession();
+		String motDePasse = (String) session.getAttribute("password");
+		String mail = (String) session.getAttribute("username");
 
-			} catch (HttpStatusCodeException e) {
-				String error=httpService.traiterLesExceptionsApi(e);
-				model.addAttribute("error", error);
+		try {
+			Page<Pret> prets = pretService.AfficherToutLesPrets(currentPage, pageSize, mail, motDePasse);
+			model.addAttribute("prets", prets);
+
+			Utilisateur user = utilisateurService.infosUtilisateur(mail, motDePasse);
+			model.addAttribute("role", user.getRoles().getNom());
+			int totalPages = prets.getTotalPages();
+			if (totalPages > 0) {
+				List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+				model.addAttribute("pageNumbers", pageNumbers);
 			}
 
-			return "prets";
+		} catch (HttpStatusCodeException e) {
+			String error = httpService.traiterLesExceptionsApi(e);
+			model.addAttribute("error", error);
 		}
-	
-		
-		
-	 
-	 
-	 
-	 
-	 
+
+		return "prets";
 	}
-	
-	
+
+	@GetMapping(value = "deletePret")
+	public String supprimerUnPrets(@RequestParam Long id, @RequestParam String statutPret, Model model,
+			Principal principal, HttpServletRequest request) {
+
+		HttpSession session = request.getSession();
+		String motDePasse = (String) session.getAttribute("password");
+		String mail = (String) session.getAttribute("username");
+		Utilisateur user = utilisateurService.infosUtilisateur(mail, motDePasse);
+		model.addAttribute("role", user.getRoles().getNom());
+		try {
+			pretService.supprimerPret(id, mail, motDePasse, statutPret);
+
+			return "redirect:/prets?page=0&size=2";
+		} catch (HttpStatusCodeException e) {
+			String error = httpService.traiterLesExceptionsApi(e);
+			model.addAttribute("error", error);
+			return "error";
+		}
+	}
+
+}

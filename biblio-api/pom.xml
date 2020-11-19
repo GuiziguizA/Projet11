@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -110,4 +111,134 @@
 </plugins></build>
 	
 
+=======
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>sid.org</groupId>
+		<artifactId>bibliotheque-app</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	
+	<artifactId>biblio-api</artifactId>
+	<packaging>jar</packaging>
+
+
+
+
+	<dependencies>
+
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+	<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+	
+
+	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		
+	<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+ 		
+		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+   
+</dependency>
+		
+		
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+     <version>2.9.2</version>
+</dependency>
+
+
+		 	<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			  <version>2.9.2</version>
+		</dependency>
+           
+		
+
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-engine</artifactId>
+
+</dependency>
+
+	
+	
+	
+
+<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-crypto</artifactId>
+   
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+
+</dependency>
+          <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.thymeleaf</groupId>
+        <artifactId>thymeleaf-spring4</artifactId>
+        <version>3.0.1.RELEASE</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>nz.net.ultraq.thymeleaf</groupId>
+        <artifactId>thymeleaf-layout-dialect</artifactId>
+    </dependency>
+	</dependencies>
+	
+	
+	
+	<build><plugins><plugin>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-maven-plugin</artifactId>
+       <configuration>
+           <layout>JAR</layout>
+       </configuration>
+       <executions>
+        
+            <execution>
+             
+              <configuration>
+                <mainClass>sid.org.BiblioAppli</mainClass>
+              </configuration>
+            </execution>
+      
+       </executions>
+</plugin>
+</plugins></build>
+	
+
+>>>>>>> feature/ListeDattenteReservationLivre
 </project>

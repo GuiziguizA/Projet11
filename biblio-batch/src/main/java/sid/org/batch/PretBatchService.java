@@ -7,14 +7,16 @@ import javax.mail.MessagingException;
 
 import sid.org.classe.Pret;
 
-
 public interface PretBatchService {
 
-	
-	  void envoieMails(Locale locale) throws MessagingException, IOException;
-	 
-	void modifierStatutPrets();
+	public void envoieMails(Locale locale) throws MessagingException, IOException;
 
-	String createHtmlContent(Pret pret, Locale locale);
+	public void modifierStatutPrets();
+
+	public String createHtmlContent(Pret pret, Locale locale);
+
+	public void TimerDisponibiliteLivre(Long idPret);
+
+	public void connectPretEnAttente(Long id);
 
 }

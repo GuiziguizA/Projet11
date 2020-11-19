@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+	<script type ="text/javascript" 
+	 src="webjars/jquery/3.5.1/jquery.min.js"></script>
+  	<script  type ="text/javascript"
+  	 src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+  	<script type="text/javascript"  th:src= "@{js/main.js}"  src="../static/js/main.js"></script>
+  	
+  	<link rel="stylesheet"
+  	href="webjars/bootstrap/4.5.3/css/bootstrap.min.css"/>
+
+</head>
+<body>
+
+<div class = " container">
+<div class= "card">
+
+<div class = "card block">
+<table class="table table hover">
+<thread>
+<tr>
+<th>ID</th>
+<th>country</th>
+<th>capitale</th>
+
+</tr>
+</thread>
+
+<tbody>
+	<tr th:each="pret:${prets}" >
+				<td th:text="${pret.livre.nom}"></td>
+				<td th:text="${pret.statut}"></td>
+				<td th:text="${#dates.format(pret.DateDeDebut, 'dd-MM-yyyy')}" ></td>
+					<td th:text="${#dates.format(pret.DateDeFin, 'dd-MM-yyyy')}" ></td>
+	
+	
+							
+				<td th:text="${#dates.format(pret.DateDeRendu, 'dd-MM-yyyy')}"></td>
+				<td th:text="${pret.position}" th:if="${ pret.statut =='enattente'} "></td>
+				<td th:text="${#dates.format(pret.livre.DateDeRetour, 'dd-MM-yyyy')}" ></td>
+				<td><a th:href="@{deletePret/{id}(id=${pret.id})}" th:method="get" class="btn btn-danger deleteBtn" id ="delete">Delete</a></td>
+
+</tr>
+</tbody>
+
+
+</table>
+<hr/>
+
+<ul class="pagination pagination-circle pg-blue">
+<li class="page-item	" th:each="i : ${#numbers.sequence(0,data.totalPages-1)}">
+<a th:href="@{/(page=${i})}"th:text="${i}" class="page-link" 
+th:classappend="${currentPage}==${i}? 'active' : ' ' "></a>
+</li>
+
+</ul>
+</div>
+
+<div class="myForm">
+<form th:action="@{/save}"  method="post">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update or create</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+          <div class="form-group">
+            <label for="id" class="form-control-label">ID:</label>
+            <input type="text" class="form-control" id="id" name="id" value=" ">
+          </div>
+            <div class="form-group">
+            <label for="name" class="form-control-label">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value=" ">
+          </div>
+     <div class="form-group">
+            <label for="capitale" class="form-control-label">Capitale:</label>
+            <input type="text" class="form-control" id="capitale" name="Capitale" value=" ">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value ="save"/>
+      </div>
+    </div>
+  </div>
+         
+</div>
+ </form>
+</div>
+
+<div class="myForm1">
+
+<!-- Modal -->
+<div class="modal fade" id="myModal"   tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Etes vous sur de vouloir supprimer ce pays</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <a  href= " " class="btn btn-danger" id="delRef">Ok</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</div>
+</body>
+</html>
