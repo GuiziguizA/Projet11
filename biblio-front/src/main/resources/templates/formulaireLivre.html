@@ -1,35 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
-	data-layout-decorator="template1">
- 
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://ultraq.net.nz/thymleaf/layout"
+  data-layout-decorate="template1">
 
- 
+
+
 <head>
-<meta charset="utf-8"/>
-	
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <meta charset="utf-8" />
+
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="webjars/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+  <script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
+
+  <link rel="stylesheet" href="webjars/bootstrap/4.5.3/css/bootstrap.min.css" />
 </head>
- 
+
 <body>
 
-<div layout:fragment="content">
-<div class="container pt-3">
- <div class="form-group">
- <div class="jumbotron text-center">
- 
- <h2>Ajouter un livre</h2>
- </div>
- 	</div>
- 	</div>
- 	 <div class="container" >
-  
-<form  th:action="@{/books}" th:object="${livre}" method="post">
-    <br>
-    <input type="text" th:field="*{nom}" id="nom"class="form-control" placeholder="nom">
-     <div  th:if="${#fields.hasErrors('nom')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{nom}"></span></div>
+  <div layout:fragment="content">
+    <div class="container pt-3">
+      <div class="form-group">
+        <div class="jumbotron text-center">
+
+          <h2>Ajouter un livre</h2>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+
+      <form th:action="@{/books}" th:object="${livre}" method="post">
+        <br>
+        <input type="text" th:field="*{nom}" id="nom" class="form-control" placeholder="nom">
+        <div th:if="${#fields.hasErrors('nom')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{nom}"></span></div>
    <br>
     <input type="text" th:field="*{auteur}" id="auteur" class="form-control" placeholder="auteur">
      <div  th:if="${#fields.hasErrors('auteur')}" class="alert alert-danger" role="alert"><span class="alert alert-primary" th:errors="*{auteur}"></span></div>

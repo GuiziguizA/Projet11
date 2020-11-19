@@ -1,49 +1,49 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
- 
+
 <head>
-<meta charset="utf-8"/>
-  <title>Authentification</title> 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <meta charset="utf-8" />
+  <title>Authentification</title>
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="webjars/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+  <script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
+
+  <link rel="stylesheet" href="webjars/bootstrap/4.5.3/css/bootstrap.min.css" />
 </head>
- 
+
 <body>
-	
 
 
-<div class="border">
-<div class="container pt-3">
- <div class="form-group">
- <div class="jumbotron text-center">
- <h2>Connexion</h2>
- 	<div class="form-group">
- 	
 
-        <form th:action="@{/login}" method="post" >	
-            <div><input type="text" class="form-control"name="username"placeholder="Adresse e-mail"/> </div>
-            <br>
-            <div> <input type="password" class="form-control"name="password"placeholder="Mot de passe"/> </div>
-         	 <br>
-            <div><input type="submit" value="Connexion"class="btn btn-primary"/></div>
-        </form>
-      
-         <a  th:href ="@{/users/form}">Inscription</a>
-         
-         <div class="alert alert-success"th:if="${succes}" th:text="${succes}"role="alert" >
-</div>
-              <div class="alert alert-success"th:if="${error}" th:text="${error}"role="alert" >
-</div> 
+  <div class="border">
+    <div class="container pt-3">
+      <div class="form-group">
+        <div class="jumbotron text-center">
+          <h2>Connexion</h2>
+          <div class="form-group">
+
+
+            <form th:action="@{/login}" method="post">
+              <div><input type="text" class="form-control" name="username" placeholder="Adresse e-mail" /> </div>
+              <br>
+              <div> <input type="password" class="form-control" name="password" placeholder="Mot de passe" /> </div>
+              <br>
+              <div><input type="submit" value="Connexion" class="btn btn-primary" /></div>
+            </form>
+
+            <a th:href="@{/users/form}">Inscription</a>
+
+            <div class="alert alert-success" th:if="${succes}" th:text="${succes}" role="alert">
+            </div>
+            <div class="alert alert-success" th:if="${error}" th:text="${error}" role="alert">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  </div>
-  </div>
-  </div>
-</div>
-	 	
+
 </body>
+
 </html>
-
-
-

@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
+import javax.validation.constraints.Size;
 
 /**
  * 
@@ -20,26 +20,26 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class Utilisateur {
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codeUtilisateur;
 	private String nom;
-	@Column(unique =true )
+	@Column(unique = true)
 	private String mail;
 	private String adresse;
 	private String motDePasse;
+	@Size(min = 5, max = 5, message = "le code postal doit etre a 5 chiffres")
 	private String codePostal;
-	@OneToMany(mappedBy="utilisateur",fetch=FetchType.LAZY)	
-	private Collection<Pret>prets;
+	@OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY)
+	private Collection<Pret> prets;
 	@ManyToOne
 	@JoinColumn(name = "ID_ROLES")
 	private Roles roles;
-	
-	
+
 	public Utilisateur() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
 
 	public Utilisateur(String nom, String mail, String adresse, String motDePasse, String codePostal, Roles roles) {
 		super();
@@ -51,70 +51,56 @@ public class Utilisateur {
 		this.roles = roles;
 	}
 
-
 	public String getNom() {
 		return nom;
 	}
-
 
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
 
-
 	public String getMail() {
 		return mail;
 	}
-
 
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
 
-
 	public String getAdresse() {
 		return adresse;
 	}
-
 
 	public void setAdresse(String adresse) {
 		this.adresse = adresse;
 	}
 
-
 	public String getMotDePasse() {
 		return motDePasse;
 	}
-
 
 	public void setMotDePasse(String motDePasse) {
 		this.motDePasse = motDePasse;
 	}
 
-
 	public String getCodePostal() {
 		return codePostal;
 	}
-
 
 	public void setCodePostal(String codePostal) {
 		this.codePostal = codePostal;
 	}
 
-
 	public Roles getRoles() {
 		return roles;
 	}
-
 
 	public void setRoles(Roles roles) {
 		this.roles = roles;
 	}
 
-
 	public Long getCodeUtilisateur() {
 		return codeUtilisateur;
 	}
-	
-	
+
 }

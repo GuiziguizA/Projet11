@@ -1,16 +1,17 @@
 package sid.org.classe;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
-
-
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,7 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 
 public class Livre {
-	@Id  @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codeLivre;
 	private String nom;
 	private String auteur;
@@ -31,15 +33,21 @@ public class Livre {
 	private String section;
 	private String emplacement;
 	private int nombreExemplaire;
-	@OneToMany(mappedBy="livre",fetch=FetchType.LAZY)	
-	private Collection<Pret>prets;
-	
+	@OneToMany(mappedBy = "livre", fetch = FetchType.LAZY)
+	private Collection<Pret> prets;
+	@Size(min = 0, max = 10)
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> listeDattente;
+	private int nombreListeDattente = 0;
+	private Date dateDeRetour;
+
 	public Livre() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Livre(String nom, String auteur,String type, String section, String emplacement, int nombreExemplaire) {
+	public Livre(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire,
+			List<String> list) {
 		super();
 		this.nom = nom;
 		this.auteur = auteur;
@@ -47,7 +55,16 @@ public class Livre {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
-		
+		this.listeDattente = list;
+
+	}
+
+	public List<String> getListeDattente() {
+		return listeDattente;
+	}
+
+	public void setListeDattente(List<String> listeDattente) {
+		this.listeDattente = listeDattente;
 	}
 
 	public String getNom() {
@@ -101,8 +118,21 @@ public class Livre {
 	public Long getCodeLivre() {
 		return codeLivre;
 	}
-	
-	
 
-	
+	public Date getDateDeRetour() {
+		return dateDeRetour;
+	}
+
+	public void setDateDeRetour(Date dateDeRetour) {
+		this.dateDeRetour = dateDeRetour;
+	}
+
+	public int getNombreListeDattente() {
+		return nombreListeDattente;
+	}
+
+	public void setNombreListeDattente(int nombreListeDattente) {
+		this.nombreListeDattente = nombreListeDattente;
+	}
+
 }

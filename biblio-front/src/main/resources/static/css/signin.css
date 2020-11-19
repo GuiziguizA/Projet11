@@ -1,0 +1,26 @@
+@charset "ISO-8859-1";
+
+
+body {
+	background-color: 	#f8f8ff;
+}
+
+
+ h1{ text-align: center;
+  color: purple;
+}
+
+a,#mail{
+  color: white;
+  font-weight: 500;
+
+}
+
+
+#rcorners1 {
+  border-radius: 25px;
+  background: #73AD21;
+  padding: 20px;
+  width: 200px;
+  height: 150px;
+}

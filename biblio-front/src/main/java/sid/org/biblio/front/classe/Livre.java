@@ -1,5 +1,8 @@
 package sid.org.biblio.front.classe;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -17,10 +20,19 @@ public class Livre {
 	private String emplacement;
 	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
 	private int nombreExemplaire;
-	
 
-	public Livre(Long codeLivre, String nom, String auteur, String type, String section, String emplacement,
-			int nombreExemplaire) {
+	private List<String> listeDattente;
+
+	private int nombreListeDattente;
+	private Date dateDeRetour;
+
+	public Livre(Long codeLivre, @NotBlank(message = "le champ nom ne peut pas etre vide") String nom,
+			@NotBlank(message = "le champ auteur ne peut pas etre vide") String auteur,
+			@NotBlank(message = "le champ type ne peut pas etre vide") String type,
+			@NotBlank(message = "le champ section ne peut pas etre vide") String section,
+			@NotBlank(message = "le champ emplacement ne peut pas etre vide") String emplacement,
+			@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide") int nombreExemplaire,
+			List<String> listeDattente, int nombreListeDattente, Date dateDeRetour) {
 		super();
 		this.codeLivre = codeLivre;
 		this.nom = nom;
@@ -29,6 +41,9 @@ public class Livre {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
+		this.listeDattente = listeDattente;
+		this.nombreListeDattente = nombreListeDattente;
+		this.dateDeRetour = dateDeRetour;
 	}
 
 	public Livre() {
@@ -90,6 +105,38 @@ public class Livre {
 
 	public void setNombreExemplaire(int nombreExemplaire) {
 		this.nombreExemplaire = nombreExemplaire;
+	}
+
+	public List<String> getListDattente() {
+		return listeDattente;
+	}
+
+	public void setListDattente(List<String> listeDattente) {
+		this.listeDattente = listeDattente;
+	}
+
+	public List<String> getListeDattente() {
+		return listeDattente;
+	}
+
+	public void setListeDattente(List<String> listeDattente) {
+		this.listeDattente = listeDattente;
+	}
+
+	public int getNombreListeDattente() {
+		return nombreListeDattente;
+	}
+
+	public void setNombreListeDattente(int nombreListeDattente) {
+		this.nombreListeDattente = nombreListeDattente;
+	}
+
+	public Date getDateDeRetour() {
+		return dateDeRetour;
+	}
+
+	public void setDateDeRetour(Date dateDeRetour) {
+		this.dateDeRetour = dateDeRetour;
 	}
 
 }
