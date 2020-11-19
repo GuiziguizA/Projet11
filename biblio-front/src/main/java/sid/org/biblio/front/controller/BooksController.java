@@ -75,7 +75,7 @@ public class BooksController {
 	public String listBooks(Model model, @RequestParam(required = false) Optional<Integer> page,
 			@RequestParam(required = false) Optional<Integer> size,
 			@RequestParam(required = false) Optional<String> type,
-			@RequestParam(required = false) Optional<String> recherche, HttpServletRequest request) {
+			@RequestParam(required = false) Optional<String> recherche, HttpServletRequest request, Livre livre) {
 
 		HttpSession session = request.getSession();
 		String motDePasse = (String) session.getAttribute("password");

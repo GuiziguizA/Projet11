@@ -25,6 +25,24 @@ $(document).ready(function(){
 	
 	
 	
+	$('#ajouter').on('click', function(event){
+		event.preventDefault();
+		var href = $(this).attr('href');
+		
+		
+	$.get(href,function(livre,status){
+		$('.myForm #nom').val(livre.nom);
+		$('.myForm #auteur').val(livre.auteur);
+		$('.myForm #type').val(livre.type);
+		$('.myForm #emplacement').val(livre.emplacement);
+		$('.myForm #nombreExemplaire').val(livre.nombreExemplaire);
+	
+	
+	});
+	
+		setTimeout(() => {  $('.myForm #exampleModal').modal('show'); }, 500);
+	});
+	
 	});
 	
 	

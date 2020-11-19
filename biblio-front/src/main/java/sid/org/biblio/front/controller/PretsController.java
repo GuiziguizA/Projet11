@@ -98,7 +98,7 @@ public class PretsController {
 		try {
 			pretService.modifierUnPret(id, mail, motDePasse);
 
-			return "redirect:/prets?page=0&size=2";
+			return "redirect:/allprets?page=0&size=2";
 		} catch (HttpStatusCodeException e) {
 			String error = httpService.traiterLesExceptionsApi(e);
 			model.addAttribute("error", error);

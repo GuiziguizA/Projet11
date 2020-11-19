@@ -176,7 +176,7 @@ public class PretBatchServiceImpl implements PretBatchService {
 		};
 		Timer timer = new Timer("Timer");
 
-		long delay = 50000;
+		long delay = 50;
 		timer.schedule(task, delay);
 
 	}

@@ -434,7 +434,7 @@ public class PretServiceImpl implements PretService {
 		}
 
 		if (pret.get().getStatut().equals(enAttente)) {
-			this.supprimerPret(idPret, null);
+			this.supprimerPret(idPret, Optional.of(enAttente));
 
 			livre.get().getListeDattente().remove(0);
 
