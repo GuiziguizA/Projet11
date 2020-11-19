@@ -4,7 +4,11 @@
   <parent>
     <artifactId>bibliotheque-app</artifactId>
     <groupId>sid.org</groupId>
+<<<<<<< HEAD
     <version>1.0.1-SNAPSHOT</version>
+=======
+    <version>1.1.1-SNAPSHOT</version>
+>>>>>>> feature/ListeDattenteReservationLivre
   </parent>
 
 
