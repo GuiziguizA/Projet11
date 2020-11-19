@@ -20,11 +20,8 @@
 	</parent>
 	  <groupId>sid.org</groupId>
   <artifactId>bibliotheque-app</artifactId>
-<<<<<<< HEAD
-  <version>1.0.1-SNAPSHOT</version>
-=======
   <version>1.1.1-SNAPSHOT</version>
->>>>>>> feature/ListeDattenteReservationLivre
+
 	
 		<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
