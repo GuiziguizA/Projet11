@@ -132,7 +132,7 @@ public class PretServiceImpl implements PretService {
 			pret.setLivre(livre.get());
 			pret.setUtilisateur(utilisateur.get());
 			pret.setStatut(enAttente);
-			pret.setPosition(livre.get().getNombreListeDattente() + 1);
+			pret.setPosition(livre.get().getNombreListeDattente());
 
 			pretRepository.saveAndFlush(pret);
 
@@ -233,11 +233,18 @@ public class PretServiceImpl implements PretService {
 		}
 
 		Optional<Livre> livre = livreRepository.findById(pret.get().getLivre().getCodeLivre());
-
+		logger.info(pret.get().getStatut());
 		if (!pret.get().getStatut().equals(enAttente) && !pret.get().getStatut().equals(remis)) {
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + pret.get().getNombreLivres());
 			livre.get().setNombreListeDattente(0);
 			livre.get().setDateDeRetour(null);
+			logger.info(String.valueOf(livre.get().getNombreListeDattente()) + "pret autre que remis et attente");
+		}
+
+		if (pret.get().getStatut().equals(enAttente)) {
+			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre());
+			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() - 1);
+			logger.info(String.valueOf(livre.get().getNombreListeDattente()) + "pret en attente ");
 		}
 		livreRepository.saveAndFlush(livre.get());
 		pretRepository.delete(pret.get());
@@ -406,8 +413,9 @@ public class PretServiceImpl implements PretService {
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 			livre.get().setDateDeRetour(null);
-			pretRepository.saveAndFlush(pret.get());
 			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre());
+			pretRepository.saveAndFlush(pret.get());
+
 		} else if (!pret.get().getStatut().equals(enAttente)) {
 			pret.get().setStatut(prolonge);
 			pret.get().setDateDeFin(dateService.modifierDate(pret.get().getDateDeFin(), time));
@@ -517,7 +525,9 @@ public class PretServiceImpl implements PretService {
 					enAttente);
 
 			pret.get().setPosition(pret.get().getPosition() - 1);
+
 			pretRepository.saveAndFlush(pret.get());
+			livreRepository.saveAndFlush(livre.get());
 
 		}
 
