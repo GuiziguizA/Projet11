@@ -15,7 +15,7 @@
 </head>
 
 <body>
-	<main class="main" id="top">
+	
 		<div layout:fragment="content">
 			<div class="container pt-3">
 				<div class="form-group">
@@ -90,33 +90,30 @@
 								</tr>
 	
 	</table>
-	</div>
+	
 				
 	</div>
-	
-				<div class="btn-group btn-group-toggle"th:if="${prets.totalPages > 0}" 
+	<div th:if="${prets.totalPages > 0}" class="pagination"
     th:each="pageNumber : ${pageNumbers}">
     <nav aria-label="...">
-  <ul class="pagination pagination-sm">
-  <li class="page-item">   <span th:if="${role!='admin' and role!='employe' } "><a class="btn btn-secondary"  th:href="@{/prets(size=${prets.size}, page=${pageNumber-1})}"
+  <ul class="pagination pagination-lg">
+  <li class="page-item">   <span th:if="${role!='admin' and role!='employe' } "><a th:href="@{/prets(size=${prets.size}, page=${pageNumber-1})}"
         th:text=${pageNumber}
-        th:class="${pageNumber==prets.number + 1} ? active" ></a></span>
-         <span th:if="${role!='user'} "><a class="btn btn-secondary" th:href="@{/allprets(size=${prets.size}, page=${pageNumber-1})}"
+        th:class="${pageNumber==prets.number + 1} ? active"></a></span>
+         <span th:if="${role!='user'} "><a th:href="@{/allprets(size=${prets.size}, page=${pageNumber-1})}"
         th:text=${pageNumber}
-        th:class="${pageNumber==prets.number + 1} ? active" ></a></span>
+        th:class="${pageNumber==prets.number + 1} ? active"></a></span>
         </li>
         </ul>
         </nav>
-
-			</div>		
-		
+</div>
+	
 					</div>
 
 </div>	
 
+</div>
 
-
-</main>
 
 
 

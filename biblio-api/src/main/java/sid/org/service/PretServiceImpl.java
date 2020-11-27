@@ -79,6 +79,9 @@ public class PretServiceImpl implements PretService {
 	private String mail;
 	@Value("${spring.api.motDePasse}")
 	private String motDePasse;
+	@Value("${livre.max.nombre.exemplaire}")
+	private int MaxExemplaire;
+
 	/*
 	 * Creation d'un Pret + decrementation nombreExemplaire pour le livre emprunté
 	 * 
@@ -123,7 +126,7 @@ public class PretServiceImpl implements PretService {
 
 		}
 
-		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < 20) {
+		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < MaxExemplaire * 2) {
 
 			livre.get().getListeDattente().add(mail);
 
@@ -447,14 +450,19 @@ public class PretServiceImpl implements PretService {
 			livre.get().getListeDattente().remove(0);
 
 			livreRepository.saveAndFlush(livre.get());
-			logger.info("le pret a été supprimé ");
-			if (livre.get().getListeDattente().size() > 1) {
+			logger.info("le pret a ete supprime ");
+			if (livre.get().getListeDattente().size() >= 1) {
 				Locale locale = new Locale("fr");
 				String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
 						locale);
 
 				emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+				Pret pretenAttente = trouverPretEnAttente(livre.get());
+
+				this.connectApiTimer(pretenAttente.getId());
+
 				logger.info(" envoie mail personne suivante");
+
 			}
 
 		} else if (livre.get().getListeDattente().size() != 0) {
