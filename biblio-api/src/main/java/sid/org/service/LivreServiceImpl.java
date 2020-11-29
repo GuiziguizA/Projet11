@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import sid.org.classe.Livre;
 import sid.org.dao.LivreRepository;
 import sid.org.dto.LivreDto;
+import sid.org.exception.BadException;
 import sid.org.exception.EntityAlreadyExistException;
 import sid.org.exception.ResultNotFoundException;
 import sid.org.specification.LivreCriteria;
@@ -23,7 +25,8 @@ import sid.org.specification.LivreSpecificationImpl;
 public class LivreServiceImpl implements LivreService {
 	@Autowired
 	private LivreRepository livreRepository;
-
+	@Value("${livre.max.nombre.exemplaire}")
+	private int MaxExemplaire;
 	private static final Logger logger = LoggerFactory.getLogger(LivreServiceImpl.class);
 
 	/*
@@ -35,8 +38,11 @@ public class LivreServiceImpl implements LivreService {
 	 */
 
 	@Override
-	public Livre createLivre(LivreDto livreDto) throws EntityAlreadyExistException {
+	public Livre createLivre(LivreDto livreDto) throws EntityAlreadyExistException, BadException {
 
+		if (livreDto.getNombreExemplaire() > MaxExemplaire) {
+			throw new BadException("le nombre d'exemplaire max est :" + MaxExemplaire);
+		}
 		List<Livre> livreAuteurAndNom = livreRepository.findByAuteurAndNom(livreDto.getAuteur(), livreDto.getNom());
 		if (!livreAuteurAndNom.isEmpty()) {
 			throw new EntityAlreadyExistException("Ce livre existe deja");

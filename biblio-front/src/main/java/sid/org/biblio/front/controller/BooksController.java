@@ -39,8 +39,9 @@ public class BooksController {
 
 	@Secured(value = { "ROLE_admin", "ROLE_employe" })
 	@GetMapping(value = "/books/form")
-	public String Book(Livre livre) {
+	public String Book(Livre livre,Model model) {
 
+		
 		return "formulaireLivre";
 	}
 
