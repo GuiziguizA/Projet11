@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 
 public class Livre {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codeLivre;
@@ -35,7 +35,6 @@ public class Livre {
 	private int nombreExemplaire;
 	@OneToMany(mappedBy = "livre", fetch = FetchType.LAZY)
 	private Collection<Pret> prets;
-	@Size(min = 0, max = 10)
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> listeDattente;
 	private int nombreListeDattente = 0;

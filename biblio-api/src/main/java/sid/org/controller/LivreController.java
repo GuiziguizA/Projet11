@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import sid.org.classe.Livre;
 import sid.org.dto.LivreDto;
+import sid.org.exception.BadException;
 import sid.org.exception.EntityAlreadyExistException;
 import sid.org.exception.ResultNotFoundException;
 import sid.org.service.LivreService;
@@ -60,7 +61,7 @@ public class LivreController {
 	@ApiOperation(value = "ajout d'un nouveau livre", response = LivreController.class)
 	public Livre ajouterLivre(
 			@ApiParam(value = "LivreDto dans le body", required = true) @Valid @RequestBody LivreDto livre)
-			throws EntityAlreadyExistException {
+			throws EntityAlreadyExistException, BadException {
 
 		return livreService.createLivre(livre);
 

@@ -30,7 +30,7 @@
 				<br>
 				<div class="col-md-3 mb-3">
 					<div>
-						<span th:if="${role!='user'} "> <a th:href="@{/books}"class="btn btn-primary eBtn" id ="ajouter"><input type="button"
+						<span th:if="${role!='user'} "> <a th:href="@{/books/form}"class="btn btn-primary eBtn" id ="ajouter"><input type="button"
 									class="btn btn-primary" value="+Ajouter" /></a></span>
 					</div>
 
@@ -95,10 +95,10 @@
 </div>
 	</div>
 <div th:if="${bookPage.totalPages > 0}"
-    th:each="pageNumber : ${pageNumbers}" class="pagination">
+    th:each="pageNumber : ${pageNumbers}" class="btn-group btn-group-toggle">
     <nav aria-label="...">
   <ul class="pagination pagination-sm">
-    <li class="page-item"> <a class="page-link"th:href="@{/books(page=${pageNumber-1},size=${bookPage.size},type=${type},recherche=${recherche})}"
+    <li class="page-item"> <a class="btn btn-secondary" th:href="@{/books(page=${pageNumber-1},size=${bookPage.size},type=${type},recherche=${recherche})}"
         th:text=${pageNumber}
         th:class="${pageNumber==bookPage.number} ? active"></a>
         </li>
@@ -172,3 +172,5 @@
 				</div>		
 
 </body>
+
+</html>
