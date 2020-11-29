@@ -8,11 +8,9 @@
 	<script type="text/javascript" src="webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
 	<script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
 
-
 	<link rel="stylesheet" href="webjars/bootstrap/4.5.3/css/bootstrap.min.css" />
-
-	<link rel="stylesheet" th:href="@{/css/signin.css}" />
 </head>
+
 
 <body>
 	
@@ -23,7 +21,7 @@
 
 
 
-						<!-- Modal -->
+						
 						<div class="modal fade" id="myModal" role="dialog">
 							<div class="modal-dialog modal-sm">
 								<div class="modal-content">
@@ -90,15 +88,16 @@
 								</tr>
 	
 	</table>
+	</div>
 	
-<div th:if="${prets.totalPages > 0}" class="pagination"
+<div th:if="${prets.totalPages > 0}" class="btn-group btn-group-toggle"
     th:each="pageNumber : ${pageNumbers}">
     <nav aria-label="...">
-  <ul class="pagination pagination-lg">
-  <li class="page-item">   <span th:if="${role!='admin' and role!='employe' } "><a th:href="@{/prets(size=${prets.size}, page=${pageNumber-1})}"
+  <ul class="pagination pagination-sm">
+  <li class="page-item">   <span th:if="${role!='admin' and role!='employe' } "><a class="btn btn-secondary" th:href="@{/prets(size=${prets.size}, page=${pageNumber-1})}"
         th:text=${pageNumber}
         th:class="${pageNumber==prets.number + 1} ? active"></a></span>
-         <span th:if="${role!='user'} "><a th:href="@{/allprets(size=${prets.size}, page=${pageNumber-1})}"
+         <span th:if="${role!='user'} "><a  class="btn btn-secondary" th:href="@{/allprets(size=${prets.size}, page=${pageNumber-1})}"
         th:text=${pageNumber}
         th:class="${pageNumber==prets.number + 1} ? active"></a></span>
         </li>
@@ -106,7 +105,7 @@
         </nav>
 </div>
 				
-	</div>
+	
 			</div>		
 					</div>
 						</div>
