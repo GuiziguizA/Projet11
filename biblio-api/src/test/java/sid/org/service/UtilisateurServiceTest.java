@@ -56,6 +56,8 @@ public class UtilisateurServiceTest {
 	private RolesRepository rolesRepository;
 	@MockBean
 	private LivreRepository livreRepository;
+	@MockBean
+	PasswordEncoder passwordEncoder;
 
 	@BeforeEach
 	void setMockOutput() {
@@ -92,9 +94,9 @@ public class UtilisateurServiceTest {
 		// GIVEN
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "22222", user);
-		PasswordEncoder mock = Mockito.mock(PasswordEncoder.class);
+
 		Mockito.when(utilisateurRepository.findByMail("bob@laposte.com")).thenReturn(Optional.empty());
-		Mockito.when(mock.encode("bob")).thenReturn("bob");
+		Mockito.when(passwordEncoder.encode("bob")).thenReturn("bob");
 		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);
 		Mockito.when(rolesRepository.findByNom(Mockito.any(String.class))).thenReturn(Optional.of(user));
 
@@ -112,9 +114,9 @@ public class UtilisateurServiceTest {
 		// GIVEN
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "22222", user);
-		PasswordEncoder mock = Mockito.mock(PasswordEncoder.class);
+
 		Mockito.when(utilisateurRepository.findByMail("bob@laposte.com")).thenReturn(Optional.of(utilisateur));
-		Mockito.when(mock.encode("bob")).thenReturn("bob");
+		Mockito.when(passwordEncoder.encode("bob")).thenReturn("bob");
 		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);
 		Mockito.when(rolesRepository.findByNom(Mockito.any(String.class))).thenReturn(Optional.of(user));
 
@@ -137,9 +139,9 @@ public class UtilisateurServiceTest {
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
 				user);
-		PasswordEncoder mock = Mockito.mock(PasswordEncoder.class);
+
 		Mockito.when(utilisateurRepository.findByMail("bob@laposte.com")).thenReturn(Optional.empty());
-		Mockito.when(mock.encode("bob")).thenReturn("bob");
+		Mockito.when(passwordEncoder.encode("bob")).thenReturn("bob");
 		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);
 		Mockito.when(rolesRepository.findByNom(Mockito.any(String.class))).thenReturn(Optional.of(user));
 
@@ -200,12 +202,12 @@ public class UtilisateurServiceTest {
 		listPret.add(pret);
 		Page<Pret> listPrets = new PageImpl<Pret>(listPret);
 
-		Pageable pageable = PageRequest.of(2, 5);
-		Mockito.when(utilisateurRepository.findById(Mockito.any(Long.class))).thenReturn(Optional.of(utilisateur));
-		Mockito.when(pretRepository.findByUtilisateur(utilisateur, pageable)).thenReturn(listPrets);
+		Mockito.when(utilisateurRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(utilisateur));
+		Mockito.when(pretRepository.findByUtilisateur(Mockito.any(Utilisateur.class), Mockito.any(Pageable.class)))
+				.thenReturn(listPrets);
+		Mockito.doNothing().when(utilisateurRepository).delete(Mockito.any(Utilisateur.class));
 
-		Mockito.doThrow(new RuntimeException()).when(pretRepository).deleteAll(listPrets);
-		Mockito.doThrow(new RuntimeException()).when(utilisateurRepository).delete(utilisateur);
+		Mockito.doNothing().when(pretRepository).deleteAll(listPrets);
 
 		utilisateurService.supprimerUtilisateur(1L);
 
@@ -263,12 +265,12 @@ public class UtilisateurServiceTest {
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@gmail.com", "40 rue du chêne", "bob", "2222222", user);
 		Sessions session = new Sessions("bob@gmail.com", "bob");
-		PasswordEncoder mock = Mockito.mock(PasswordEncoder.class);
+
 		boolean debug = true;
 
 		Mockito.when(utilisateurRepository.findByMail("bob@gmail.com")).thenReturn(Optional.of(utilisateur));
 
-		Mockito.when(mock.matches(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(debug);
+		Mockito.when(passwordEncoder.matches(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(debug);
 
 		Optional<Utilisateur> user1 = utilisateurService.connectionUtilisateur(session);
 
@@ -281,12 +283,11 @@ public class UtilisateurServiceTest {
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@gmail.com", "40 rue du chêne", "bob", "2222222", user);
 		Sessions session = new Sessions("bob@gmail.com", "bob");
-		PasswordEncoder mock = Mockito.mock(PasswordEncoder.class);
 		boolean debug = false;
 
 		Mockito.when(utilisateurRepository.findByMail("bob@gmail.com")).thenReturn(Optional.of(utilisateur));
 
-		Mockito.when(mock.matches(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(debug);
+		Mockito.when(passwordEncoder.matches(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(debug);
 
 		MotDePasseInvalidException exception = assertThrows(MotDePasseInvalidException.class, () -> {
 
@@ -310,7 +311,6 @@ public class UtilisateurServiceTest {
 		Sessions session = new Sessions("bob@gmail.com", "bob");
 
 		Mockito.when(utilisateurRepository.findByMail("bob@gmail.com")).thenReturn(Optional.empty());
-		PasswordEncoder mock = Mockito.mock(PasswordEncoder.class);
 
 		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
 			Optional<Utilisateur> user1 = utilisateurService.connectionUtilisateur(session);

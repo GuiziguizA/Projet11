@@ -81,8 +81,6 @@ public class LivreServiceTest {
 	public void supprimerUnLivre() throws ResultNotFoundException {
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
 
-		LivreService livreService = Mockito.mock(LivreService.class);
-
 		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(livre));
 		Mockito.doNothing().when(livreRepository).delete(livre);
 
@@ -93,8 +91,6 @@ public class LivreServiceTest {
 	@Test
 	public void supprimerUnLivreExceptionLivreNotFound() throws ResultNotFoundException {
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
-
-		LivreService livreService = Mockito.mock(LivreService.class);
 
 		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 		Mockito.doNothing().when(livreRepository).delete(livre);
@@ -114,19 +110,19 @@ public class LivreServiceTest {
 	public void afficherUnLivre() throws ResultNotFoundException {
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
 
-		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(livre));
+		Mockito.when(livreRepository.findByCodeLivre(Mockito.any())).thenReturn(Optional.of(livre));
 
 		Livre livre1 = livreService.afficheUnLivre(1L);
 
-		assertEquals(livre.getAuteur(), livre.getAuteur());
-		assertEquals(livre.getNom(), livre.getNom());
+		assertEquals(livre1.getAuteur(), livre.getAuteur());
+		assertEquals(livre1.getNom(), livre.getNom());
 	}
 
 	@Test
 	public void afficherUnLivreExceptionNotFound() throws ResultNotFoundException {
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
 
-		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+		Mockito.when(livreRepository.findByCodeLivre(Mockito.anyLong())).thenReturn(Optional.empty());
 
 		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
 			Livre livre1 = livreService.afficheUnLivre(1L);

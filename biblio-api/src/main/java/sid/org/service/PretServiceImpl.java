@@ -269,7 +269,7 @@ public class PretServiceImpl implements PretService {
 	@Override
 	public Page<Pret> afficherPrets(String mail, int page, int size) throws ResultNotFoundException {
 		if (size == 0) {
-			throw new ResultNotFoundException();
+			throw new ResultNotFoundException("le parametre size est incorrect");
 		}
 		Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(mail);
 		if (!utilisateur.isPresent()) {
@@ -345,10 +345,13 @@ public class PretServiceImpl implements PretService {
 	public void modifierStatut(Long id) throws ResultNotFoundException {
 		Date aujourdhui = new Date();
 		Optional<Pret> pret = pretRepository.findById(id);
-		if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut() == prolonge) {
+		if (!pret.isPresent()) {
+			throw new ResultNotFoundException("le pret n'existe pas");
+		}
+		if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut().equals(prolonge)) {
 			pret.get().setStatut(depasse);
 			pretRepository.saveAndFlush(pret.get());
-		} else if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut() == encours) {
+		} else if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut().equals(encours)) {
 			pret.get().setStatut(depasse);
 			pretRepository.saveAndFlush(pret.get());
 		}
@@ -501,13 +504,6 @@ public class PretServiceImpl implements PretService {
 		return pret;
 	}
 
-	private Pret creationDuPret(Pret pret, String methode, Utilisateur utilisateur, Livre livre) {
-		pret.setLivre(livre);
-		pret.setUtilisateur(utilisateur);
-		pret.setStatut(enAttente);
-		return pret;
-	}
-
 	private Date modifierLaDateDeRetour(Livre livre, String statut) throws ResultNotFoundException {
 
 		List<Pret> listPret = pretRepository.findLivreandStatutNotByOrderByDateDeFinAsc(livre, statut);
@@ -517,7 +513,8 @@ public class PretServiceImpl implements PretService {
 
 	}
 
-	private void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException {
+	@Override
+	public void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException {
 		Optional<Livre> livre = livreRepository.findById(idLivre);
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("le livre est introuvable");

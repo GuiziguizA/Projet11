@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -18,8 +19,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 import sid.org.classe.Livre;
 import sid.org.classe.Pret;
@@ -35,9 +42,7 @@ import sid.org.exception.ResultNotFoundException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-
 @ContextConfiguration
-
 public class PretServiceTest {
 
 	@Autowired
@@ -54,6 +59,8 @@ public class PretServiceTest {
 	private EmailService emailService;
 	@Autowired
 	private HttpService httpService;
+	@MockBean
+	private RestTemplate restTemplate;
 
 	@Test
 	public void TrouverPretEncours() {
@@ -274,8 +281,9 @@ public class PretServiceTest {
 				user);
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
 		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+		Date date = Mockito.mock(Date.class);
 
-		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 		Mockito.when(pretRepository.saveAndFlush(Mockito.any(Pret.class))).thenReturn(pret);
 
 		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
@@ -287,6 +295,22 @@ public class PretServiceTest {
 		String actualMessage = exception.getMessage();
 
 		assertTrue(actualMessage.contains(expectedMessage));
+
+	}
+
+	@Test
+	public void modifierStatutPret() throws ResultNotFoundException {
+		Roles user = new Roles("user");
+		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
+				user);
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
+		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+		Date date = Mockito.mock(Date.class);
+
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+		Mockito.when(pretRepository.saveAndFlush(Mockito.any(Pret.class))).thenReturn(pret);
+
+		pretService.modifierStatut(1L);
 
 	}
 
@@ -349,6 +373,7 @@ public class PretServiceTest {
 		String expectedMessage = "le livre n'existe pas";
 		String actualMessage = exception.getMessage();
 
+		assertTrue(actualMessage.contains(expectedMessage));
 	}
 
 	@Test
@@ -380,8 +405,9 @@ public class PretServiceTest {
 
 		});
 
-		String expectedMessage = "le livre n'existe pas";
+		String expectedMessage = "l'utilisateur n'existe pas";
 		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
 
 	}
 
@@ -417,6 +443,7 @@ public class PretServiceTest {
 		String expectedMessage = "La reservation existe deja pour ce livre";
 		String actualMessage = exception.getMessage();
 
+		assertTrue(actualMessage.contains(expectedMessage));
 	}
 
 	@Test
@@ -450,6 +477,7 @@ public class PretServiceTest {
 
 		String expectedMessage = "La reservation existe deja pour ce livre";
 		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
 
 	}
 
@@ -542,16 +570,24 @@ public class PretServiceTest {
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
 				user);
+		PretServiceImpl pretservice1 = Mockito.mock(PretServiceImpl.class);
 		Utilisateur utilisateur1 = new Utilisateur("bob", "bob@gmail.com", "40 rue du chêne", "bob", "2222222", user);
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
 		Pret pret = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
 
+		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.of(livre));
 		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
-		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(livre));
+
+		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.of(utilisateur));
+		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
+				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
+
+		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
 		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
 
-		Mockito.doThrow(new RuntimeException()).when(pretRepository).delete(pret);
-		pretService.supprimerPret(1L, Optional.of("encours1"));
+		Mockito.doNothing().when(pretRepository).delete(pret);
+
+		pretService.supprimerPret(1L, Optional.of("enattente"));
 
 	}
 
@@ -565,12 +601,209 @@ public class PretServiceTest {
 		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
 
 		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
-		Mockito.when(livreRepository.findByCodeLivre(Mockito.anyLong())).thenReturn(Optional.of(livre));
+		Mockito.when(livreRepository.findByCodeLivre(Mockito.any())).thenReturn(Optional.of(livre));
 		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
 		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
-		EmailService emailservice = Mockito.mock(EmailServiceImpl.class);
+		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.of(livre));
+		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.of(utilisateur));
+		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
+				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
 
 		pretService.modifierPret(1L, "remise");
+
+	}
+
+	@Test
+	public void modifierLesPositionsDesPretsEnListeDattentes() throws ResultNotFoundException {
+
+		Roles user = new Roles("user");
+		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
+				user);
+		List<String> listmails = new ArrayList<String>();
+		listmails.add("gualisse@gmail.com");
+		listmails.add("bob@laposte.com");
+
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, listmails);
+		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+
+		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.of(livre));
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+
+		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.of(utilisateur));
+		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
+				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
+
+		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
+		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
+
+		pretService.modifierLesPositionsDesPretsEnListeDattentes(1L);
+
+	}
+
+	@Test
+	public void modifierLesPositionsDesPretsEnListeDattentesUtilisateurIntrouvable() throws ResultNotFoundException {
+
+		Roles user = new Roles("user");
+		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
+				user);
+		List<String> listmails = new ArrayList<String>();
+		listmails.add("gualisse@gmail.com");
+		listmails.add("bob@laposte.com");
+
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, listmails);
+		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+
+		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.of(livre));
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+
+		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.empty());
+		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
+				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
+
+		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
+		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
+
+		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
+			pretService.modifierLesPositionsDesPretsEnListeDattentes(1L);
+
+		});
+
+		String expectedMessage = "l'utilisateur est introuvable";
+		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
+
+	}
+
+	@Test
+	public void modifierLesPositionsDesPretsEnListeDattenteslivreIntrouvable() throws ResultNotFoundException {
+
+		Roles user = new Roles("user");
+		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
+				user);
+		List<String> listmails = new ArrayList<String>();
+		listmails.add("gualisse@gmail.com");
+		listmails.add("bob@laposte.com");
+
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, listmails);
+		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+
+		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+
+		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.of(utilisateur));
+		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
+				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
+
+		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
+		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
+
+		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
+			pretService.modifierLesPositionsDesPretsEnListeDattentes(1L);
+
+		});
+
+		String expectedMessage = "le livre est introuvable";
+		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
+	}
+
+	public void connectApiTimer() {
+
+		HttpService httpServices = Mockito.mock(HttpServiceImpl.class);
+		HttpHeaders headers = httpService.creerHeadersHttpAuthentifie("gualiss@gmail.com", "gualisse");
+		ResponseEntity<Long> responseEntity = new ResponseEntity<Long>(1L, HttpStatus.OK);
+		final String uri = "http://localhost:8085/timer";
+		Mockito.when(httpServices.creerHeadersHttpAuthentifie(Mockito.anyString(), Mockito.anyString()))
+				.thenReturn(headers);
+
+		Mockito.when(restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(1L, headers), Long.class))
+				.thenReturn(responseEntity);
+
+		pretService.connectApiTimer(1L);
+	}
+
+	@Test
+	public void verifierPret() throws ResultNotFoundException, BadException, EntityAlreadyExistException {
+
+		PretServiceImpl pretServices = Mockito.mock(PretServiceImpl.class);
+		EmailServiceImpl emailServices = Mockito.mock(EmailServiceImpl.class);
+
+		Roles user = new Roles("user");
+		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
+				user);
+		List<String> listmails = new ArrayList<String>();
+		listmails.add("gualisse@gmail.com");
+		listmails.add("bob@laposte.com");
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, listmails);
+		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+
+		List<Pret> listPrets = new ArrayList<Pret>();
+		Pret pret1 = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
+		Pret pret2 = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
+		listPrets.add(pret1);
+		listPrets.add(pret2);
+
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+		Mockito.when(livreRepository.findByNom(Mockito.anyString())).thenReturn(Optional.of(livre));
+		Mockito.when(livreRepository.saveAndFlush(Mockito.any(Livre.class))).thenReturn(livre);
+
+		Mockito.doNothing().when(pretServices).supprimerPret(Mockito.anyLong(), Optional.of(Mockito.anyString()));
+		Mockito.when(livreRepository.saveAndFlush(Mockito.any(Livre.class))).thenReturn(livre);
+
+		Mockito.doNothing().when(pretRepository).delete(pret);
+		Mockito.when(emailServices.createHtmlContent(Mockito.anyString(), Mockito.any(Livre.class),
+				Mockito.any(Locale.class))).thenReturn("bob");
+		Mockito.doNothing().when(emailServices).sendMail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString(), Mockito.any(Locale.class));
+		Mockito.when(pretRepository.findByStatutAndLivre(Mockito.anyString(), Mockito.any(Livre.class)))
+				.thenReturn(listPrets);
+
+		Mockito.doNothing().when(pretServices).connectApiTimer(1L);
+
+		pretService.verifierPrêt(1L);
+
+	}
+
+	@Test
+	public void verifierPretPretNotFoundException()
+			throws ResultNotFoundException, BadException, EntityAlreadyExistException {
+
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+
+		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
+			pretService.verifierPrêt(1L);
+
+		});
+
+		String expectedMessage = "le pret n'existe pas";
+		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
+
+	}
+
+	@Test
+	public void verifierPretLivreNotFound() throws ResultNotFoundException, BadException, EntityAlreadyExistException {
+
+		Roles user = new Roles("user");
+		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
+				user);
+		List<String> listmails = new ArrayList<String>();
+		listmails.add("gualisse@gmail.com");
+		listmails.add("bob@laposte.com");
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, listmails);
+		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
+
+		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
+		Mockito.when(livreRepository.findByNom(Mockito.anyString())).thenReturn(Optional.empty());
+
+		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
+			pretService.verifierPrêt(1L);
+
+		});
+
+		String expectedMessage = "le livre n'existe pas";
+		String actualMessage = exception.getMessage();
+		assertTrue(actualMessage.contains(expectedMessage));
 
 	}
 

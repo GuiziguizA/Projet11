@@ -75,15 +75,14 @@ public class BiblioAppli {
 	 * pretService.creerPret(new Long(1), "bob@Laposte.com");
 	 * pretService.creerPret(new Long(1), "michel@gmail.com");
 	 * 
+	 * 
 	 * Optional<String> opt = Optional.of("enattente");
 	 * pretService.supprimerPret(new Long(2), opt);
-	 * 
 	 * 
 	 * pretService.modifierPret(new Long(1), "remise"); pretService.creerPret(new
 	 * Long(1), "marcel@gmail.com"); pretService.verifierPrêt(new Long(6));
 	 * pretService.creerPret(new Long(1), "jean@gmail.com");
 	 * pretService.verifierPrêt(new Long(7));
-	 * 
 	 * 
 	 * pretService.connectApiTimer(new Long(1)); Optional<Livre> livre =
 	 * livreRepository.findById(new Long(1)); if
