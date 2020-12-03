@@ -1,6 +1,7 @@
 package sid.org.service;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -92,6 +93,14 @@ public class EmailServiceImpl implements EmailService {
 		Context ctx = variableEmail(locale, mail, livre);
 
 		return templateEngine.process("email.html", ctx);
+	}
+
+	@Override
+	public void envoyerLeMail(Optional<Livre> livre) {
+		Locale locale = new Locale("fr");
+		String htmlContent = this.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(), locale);
+
+		this.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
 	}
 
 }
