@@ -34,8 +34,8 @@ public interface PretService {
 
 	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException, BadException;
 
-	public void connectApiTimer(Long idPret);
-
 	Optional<Pret> trouverPretenCours(List<Pret> prets);
+
+	void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException;
 
 }

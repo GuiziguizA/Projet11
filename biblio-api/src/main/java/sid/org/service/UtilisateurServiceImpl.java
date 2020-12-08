@@ -109,7 +109,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		Page<Pret> listPretUtilisateur = pretRepository.findByUtilisateur(user.get(), pageable);
 
 		utilisateurRepository.delete(user.get());
-		pretRepository.deleteAll(listPretUtilisateur);
+		/* pretRepository.deleteAll(listPretUtilisateur); */
 
 	}
 
@@ -144,7 +144,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	@Override
 	public Page<Utilisateur> voirListeUtilisateurs(int page, int size) throws ResultNotFoundException {
 		if (size == 0) {
-			throw new ResultNotFoundException();
+			throw new ResultNotFoundException("le parametre size est incorrect");
 		}
 		Pageable pageable = PageRequest.of(page, size);
 		Page<Utilisateur> utilisateurs = utilisateurRepository.findAll(pageable);
