@@ -19,6 +19,8 @@ public class LivreDto {
 	private String emplacement;
 	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
 	private int nombreExemplaire;
+	@NotNull(message = "le champ nombre d'exemplaire ne peut pas etre vide")
+	private int nombreExemplaireFixe;
 
 	public LivreDto(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire) {
 		super();
@@ -28,6 +30,7 @@ public class LivreDto {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
+		this.nombreExemplaireFixe = nombreExemplaire;
 
 	}
 
@@ -77,6 +80,14 @@ public class LivreDto {
 
 	public void setNombreExemplaire(int nombreExemplaire) {
 		this.nombreExemplaire = nombreExemplaire;
+	}
+
+	public int getNombreExemplaireFixe() {
+		return nombreExemplaireFixe;
+	}
+
+	public void setNombreExemplaireFixe(int nombreExemplaireFixe) {
+		this.nombreExemplaireFixe = nombreExemplaireFixe;
 	}
 
 }

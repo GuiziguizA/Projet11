@@ -33,6 +33,7 @@ public class Livre {
 	private String section;
 	private String emplacement;
 	private int nombreExemplaire;
+	private int nombreExemplaireFixe;
 	@OneToMany(mappedBy = "livre", fetch = FetchType.LAZY)
 	private Collection<Pret> prets;
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -54,6 +55,7 @@ public class Livre {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
+		this.nombreExemplaireFixe = nombreExemplaire;
 		this.listeDattente = list;
 
 	}
@@ -132,6 +134,14 @@ public class Livre {
 
 	public void setNombreListeDattente(int nombreListeDattente) {
 		this.nombreListeDattente = nombreListeDattente;
+	}
+
+	public int getNombreExemplaireFixe() {
+		return nombreExemplaireFixe;
+	}
+
+	public void setNombreExemplaireFixe(int nombreExemplaireFixe) {
+		this.nombreExemplaireFixe = nombreExemplaireFixe;
 	}
 
 }

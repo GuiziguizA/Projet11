@@ -2,15 +2,12 @@ package sid.org.classe;
 
 import java.util.Collection;
 
-
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,7 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 
 public class Livre {
-	@Id  @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codeLivre;
 	private String nom;
 	private String auteur;
@@ -31,15 +29,16 @@ public class Livre {
 	private String section;
 	private String emplacement;
 	private int nombreExemplaire;
-	@OneToMany(mappedBy="livre",fetch=FetchType.LAZY)	
-	private Collection<Pret>prets;
-	
+	private int nombreExemplaireFixe;
+	@OneToMany(mappedBy = "livre", fetch = FetchType.LAZY)
+	private Collection<Pret> prets;
+
 	public Livre() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Livre(String nom, String auteur,String type, String section, String emplacement, int nombreExemplaire) {
+	public Livre(String nom, String auteur, String type, String section, String emplacement, int nombreExemplaire) {
 		super();
 		this.nom = nom;
 		this.auteur = auteur;
@@ -47,7 +46,7 @@ public class Livre {
 		this.section = section;
 		this.emplacement = emplacement;
 		this.nombreExemplaire = nombreExemplaire;
-		
+		this.nombreExemplaireFixe = nombreExemplaire;
 	}
 
 	public String getNom() {
@@ -101,8 +100,13 @@ public class Livre {
 	public Long getCodeLivre() {
 		return codeLivre;
 	}
-	
-	
 
-	
+	public int getNombreExemplaireFixe() {
+		return nombreExemplaireFixe;
+	}
+
+	public void setNombreExemplaireFixe(int nombreExemplaireFixe) {
+		this.nombreExemplaireFixe = nombreExemplaireFixe;
+	}
+
 }

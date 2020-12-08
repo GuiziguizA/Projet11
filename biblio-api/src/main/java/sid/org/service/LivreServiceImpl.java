@@ -40,9 +40,6 @@ public class LivreServiceImpl implements LivreService {
 	@Override
 	public Livre createLivre(LivreDto livreDto) throws EntityAlreadyExistException, BadException {
 
-		if (livreDto.getNombreExemplaire() > MaxExemplaire) {
-			throw new BadException("le nombre d'exemplaire max est :" + MaxExemplaire);
-		}
 		List<Livre> livreAuteurAndNom = livreRepository.findByAuteurAndNom(livreDto.getAuteur(), livreDto.getNom());
 		if (!livreAuteurAndNom.isEmpty()) {
 			throw new EntityAlreadyExistException("Ce livre existe deja");
@@ -134,6 +131,7 @@ public class LivreServiceImpl implements LivreService {
 		livre.setEmplacement(livreDto.getEmplacement());
 		livre.setNom(livreDto.getNom());
 		livre.setNombreExemplaire(livreDto.getNombreExemplaire());
+		livre.setNombreExemplaireFixe(livreDto.getNombreExemplaireFixe());
 		livre.setSection(livreDto.getSection());
 		livre.setType(livreDto.getType());
 		livre.setListeDattente(null);

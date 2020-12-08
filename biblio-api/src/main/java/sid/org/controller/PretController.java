@@ -49,7 +49,7 @@ public class PretController {
 	public void creerUnPret(
 			@ApiParam(value = "Ajouter int idLivre dans le body", required = true) @RequestBody PretDto pretDto,
 			@RequestParam String mail)
-			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
 
 		pretService.creerPret(pretDto.getId(), mail);
 

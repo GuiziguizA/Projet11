@@ -79,9 +79,13 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (!user.isPresent()) {
 			throw new ResultNotFoundException("Utilisateur introuvable");
 		}
-		Roles role = new Roles();
-		role.setNom(statut);
-		user.get().setRoles(role);
+
+		Optional<Roles> roles = rolesRepository.findByNom(statut);
+		if (!roles.isPresent()) {
+			throw new ResultNotFoundException("Role introuvable");
+		}
+
+		user.get().setRoles(roles.get());
 
 		return utilisateurRepository.save(user.get());
 	}

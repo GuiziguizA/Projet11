@@ -14,7 +14,7 @@ import sid.org.exception.ResultNotFoundException;
 public interface PretService {
 
 	public void creerPret(Long idLivre, String mail)
-			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException;
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException;
 
 	public void supprimerPret(Long id, Optional<String> statutPret) throws ResultNotFoundException, BadException;
 

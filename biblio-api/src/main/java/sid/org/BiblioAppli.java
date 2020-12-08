@@ -69,15 +69,18 @@ public class BiblioAppli implements CommandLineRunner {
 				new UtilisateurDto("Bob", "bob@laposte.com", "8rue de le scandinavie", "bob", "85641"), "user");
 		Utilisateur user3 = utilisateurService.creerUtilisateur(
 				new UtilisateurDto("Marcel", "marcel@gmail.com", "14 avenue du chene", "marcel", "65123"), "user");
+		Utilisateur user4 = utilisateurService.creerUtilisateur(
+				new UtilisateurDto("Marcel", "julien@gmail.com", "14 avenue du chene", "julien", "65123"), "user");
 
 		utilisateurService.creerUtilisateur(new UtilisateurDto("batch", "batch", " adresse7", "batch", "56776"),
 				"user");
 		Livre livre1 = livreService.createLivre(
 				new LivreDto("les trois mousquetaires", "Alexandre DUMAS", "type1", "section1", "emplacement1", 1));
 		Livre livre2 = livreService
-				.createLivre(new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 2));
+				.createLivre(new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 1));
 		Livre livre3 = livreService.createLivre(
-				new LivreDto("le bossu de notre dame", "Henry Polac ", "type1", "section1", "emplacement1", 5));
+				new LivreDto("le bossu de notre dame", "Henry Polac ", "type1", "section1", "emplacement1", 1));
+
 		/*
 		 * pretService.creerPret(new Long(1), "bob@Laposte.com");
 		 * pretService.creerPret(new Long(1), "michel@gmail.com");

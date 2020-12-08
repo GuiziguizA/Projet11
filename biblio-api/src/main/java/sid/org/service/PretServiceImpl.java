@@ -80,7 +80,7 @@ public class PretServiceImpl implements PretService {
 	@Value("${spring.api.motDePasse}")
 	private String motDePasse;
 	@Value("${livre.max.nombre.exemplaire}")
-	private int MaxExemplaire;
+	private int MultipleListDattente;
 
 	/*
 	 * Creation d'un Pret + decrementation nombreExemplaire pour le livre emprunté
@@ -95,7 +95,7 @@ public class PretServiceImpl implements PretService {
 	@Override
 	@Transactional
 	public void creerPret(Long idLivre, String mail)
-			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
 		Date date1 = new Date();
 		Pret pret = new Pret();
 		Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(mail);
@@ -125,8 +125,9 @@ public class PretServiceImpl implements PretService {
 		if (livre.get().getNombreExemplaire() == 1 && !livre.get().getListeDattente().isEmpty()) {
 
 		}
-
-		if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() < MaxExemplaire * 2) {
+		if (livre.get().getNombreListeDattente() == livre.get().getNombreExemplaireFixe() * MultipleListDattente) {
+			throw new BadException("La liste d'attente est complète");
+		} else if (livre.get().getNombreExemplaire() < 1) {
 
 			livre.get().getListeDattente().add(mail);
 
@@ -245,8 +246,11 @@ public class PretServiceImpl implements PretService {
 		}
 
 		if (pret.get().getStatut().equals(enAttente)) {
-			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre());
+			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());
 			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() - 1);
+			ArrayList<String> listmail = new ArrayList<String>(livre.get().getListeDattente());
+			listmail.remove(pret.get().getUtilisateur().getMail());
+			livre.get().setListeDattente(listmail);
 			logger.info(String.valueOf(livre.get().getNombreListeDattente()) + "pret en attente ");
 		}
 		livreRepository.saveAndFlush(livre.get());
@@ -416,7 +420,7 @@ public class PretServiceImpl implements PretService {
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 			livre.get().setDateDeRetour(null);
-			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre());
+			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());
 			pretRepository.saveAndFlush(pret.get());
 
 		} else if (!pret.get().getStatut().equals(enAttente)) {
@@ -517,26 +521,27 @@ public class PretServiceImpl implements PretService {
 
 	}
 
-	private void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException {
+	private void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
+			throws ResultNotFoundException {
 		Optional<Livre> livre = livreRepository.findById(idLivre);
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("le livre est introuvable");
 		}
 		List<String> listMail = livre.get().getListeDattente();
-
-		for (int i = 0; i < listMail.size(); i++) {
-			Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(listMail.get(i));
-			if (!utilisateur.isPresent()) {
-				throw new ResultNotFoundException("l'utilisateur est introuvable");
+		if (livre.get().getNombreListeDattente() > 1) {
+			for (int i = 0; i < listMail.size(); i++) {
+				Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(listMail.get(i));
+				if (!utilisateur.isPresent()) {
+					throw new ResultNotFoundException("l'utilisateur est introuvable");
+				}
+				Optional<Pret> pret = pretRepository.findByUtilisateurAndLivreAndStatut(utilisateur.get(), livre.get(),
+						enAttente);
+				if (positionLivreSupprime < pret.get().getPosition()) {
+					pret.get().setPosition(pret.get().getPosition() - 1);
+				}
+				pretRepository.saveAndFlush(pret.get());
+				livreRepository.saveAndFlush(livre.get());
 			}
-			Optional<Pret> pret = pretRepository.findByUtilisateurAndLivreAndStatut(utilisateur.get(), livre.get(),
-					enAttente);
-
-			pret.get().setPosition(pret.get().getPosition() - 1);
-
-			pretRepository.saveAndFlush(pret.get());
-			livreRepository.saveAndFlush(livre.get());
-
 		}
 
 	}
