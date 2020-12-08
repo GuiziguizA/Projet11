@@ -495,13 +495,10 @@ public class PretServiceImpl implements PretService {
 
 	}
 
-<<<<<<< HEAD
-	private void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
-			throws ResultNotFoundException {
-=======
 	@Override
-	public void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException {
->>>>>>> feature/tests
+	public void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
+			throws ResultNotFoundException {
+
 		Optional<Livre> livre = livreRepository.findById(idLivre);
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("le livre est introuvable");

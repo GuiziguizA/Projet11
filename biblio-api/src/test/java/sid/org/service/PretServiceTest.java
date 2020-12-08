@@ -317,7 +317,8 @@ public class PretServiceTest {
 	}
 
 	@Test
-	public void creerUnPret() throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
+	public void creerUnPret()
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
 
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
@@ -485,18 +486,17 @@ public class PretServiceTest {
 
 	@Test
 	public void creerUnPretEnattente()
-			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
 
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
 				user);
-		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 0, new ArrayList<String>());
+		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 5, new ArrayList<String>());
 		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
 		List<Pret> list = new ArrayList<Pret>();
 		Pret pret1 = new Pret(1L, new Date(), new Date(), "remis", 1, livre, utilisateur);
 		Pret pret2 = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
 
-		list.add(pret1);
 		list.add(pret1);
 
 		Mockito.when(utilisateurRepository.findByMail(Mockito.anyString())).thenReturn(Optional.of(utilisateur));
@@ -513,7 +513,7 @@ public class PretServiceTest {
 
 	@Test
 	public void creerUnPretModifierPretattente()
-			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
 
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
@@ -540,7 +540,8 @@ public class PretServiceTest {
 	}
 
 	@Test
-	public void creerUnPret1() throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException {
+	public void creerUnPret1()
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
 
 		Roles user = new Roles("user");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
@@ -866,7 +867,7 @@ public class PretServiceTest {
 		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
 		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
 
-		pretService.modifierLesPositionsDesPretsEnListeDattentes(1L);
+		pretService.modifierLesPositionsDesPretsEnListeDattentes(1L, 1);
 
 	}
 
@@ -881,20 +882,16 @@ public class PretServiceTest {
 		listmails.add("bob@laposte.com");
 
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, listmails);
+		livre.setNombreListeDattente(2);
 		Pret pret = new Pret(1L, new Date(), new Date(), "encours", 1, livre, utilisateur);
 
 		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.of(livre));
 		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
 
 		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.empty());
-		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
-				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
-
-		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
-		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
 
 		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
-			pretService.modifierLesPositionsDesPretsEnListeDattentes(1L);
+			pretService.modifierLesPositionsDesPretsEnListeDattentes(1L, 1);
 
 		});
 
@@ -928,7 +925,7 @@ public class PretServiceTest {
 		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);
 
 		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -> {
-			pretService.modifierLesPositionsDesPretsEnListeDattentes(1L);
+			pretService.modifierLesPositionsDesPretsEnListeDattentes(1L, 1);
 
 		});
 

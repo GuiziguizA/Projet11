@@ -161,10 +161,12 @@ public class UtilisateurServiceTest {
 	@Test
 	public void modifierUnUtilisateur() throws ResultNotFoundException {
 		Roles user = new Roles("user");
+		Roles employe = new Roles("employe");
 		Utilisateur utilisateur = new Utilisateur("emile", "bob@laposte.com", "40 rue du chêne", "bob", "2222222",
 				user);
 		Mockito.when(utilisateurRepository.findById(Mockito.any(Long.class))).thenReturn(Optional.of(utilisateur));
 		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);
+		Mockito.when(rolesRepository.findByNom(Mockito.anyString())).thenReturn(Optional.of(employe));
 
 		Utilisateur utilisateur1 = utilisateurService.modifierUtilisateur(1L, "employe");
 

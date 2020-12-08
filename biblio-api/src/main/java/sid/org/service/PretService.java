@@ -36,6 +36,7 @@ public interface PretService {
 
 	Optional<Pret> trouverPretenCours(List<Pret> prets);
 
-	void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre) throws ResultNotFoundException;
+	public void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
+			throws ResultNotFoundException;
 
 }

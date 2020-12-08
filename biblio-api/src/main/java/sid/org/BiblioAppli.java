@@ -45,60 +45,6 @@ public class BiblioAppli {
 	@Autowired
 	private UtilisateurRepository utilisateurRepository;
 
-<<<<<<< HEAD
-	@Override
-	public void run(String... args) throws Exception {
-		List<String> list = null;
-		Roles role1 = rolesRepository.save(new Roles("user"));
-		Roles role2 = rolesRepository.save(new Roles("employe"));
-		Roles role3 = rolesRepository.save(new Roles("admin"));
-		Utilisateur admin = utilisateurService.creerUtilisateur(
-				new UtilisateurDto("admin", "admin@gmail.com", " 30 rue du Lac", "admin", "93450"), "admin");
-		Utilisateur employe = utilisateurService.creerUtilisateur(
-				new UtilisateurDto("Jean", "jean@gmail.com", "25 rue de la rose", "employe", "94520"), "employe");
-		Utilisateur user1 = utilisateurService.creerUtilisateur(
-				new UtilisateurDto("Michel", "michel@gmail.com", "34 rue de chretiente", "michel", "28450"), "user");
-		Utilisateur user2 = utilisateurService.creerUtilisateur(
-				new UtilisateurDto("Bob", "bob@laposte.com", "8rue de le scandinavie", "bob", "85641"), "user");
-		Utilisateur user3 = utilisateurService.creerUtilisateur(
-				new UtilisateurDto("Marcel", "marcel@gmail.com", "14 avenue du chene", "marcel", "65123"), "user");
-		Utilisateur user4 = utilisateurService.creerUtilisateur(
-				new UtilisateurDto("Marcel", "julien@gmail.com", "14 avenue du chene", "julien", "65123"), "user");
-
-		utilisateurService.creerUtilisateur(new UtilisateurDto("batch", "batch", " adresse7", "batch", "56776"),
-				"user");
-		Livre livre1 = livreService.createLivre(
-				new LivreDto("les trois mousquetaires", "Alexandre DUMAS", "type1", "section1", "emplacement1", 1));
-		Livre livre2 = livreService
-				.createLivre(new LivreDto("Bel-ami", "Guy de Maupassant", "type2", "section2", "emplacement1", 1));
-		Livre livre3 = livreService.createLivre(
-				new LivreDto("le bossu de notre dame", "Henry Polac ", "type1", "section1", "emplacement1", 1));
-
-		/*
-		 * pretService.creerPret(new Long(1), "bob@Laposte.com");
-		 * pretService.creerPret(new Long(1), "michel@gmail.com");
-		 */
-		/* Optional<String> opt = Optional.of("enattente"); */
-		/* pretService.supprimerPret(new Long(2), opt); */
-
-		/*
-		 * pretService.modifierPret(new Long(1), "remise"); pretService.creerPret(new
-		 * Long(1), "marcel@gmail.com"); pretService.verifierPrêt(new Long(6));
-		 * pretService.creerPret(new Long(1), "jean@gmail.com");
-		 * pretService.verifierPrêt(new Long(7));
-		 */
-		/*
-		 * pretService.connectApiTimer(new Long(1)); Optional<Livre> livre =
-		 * livreRepository.findById(new Long(1)); if
-		 * (livre.get().getListeDattente().isEmpty()) { System.out.println("ca bug"); }
-		 * else { System.out.println(livre.get().getListeDattente().get(0)); }
-		 * Optional<Pret> pret22 = pretRepository.findById((long) 6);
-		 * System.out.println(pret22.get().getStatut()); System.out.println(
-		 * "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000à"
-		 * );
-		 */
-	}
-=======
 	/*
 	 * @Override public void run(String... args) throws Exception { List<String>
 	 * list = null; Roles role1 = rolesRepository.save(new Roles("user")); Roles
@@ -115,29 +61,33 @@ public class BiblioAppli {
 	 * "bob@laposte.com", "8rue de le scandinavie", "bob", "85641"), "user");
 	 * Utilisateur user3 = utilisateurService.creerUtilisateur( new
 	 * UtilisateurDto("Marcel", "marcel@gmail.com", "14 avenue du chene", "marcel",
-	 * "65123"), "user");
+	 * "65123"), "user"); Utilisateur user4 = utilisateurService.creerUtilisateur(
+	 * new UtilisateurDto("Marcel", "julien@gmail.com", "14 avenue du chene",
+	 * "julien", "65123"), "user");
 	 * 
 	 * utilisateurService.creerUtilisateur(new UtilisateurDto("batch", "batch",
 	 * " adresse7", "batch", "56776"), "user"); Livre livre1 =
 	 * livreService.createLivre( new LivreDto("les trois mousquetaires",
 	 * "Alexandre DUMAS", "type1", "section1", "emplacement1", 1)); Livre livre2 =
 	 * livreService .createLivre(new LivreDto("Bel-ami", "Guy de Maupassant",
-	 * "type2", "section2", "emplacement1", 2)); Livre livre3 =
+	 * "type2", "section2", "emplacement1", 1)); Livre livre3 =
 	 * livreService.createLivre( new LivreDto("le bossu de notre dame",
-	 * "Henry Polac ", "type1", "section1", "emplacement1", 5));
-	 * 
+	 * "Henry Polac ", "type1", "section1", "emplacement1", 1));
+	 */
+	/*
 	 * pretService.creerPret(new Long(1), "bob@Laposte.com");
 	 * pretService.creerPret(new Long(1), "michel@gmail.com");
-	 * 
-	 * 
-	 * Optional<String> opt = Optional.of("enattente");
-	 * pretService.supprimerPret(new Long(2), opt);
-	 * 
+	 */
+	/* Optional<String> opt = Optional.of("enattente"); */
+	/* pretService.supprimerPret(new Long(2), opt); */
+
+	/*
 	 * pretService.modifierPret(new Long(1), "remise"); pretService.creerPret(new
 	 * Long(1), "marcel@gmail.com"); pretService.verifierPrêt(new Long(6));
 	 * pretService.creerPret(new Long(1), "jean@gmail.com");
 	 * pretService.verifierPrêt(new Long(7));
-	 * 
+	 */
+	/*
 	 * pretService.connectApiTimer(new Long(1)); Optional<Livre> livre =
 	 * livreRepository.findById(new Long(1)); if
 	 * (livre.get().getListeDattente().isEmpty()) { System.out.println("ca bug"); }
@@ -146,9 +96,7 @@ public class BiblioAppli {
 	 * System.out.println(pret22.get().getStatut()); System.out.println(
 	 * "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000à"
 	 * );
-	 * 
-	 * }
 	 */
->>>>>>> feature/tests
+	/* } */
 
 }
