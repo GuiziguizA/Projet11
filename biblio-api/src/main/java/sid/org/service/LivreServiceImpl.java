@@ -64,7 +64,7 @@ public class LivreServiceImpl implements LivreService {
 
 		Optional<Livre> livre = livreRepository.findById(id);
 		if (!livre.isPresent()) {
-			throw new ResultNotFoundException();
+			throw new ResultNotFoundException("le livre existe pas");
 		}
 		livreRepository.delete(livre.get());
 	}
@@ -104,7 +104,7 @@ public class LivreServiceImpl implements LivreService {
 		LivreSpecificationImpl spec = new LivreSpecificationImpl(livreCriteria);
 
 		if (size == 0) {
-			throw new ResultNotFoundException();
+			throw new ResultNotFoundException("le parametre size est incorrect");
 		}
 
 		Pageable pageable = PageRequest.of(page, size);

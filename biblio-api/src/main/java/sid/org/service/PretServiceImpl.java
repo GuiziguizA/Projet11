@@ -3,7 +3,6 @@ package sid.org.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -15,12 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import sid.org.classe.Livre;
 import sid.org.classe.Pret;
@@ -49,6 +43,8 @@ public class PretServiceImpl implements PretService {
 	private EmailService emailService;
 	@Autowired
 	private HttpService httpService;
+	@Autowired
+	private ConnectionApiService connectionApiService;
 
 	@Value("${pret.statut1}")
 	private String encours;
@@ -273,7 +269,7 @@ public class PretServiceImpl implements PretService {
 	@Override
 	public Page<Pret> afficherPrets(String mail, int page, int size) throws ResultNotFoundException {
 		if (size == 0) {
-			throw new ResultNotFoundException();
+			throw new ResultNotFoundException("le parametre size est incorrect");
 		}
 		Optional<Utilisateur> utilisateur = utilisateurRepository.findByMail(mail);
 		if (!utilisateur.isPresent()) {
@@ -349,10 +345,13 @@ public class PretServiceImpl implements PretService {
 	public void modifierStatut(Long id) throws ResultNotFoundException {
 		Date aujourdhui = new Date();
 		Optional<Pret> pret = pretRepository.findById(id);
-		if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut() == prolonge) {
+		if (!pret.isPresent()) {
+			throw new ResultNotFoundException("le pret n'existe pas");
+		}
+		if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut().equals(prolonge)) {
 			pret.get().setStatut(depasse);
 			pretRepository.saveAndFlush(pret.get());
-		} else if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut() == encours) {
+		} else if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut().equals(encours)) {
 			pret.get().setStatut(depasse);
 			pretRepository.saveAndFlush(pret.get());
 		}
@@ -370,7 +369,7 @@ public class PretServiceImpl implements PretService {
 	public void modifierStatutsPrets() throws ResultNotFoundException {
 
 		ArrayList<Pret> prets = (ArrayList<Pret>) afficherPrets();
-		if (prets.isEmpty()) {
+		if (!prets.isEmpty()) {
 			for (int i = 0; i < prets.size(); i++) {
 				modifierStatut(prets.get(i).getId());
 			}
@@ -408,15 +407,11 @@ public class PretServiceImpl implements PretService {
 			pret.get().setDateDeRendu(new Date());
 			if (livre.get().getNombreExemplaire() < 1 && livre.get().getListeDattente().size() > 0) {
 
-				Locale locale = new Locale("fr");
-				String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
-						locale);
-
-				emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+				emailService.envoyerLeMail(livre);
 
 				Pret pretenAttente = trouverPretEnAttente(livre.get());
 
-				this.connectApiTimer(pretenAttente.getId());
+				connectionApiService.connectApiTimer(pretenAttente.getId());
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 			livre.get().setDateDeRetour(null);
@@ -456,14 +451,10 @@ public class PretServiceImpl implements PretService {
 			livreRepository.saveAndFlush(livre.get());
 			logger.info("le pret a ete supprime ");
 			if (livre.get().getListeDattente().size() >= 1) {
-				Locale locale = new Locale("fr");
-				String htmlContent = emailService.createHtmlContent(livre.get().getListeDattente().get(0), livre.get(),
-						locale);
-
-				emailService.sendMail(biblioMail, livre.get().getListeDattente().get(0), subject, htmlContent, locale);
+				emailService.envoyerLeMail(livre);
 				Pret pretenAttente = trouverPretEnAttente(livre.get());
 
-				this.connectApiTimer(pretenAttente.getId());
+				connectionApiService.connectApiTimer(pretenAttente.getId());
 
 				logger.info(" envoie mail personne suivante");
 
@@ -485,16 +476,6 @@ public class PretServiceImpl implements PretService {
 
 	}
 
-	@Override
-	public void connectApiTimer(Long idPret) {
-		RestTemplate rt = new RestTemplate();
-		final String uri = apiUrl + "/timer";
-
-		HttpHeaders headers = httpService.creerHeadersHttpAuthentifie(mail, motDePasse);
-
-		ResponseEntity<Long> idPrets = rt.exchange(uri, HttpMethod.POST, new HttpEntity<>(idPret, headers), Long.class);
-	}
-
 	public Pret trouverPretEnAttente(Livre livre) throws ResultNotFoundException {
 		List<Pret> pretsEnAttente = pretRepository.findByStatutAndLivre(enAttente, livre);
 		if (pretsEnAttente.isEmpty()) {
@@ -502,13 +483,6 @@ public class PretServiceImpl implements PretService {
 		}
 		Pret pret = pretsEnAttente.get(0);
 
-		return pret;
-	}
-
-	private Pret creationDuPret(Pret pret, String methode, Utilisateur utilisateur, Livre livre) {
-		pret.setLivre(livre);
-		pret.setUtilisateur(utilisateur);
-		pret.setStatut(enAttente);
 		return pret;
 	}
 
@@ -521,8 +495,10 @@ public class PretServiceImpl implements PretService {
 
 	}
 
-	private void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
+	@Override
+	public void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
 			throws ResultNotFoundException {
+
 		Optional<Livre> livre = livreRepository.findById(idLivre);
 		if (!livre.isPresent()) {
 			throw new ResultNotFoundException("le livre est introuvable");

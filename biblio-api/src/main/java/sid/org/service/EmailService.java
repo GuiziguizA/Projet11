@@ -1,6 +1,7 @@
 package sid.org.service;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.thymeleaf.context.Context;
 
@@ -12,5 +13,7 @@ public interface EmailService {
 	public Context variableEmail(Locale locale, String mail, Livre livre);
 
 	public String createHtmlContent(String mail, Livre livre, Locale locale);
+
+	public void envoyerLeMail(Optional<Livre> livre);
 
 }
