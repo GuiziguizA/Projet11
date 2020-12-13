@@ -1,0 +1,3008 @@
+{
+	"info": {
+		"_postman_id": "933cb5e0-80dd-474b-b201-de1816c2bbee",
+		"name": "BiblioApiTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "afficher un livre en fonction de son id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "838817c0-0e99-4783-bce4-5508eae2ab4f",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/books/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher un livre en fonction de son id (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3758b781-eb08-4cf6-b3c2-dfc214d3c602",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"\r",
+									"     \r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"le livre existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/books/345",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books",
+								"345"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "afficher un livre en fonction de son id (Error 415)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/books/345",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"books",
+										"345"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 02 Dec 2020 17:52:41 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"date\": \"2020-12-02T17:52:41.223+00:00\",\n    \"message\": \"le livre existe pas\",\n    \"status\": 415,\n    \"httpCodeMessage\": \"/books/345\"\n}"
+						},
+						{
+							"name": "afficher un livre en fonction de son id (Error 415)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/books/345",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"books",
+										"345"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 02 Dec 2020 17:52:41 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"date\": \"2020-12-02T17:52:41.223+00:00\",\n    \"message\": \"le livre existe pas\",\n    \"status\": 415,\n    \"httpCodeMessage\": \"/books/345\"\n}"
+						}
+					]
+				},
+				{
+					"name": "afficher le livre en fonction de son id (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c95687ff-a9f1-4c1a-bdab-7ce62727a9e2",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/books/ee",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books",
+								"ee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher une page contenant les différents livres de la recherche (recherche = le , type = nom)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e881e392-7cdd-44cc-97a3-b952b10e73a3",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"codeLivre\": null,\r\n    \"nom\": \"le\",\r\n    \"auteur\": null,\r\n    \"type\": null,\r\n    \"section\": null,\r\n    \"emplacement\": null,\r\n    \"nombreExemplaire\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/books?page=0&size=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher une page contenant les différents livres de la recherche (recherche = null)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b2712906-2cd8-48bf-bbe7-82553b9dcde2",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"codeLivre\": null,\r\n    \"nom\": null,\r\n    \"auteur\": null,\r\n    \"type\": null,\r\n    \"section\": null,\r\n    \"emplacement\": null,\r\n    \"nombreExemplaire\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/books?page=0&size=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher une page contenant les différents livres de la recherche (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "75716a21-0b62-4a50-bc00-9d4dc4523685",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"  \r",
+									"\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\nckl,ckls\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/books?page=0&size=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ajouter un nouveau livre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb7b7c0d-2d0a-47c9-82c4-aa5b2edb8a2a",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"nom\": \"les misérables\",\r\n    \"auteur\": \"Victor Hugo\",\r\n    \"type\": \"type1\",\r\n    \"section\": \"section 1\",\r\n    \"emplacement\": \"emplacement 1\",\r\n    \"nombreExemplaire\": 15\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ajouter un livre (Forbidden)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d063642a-0f81-416b-bd2e-e05c964d7490",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(403);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Forbidden\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"nom\": \"les misérables\",\r\n    \"auteur\": \"Victor Hugo\",\r\n    \"type\": \"type1\",\r\n    \"section\": \"section 1\",\r\n    \"emplacement\": \"emplacement 1\",\r\n    \"nombreExemplaire\": 5\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ajouter un nouveau livre (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "94f11732-faf8-414f-910a-4453e4267742",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer un livre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b7abbfd2-dc55-44ec-97da-e0526d65dd9e",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"    \r",
+									"     \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/books?id=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer un livre (Forbidden)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9e43657d-dcc4-4964-8096-044ab84b8914",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(403);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Forbidden\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/books?id=45",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "45"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer un livre (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7b514a27-a3c2-4d84-a59c-50e6d8aa5b70",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"  \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/books?id=45",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "45"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Pret",
+			"item": [
+				{
+					"name": "Creer un pret",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "90e03161-4743-4275-82ef-312cfc00685e",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									" \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n   {\r\n   \"id\" : 1\r\n   \r\n   }\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=bob@laposte.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "bob@laposte.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Creet un Pret",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02d2cc23-6d5c-47b8-ba49-a83eaddc1913",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    \r\n   {\"id\" : 1}\r\n   \r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=michel@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "michel@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Creer un Pret",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "113d2901-bdaf-476f-9e6d-576f593f89b9",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\"id\" : 2}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=michel@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "michel@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Creer un Pret",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a0617b0b-f235-46a3-ac1e-e050c0ce381d",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									" \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n   {\r\n   \"id\" : 1\r\n   \r\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=marcel@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "marcel@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "creer un Pret (Error 420 )",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8dea0923-2eed-4cb2-b908-cb1c074cc88a",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"La reservation existe deja pour ce livre\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\"id\" : 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=michel@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "michel@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Creer un pret (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb87917-90b7-46e0-88bf-ed3d2e514bea",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"l'utilisateur n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\"id\" : 1}\r\n ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=michellll@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "michellll@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Creer un pret (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7284b636-0694-4fad-b675-2fb5371cce47",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"le livre n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\"id\" : 100}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=michel@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "michel@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Creer un pret (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f28777c2-19ab-494e-be49-faccc34d52a1",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?mail=michel@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "michel@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "affiche un pret en fonction de son id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c70c8aef-c30f-4c85-bb77-b89957f9b650",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "affiche un pret en fonction de son id (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1f1a2e6c-f899-4e52-a799-26e8fc9a43af",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"ce pret n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "affiche un pret en fonction de son id (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "de847422-50bf-40ed-97eb-f8a6984452d3",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets/RR",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets",
+								"RR"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renvoie liste de tout les prets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "98915242-5a3e-4c3e-aff0-891488eff6b5",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/allprets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"allprets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "affiche Les prets en fonction d'un statut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "18b7a4d9-37b1-43fb-9c0f-e4d50ef7f4d2",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/listprets?statut=encours",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"listprets"
+							],
+							"query": [
+								{
+									"key": "statut",
+									"value": "encours"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "affiche Les prets en fonction d'un statut (list vide pour mauvais statut)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bd48fbc7-d321-401a-a4ef-be30ea2ef147",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/listprets?statut=EE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"listprets"
+							],
+							"query": [
+								{
+									"key": "statut",
+									"value": "EE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifier statut du pret pour confirmer que le livre a été rendu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "76234663-f1a1-419c-8fff-f9a62f600e7a",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     \r",
+									"\r",
+									"  \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifier statut du pret pour confirmer que le livre a été rendu (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fc941cb2-0806-412f-bc2c-3e69493ce0f2",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Ce pret n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?id=111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "111"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifier statut du pret pour renouvelé la periode de pret",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "731e517f-f631-4916-961f-1e2012084782",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     \r",
+									"     \r",
+									"     \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/pret?id=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pret"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifier statut du pret pour renouvelé la periode de pret (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "724e1b7b-57a0-4570-9628-72de1adcb921",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Ce pret n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/pret?id=111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pret"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "111"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer le pret en attente au bout de 48h si il n'a pas été complété",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7eb97c5f-c131-491d-98ae-c641477e6627",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"   \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/pretEnAttente?idPret=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pretEnAttente"
+							],
+							"query": [
+								{
+									"key": "idPret",
+									"value": "2"
+								}
+							]
+						},
+						"description": "\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer le pret en attente au bout de 48h si il n'a pas été complété (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2855fdbb-07bd-4416-9797-0f016c8f64a9",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"le pret n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/pretEnAttente?idPret=22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pretEnAttente"
+							],
+							"query": [
+								{
+									"key": "idPret",
+									"value": "22"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer un pret en attente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0898a5d2-da6b-434f-beb0-12edfbf438a7",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"    \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n\r\n   \r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/pretEnAttente?id=4&statutPret=enattente",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pretEnAttente"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "statutPret",
+									"value": "enattente"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer un pret en attente(Error 435)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cfae7000-b643-4d1c-8796-fb111006c148",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"le pret ne peut pas etre supprimer\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/pretEnAttente?id=1&statutPret=encours",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pretEnAttente"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "statutPret",
+									"value": "encours"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprimer un pret en attente (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d9cf6348-b5a6-40f8-9e54-09fdcfd08c20",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"ce pret n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/pretEnAttente?id=11&statutPret=encours",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"pretEnAttente"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "11"
+								},
+								{
+									"key": "statutPret",
+									"value": "encours"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprime le pret et reincremente le stock du livre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f0a18d23-2046-43c3-b121-b02910c61fde",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprime le pret et reincremente le stock du livre (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f655f10f-dce3-45ca-a2d5-d8e775ddcc8d",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"ce pret n'existe pas\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?id=111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "111"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "supprime le pret et reincremente le stock du livre (Error 403)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4d02cbf6-7ac7-4bc3-8bff-d7efeec10082",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(403);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Forbidden\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "michel",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "michel@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": " Modifier les statuts des prets dont la date est depasse",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d2e69a8-ecfa-4f9c-9796-7d68d5d6897f",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									" \r",
+									"\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets/statuts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets",
+								"statuts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete pret restant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "42ac7328-174b-4cfe-a256-fdf9b7281636",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"    \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/prets?id=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"prets"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Utilisateur",
+			"item": [
+				{
+					"name": "afficher un utilisateur en fonction de son mail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0df33ffb-61c1-4c57-84c0-4ead47cc23e7",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/user?mail=admin@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "admin@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher un utilisateur en fonction de son mail (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c11fbf16-998b-4558-87a2-2c6877756a40",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Utilisateur introuvable\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/user?mail=admin@gmail.c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "admin@gmail.c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher un utilisateur en fonction de son mail (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a8e75ac-1189-4dfd-a878-c7d2152c8782",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"mail\":\"michel@gmail.com\",\r\n\"motDePasse\":\"michel\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/user?",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "identification de l'utilisateur",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bd981e73-4440-45f4-ab5d-3716a328bba8",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"mail\":\"michel@gmail.com\",\r\n\"motDePasse\":\"michel\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users/identity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"identity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "identifacation de l'utilisateur (Error 415)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "49dac933-dc8c-4739-94d7-011126700935",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(404);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Il n'existe aucun compte contenant cette adresse e-mail\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"mail\":\"miche@gmail.com\",\r\n\"motDePasse\":\"michel\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users/identity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"identity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "identification de l'utilisateur (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "da52e649-7737-44ba-9eca-8562eecc393d",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/users/identity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"identity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher une page avec tous les utilisateurs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e47e8ac3-0898-4afa-b2d2-379b25ac2749",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/users?page=0&size=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "afficher une page avec tous les utilisateurs (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bd42d87-e5b8-4ec9-91fe-330cf8075597",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/users?page=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter un utilisateur",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b5e6bdf-060a-4c00-a880-7c96d605f71d",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"heroes\",\r\n    \"mail\":\"heroes@gmail.com\",\r\n    \"adresse\":\"3 tue del coche\",\r\n    \"motDePasse\":\"heroes\",\r\n    \"codePostal\":\"34444\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter un utilisateur (Error 420)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40d9be10-7e79-4b0e-bf90-ed8a749968a3",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"le mail est deja utilise\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"heroes\",\r\n    \"mail\":\"heroes@gmail.com\",\r\n    \"adresse\":\"3 tue del coche\",\r\n    \"motDePasse\":\"heroes\",\r\n    \"codePostal\":\"34444\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter un utilisateur (Error 435)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "81f5a89b-81af-4799-bff2-29fbe91b46c3",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"le code postal doit contenir 5 chiffres\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"heroes\",\r\n    \"mail\":\"heroeZZ@gmail.com\",\r\n    \"adresse\":\"3 tue del coche\",\r\n    \"motDePasse\":\"heroes\",\r\n    \"codePostal\":\"343444\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ajouter un utilisateur (Error 400)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nom\":\"heroes\",\r\n    \"mail\":\"heroeZZ@gmail.com\",\r\n    \"adresse\":\"3 tue del coche\",\r\n    \"motDePasse\":\"heroes\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un utilisateur",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb44517a-b35d-496f-ae8b-feb005cb27e0",
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     \r",
+									"     pm.response.to.have.status(200);\r",
+									"   \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/users/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un utilisateur(Error 415)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8081/users/243",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"243"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un utilisateur (Error 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "68853751-c209-4528-91fe-3197e6cc547d",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(400);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Bad Request\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin@gmail.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/users/4@",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"4@"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un utilisateur (Error 403)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "79d2e2dd-0adf-4c7f-a2d3-e5837712332a",
+								"exec": [
+									"pm.test(\"response should be okay to process\", function () {\r",
+									"     \r",
+									"     pm.response.to.be.json;\r",
+									"     pm.response.to.have.status(403);\r",
+									"   \r",
+									"\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(pm.response.text()).to.include(\"Forbidden\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/users/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"users",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "bob",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "bob@laposte.com",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5eef0a94-9527-4790-af21-dc4e90b032f7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e9281fc1-0b8e-43f5-87e8-52b65a65c19a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
