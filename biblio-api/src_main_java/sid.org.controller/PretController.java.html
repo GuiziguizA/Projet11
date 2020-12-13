@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PretController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.controller</a> &gt; <span class="el_source">PretController.java</span></div><h1>PretController.java</h1><pre class="source lang-java linenums">package sid.org.controller;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import javax.mail.MessagingException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import sid.org.classe.Pret;
+import sid.org.dto.PretDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.LivreIndisponibleException;
+import sid.org.exception.ResultNotFoundException;
+import sid.org.service.PretService;
+
+@RestController
+@Api(value = &quot;Api Prets&quot;, description = &quot;Api Prets&quot;)
+<span class="fc" id="L34">public class PretController {</span>
+	@Autowired
+	private PretService pretService;
+
+	@GetMapping(&quot;/prets/{id}&quot;)
+	@ApiOperation(value = &quot;affiche un pret en fonction de son id&quot;, response = PretController.class)
+	public Pret afficherUnPret(@PathVariable Long id) throws ResultNotFoundException {
+
+<span class="nc" id="L42">		Pret pret = pretService.afficherUnPret(id);</span>
+<span class="nc" id="L43">		return pret;</span>
+
+	}
+
+	@PostMapping(value = &quot;/prets&quot;)
+	@ApiOperation(value = &quot;ajout d'un nouveau pret et decrementation le stock du livre&quot;, response = PretController.class)
+	public void creerUnPret(
+			@ApiParam(value = &quot;Ajouter int idLivre dans le body&quot;, required = true) @RequestBody PretDto pretDto,
+			@RequestParam String mail)
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
+
+<span class="nc" id="L54">		pretService.creerPret(pretDto.getId(), mail);</span>
+
+		;
+
+<span class="nc" id="L58">	}</span>
+
+	@GetMapping(&quot;/prets&quot;)
+	@ApiOperation(value = &quot;affiche Les pret d'un utilisateur&quot;, response = PretController.class)
+	public Page&lt;Pret&gt; afficherPretUtilisateur(@RequestParam String mail, @RequestParam int page, @RequestParam int size)
+			throws ResultNotFoundException {
+
+<span class="nc" id="L65">		Page&lt;Pret&gt; prets = pretService.afficherPrets(mail, page, size);</span>
+
+<span class="nc" id="L67">		return prets;</span>
+
+	}
+
+	@GetMapping(&quot;/allprets&quot;)
+	@ApiOperation(value = &quot;Renvoie liste de tout les prets&quot;, response = PretController.class)
+	public List&lt;Pret&gt; afficherPrets() throws ResultNotFoundException {
+
+<span class="nc" id="L75">		List&lt;Pret&gt; prets = pretService.afficherPrets();</span>
+
+<span class="nc" id="L77">		return prets;</span>
+
+	}
+
+	@GetMapping(&quot;/listprets&quot;)
+	@ApiOperation(value = &quot;affiche Les prets en fonction d'un statut&quot;, response = PretController.class)
+	public List&lt;Pret&gt; afficherPretUtilisateur(@RequestParam String statut) throws ResultNotFoundException {
+
+<span class="nc" id="L85">		List&lt;Pret&gt; prets = pretService.afficherPrets(statut);</span>
+
+<span class="nc" id="L87">		return prets;</span>
+
+	}
+
+	@PutMapping(&quot;/prets&quot;)
+	@ApiOperation(value = &quot;modifier statut du pret pour confirmer que le livre a été rendu&quot;, response = PretController.class)
+	public void retourLivre(@RequestParam Long id)
+			throws ResultNotFoundException, MessagingException, IOException, EntityAlreadyExistException {
+<span class="nc" id="L95">		pretService.modifierPret(id, &quot;remise&quot;);</span>
+
+<span class="nc" id="L97">	}</span>
+
+	@PutMapping(&quot;/pret&quot;)
+	@ApiOperation(value = &quot;modifier statut du pret pour renouvelé la periode de pret&quot;, response = PretController.class)
+	public void prolongerLivre(@RequestParam Long id) throws ResultNotFoundException, EntityAlreadyExistException {
+<span class="nc" id="L102">		pretService.modifierPret(id, &quot;renouvelement&quot;);</span>
+
+<span class="nc" id="L104">	}</span>
+
+	@PutMapping(&quot;/prets/statuts&quot;)
+	public void modifierStatutBatch() throws ResultNotFoundException {
+
+<span class="nc" id="L109">		pretService.modifierStatutsPrets();</span>
+
+<span class="nc" id="L111">	}</span>
+
+	@PutMapping(&quot;/pretEnAttente&quot;)
+	@ApiOperation(value = &quot;supprimer le pret en attente au bout de 48h si il n'a pas été complété&quot;, response = PretController.class)
+	public void vérifierPret(@RequestParam Long idPret)
+			throws ResultNotFoundException, EntityAlreadyExistException, BadException {
+<span class="nc" id="L117">		pretService.verifierPrêt(idPret);</span>
+<span class="nc" id="L118">	}</span>
+
+	@Secured(value = { &quot;ROLE_admin&quot;, &quot;ROLE_employe&quot; })
+	@DeleteMapping(&quot;/prets&quot;)
+	@ApiOperation(value = &quot;supprime le pret et reincremente le stock du livre&quot;, response = PretController.class)
+	public void supprimerUnPret(@RequestParam Long id) throws ResultNotFoundException, BadException {
+<span class="nc" id="L124">		Optional&lt;String&gt; statut = Optional.of(&quot;encours1&quot;);</span>
+<span class="nc" id="L125">		pretService.supprimerPret(id, statut);</span>
+
+<span class="nc" id="L127">	}</span>
+
+	@DeleteMapping(&quot;/pretEnAttente&quot;)
+	@ApiOperation(value = &quot;supprime le pret et reincremente le stock du livre&quot;, response = PretController.class)
+	public void supprimerUnPretenAttente(@RequestParam Long id, @RequestParam String statutPret)
+			throws ResultNotFoundException, BadException {
+<span class="nc" id="L133">		Optional&lt;String&gt; statut = Optional.of(statutPret);</span>
+<span class="nc" id="L134">		pretService.supprimerPret(id, statut);</span>
+
+<span class="nc" id="L136">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

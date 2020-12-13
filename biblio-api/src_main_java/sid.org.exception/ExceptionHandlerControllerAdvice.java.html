@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionHandlerControllerAdvice.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.exception</a> &gt; <span class="el_source">ExceptionHandlerControllerAdvice.java</span></div><h1>ExceptionHandlerControllerAdvice.java</h1><pre class="source lang-java linenums">package sid.org.exception;
+
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ControllerAdvice
+<span class="fc" id="L14">public class ExceptionHandlerControllerAdvice {</span>
+
+	@ExceptionHandler(ResultNotFoundException.class)
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public @ResponseBody ExceptionReponse ResourceNotFound(final ResultNotFoundException exception,
+			final HttpServletRequest request) {
+
+<span class="nc" id="L21">		ExceptionReponse error = new ExceptionReponse();</span>
+<span class="nc" id="L22">		error.setMessage(exception.getMessage());</span>
+<span class="nc" id="L23">		error.setDate(new Date());</span>
+<span class="nc" id="L24">		error.setHttpCodeMessage(request.getRequestURI());</span>
+<span class="nc" id="L25">		error.setStatus(415);</span>
+<span class="nc" id="L26">		return error;</span>
+	}
+
+	@ExceptionHandler(EntityAlreadyExistException.class)
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public @ResponseBody ExceptionReponse EntityAlreadyExistException(final EntityAlreadyExistException exception,
+			final HttpServletRequest request) {
+
+<span class="nc" id="L35">		ExceptionReponse error = new ExceptionReponse();</span>
+<span class="nc" id="L36">		error.setMessage(exception.getMessage());</span>
+<span class="nc" id="L37">		error.setDate(new Date());</span>
+<span class="nc" id="L38">		error.setHttpCodeMessage(request.getRequestURI());</span>
+<span class="nc" id="L39">		error.setStatus(420);</span>
+<span class="nc" id="L40">		return error;</span>
+	}
+
+	@ExceptionHandler(LivreIndisponibleException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public @ResponseBody ExceptionReponse LivreIndisponibleException(final LivreIndisponibleException exception,
+			final HttpServletRequest request) {
+
+<span class="nc" id="L48">		ExceptionReponse error = new ExceptionReponse();</span>
+<span class="nc" id="L49">		error.setMessage(exception.getMessage());</span>
+<span class="nc" id="L50">		error.setDate(new Date());</span>
+<span class="nc" id="L51">		error.setHttpCodeMessage(request.getRequestURI());</span>
+<span class="nc" id="L52">		error.setStatus(430);</span>
+<span class="nc" id="L53">		return error;</span>
+	}
+
+	@ExceptionHandler(BadException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public @ResponseBody ExceptionReponse BadException(final BadException exception, final HttpServletRequest request) {
+
+<span class="nc" id="L60">		ExceptionReponse error = new ExceptionReponse();</span>
+<span class="nc" id="L61">		error.setMessage(exception.getMessage());</span>
+<span class="nc" id="L62">		error.setDate(new Date());</span>
+<span class="nc" id="L63">		error.setHttpCodeMessage(request.getRequestURI());</span>
+<span class="nc" id="L64">		error.setStatus(435);</span>
+<span class="nc" id="L65">		return error;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>UtilisateurServiceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.service</a> &gt; <span class="el_source">UtilisateurServiceTest.java</span></div><h1>UtilisateurServiceTest.java</h1><pre class="source lang-java linenums">package sid.org.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import sid.org.classe.Livre;
+import sid.org.classe.Pret;
+import sid.org.classe.Roles;
+import sid.org.classe.Sessions;
+import sid.org.classe.Utilisateur;
+import sid.org.dao.LivreRepository;
+import sid.org.dao.PretRepository;
+import sid.org.dao.RolesRepository;
+import sid.org.dao.UtilisateurRepository;
+import sid.org.dto.UtilisateurDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.MotDePasseInvalidException;
+import sid.org.exception.ResultNotFoundException;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+
+@ContextConfiguration
+
+<span class="fc" id="L47">public class UtilisateurServiceTest {</span>
+
+	@Autowired
+	private UtilisateurService utilisateurService;
+	@MockBean
+	private UtilisateurRepository utilisateurRepository;
+	@MockBean
+	private PretRepository pretRepository;
+	@MockBean
+	private RolesRepository rolesRepository;
+	@MockBean
+	private LivreRepository livreRepository;
+	@MockBean
+	PasswordEncoder passwordEncoder;
+
+	@BeforeEach
+	void setMockOutput() {
+
+<span class="nc" id="L65">	}</span>
+
+	@Test
+	public void voirUnUtilisateur() throws ResultNotFoundException {
+<span class="fc" id="L69">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L70">		Utilisateur alex = new Utilisateur(&quot;Marcel&quot;, &quot;marcel@gmail.com&quot;, &quot;14 avenue du chene&quot;, &quot;marcel&quot;, &quot;65123&quot;, user);</span>
+<span class="fc" id="L71">		Mockito.when(utilisateurRepository.findByMail(&quot;marcel@gmail.com&quot;)).thenReturn(Optional.of(alex));</span>
+<span class="fc" id="L72">		Utilisateur utilisateur = utilisateurService.voirUtilisateur(&quot;marcel@gmail.com&quot;);</span>
+<span class="fc" id="L73">		assertEquals(utilisateur.getMail(), &quot;marcel@gmail.com&quot;);</span>
+<span class="fc" id="L74">		assertEquals(utilisateur.getNom(), &quot;Marcel&quot;);</span>
+
+<span class="fc" id="L76">	}</span>
+
+	@Test
+	public void voirUnUtilisateurResultNotFoundException() throws ResultNotFoundException {
+<span class="fc" id="L80">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@laposte.com&quot;)).thenReturn(Optional.empty());</span>
+<span class="fc" id="L81">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L82">			Utilisateur utilisateur = utilisateurService.voirUtilisateur(&quot;bob@laposte.com&quot;);</span>
+<span class="nc" id="L83">		});</span>
+
+<span class="fc" id="L85">		String expectedMessage = &quot;Utilisateur introuvable&quot;;</span>
+<span class="fc" id="L86">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L88">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L90">	}</span>
+
+	@Test
+	public void creerUnUtilisateur() throws EntityAlreadyExistException, BadException {
+		// GIVEN
+<span class="fc" id="L95">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L96">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;22222&quot;, user);</span>
+
+<span class="fc" id="L98">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@laposte.com&quot;)).thenReturn(Optional.empty());</span>
+<span class="fc" id="L99">		Mockito.when(passwordEncoder.encode(&quot;bob&quot;)).thenReturn(&quot;bob&quot;);</span>
+<span class="fc" id="L100">		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);</span>
+<span class="fc" id="L101">		Mockito.when(rolesRepository.findByNom(Mockito.any(String.class))).thenReturn(Optional.of(user));</span>
+
+		// WHEN
+<span class="fc" id="L104">		UtilisateurDto userDto = new UtilisateurDto(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;22222&quot;);</span>
+<span class="fc" id="L105">		Utilisateur user1 = utilisateurService.creerUtilisateur(userDto, &quot;utilisateur&quot;);</span>
+
+		// THEN
+<span class="fc" id="L108">		assertEquals(user1.getMail(), &quot;bob@laposte.com&quot;);</span>
+<span class="fc" id="L109">		assertEquals(user1.getMotDePasse(), &quot;bob&quot;);</span>
+<span class="fc" id="L110">	}</span>
+
+	@Test
+	public void creerUnUtilisateurUtilisateurException() throws EntityAlreadyExistException, BadException {
+		// GIVEN
+<span class="fc" id="L115">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L116">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;22222&quot;, user);</span>
+
+<span class="fc" id="L118">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@laposte.com&quot;)).thenReturn(Optional.of(utilisateur));</span>
+<span class="fc" id="L119">		Mockito.when(passwordEncoder.encode(&quot;bob&quot;)).thenReturn(&quot;bob&quot;);</span>
+<span class="fc" id="L120">		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);</span>
+<span class="fc" id="L121">		Mockito.when(rolesRepository.findByNom(Mockito.any(String.class))).thenReturn(Optional.of(user));</span>
+
+		// WHEN
+<span class="fc" id="L124">		UtilisateurDto userDto = new UtilisateurDto(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;22222&quot;);</span>
+<span class="fc" id="L125">		EntityAlreadyExistException exception = assertThrows(EntityAlreadyExistException.class, () -&gt; {</span>
+<span class="nc" id="L126">			Utilisateur user1 = utilisateurService.creerUtilisateur(userDto, &quot;utilisateur&quot;);</span>
+<span class="nc" id="L127">		});</span>
+
+<span class="fc" id="L129">		String expectedMessage = &quot;le mail est deja utilise&quot;;</span>
+<span class="fc" id="L130">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L132">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L134">	}</span>
+
+	@Test
+	public void creerUnUtilisateurcodePostalException() throws EntityAlreadyExistException, BadException {
+		// GIVEN
+<span class="fc" id="L139">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L140">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;,</span>
+				user);
+
+<span class="fc" id="L143">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@laposte.com&quot;)).thenReturn(Optional.empty());</span>
+<span class="fc" id="L144">		Mockito.when(passwordEncoder.encode(&quot;bob&quot;)).thenReturn(&quot;bob&quot;);</span>
+<span class="fc" id="L145">		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);</span>
+<span class="fc" id="L146">		Mockito.when(rolesRepository.findByNom(Mockito.any(String.class))).thenReturn(Optional.of(user));</span>
+
+		// WHEN
+<span class="fc" id="L149">		UtilisateurDto userDto = new UtilisateurDto(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;222222&quot;);</span>
+<span class="fc" id="L150">		BadException exception = assertThrows(BadException.class, () -&gt; {</span>
+<span class="nc" id="L151">			Utilisateur user1 = utilisateurService.creerUtilisateur(userDto, &quot;utilisateur&quot;);</span>
+<span class="nc" id="L152">		});</span>
+
+<span class="fc" id="L154">		String expectedMessage = &quot;le code postal doit contenir 5 chiffres&quot;;</span>
+<span class="fc" id="L155">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L157">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L159">	}</span>
+
+	@Test
+	public void modifierUnUtilisateur() throws ResultNotFoundException {
+<span class="fc" id="L163">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L164">		Roles employe = new Roles(&quot;employe&quot;);</span>
+<span class="fc" id="L165">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;,</span>
+				user);
+<span class="fc" id="L167">		Mockito.when(utilisateurRepository.findById(Mockito.any(Long.class))).thenReturn(Optional.of(utilisateur));</span>
+<span class="fc" id="L168">		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);</span>
+<span class="fc" id="L169">		Mockito.when(rolesRepository.findByNom(Mockito.anyString())).thenReturn(Optional.of(employe));</span>
+
+<span class="fc" id="L171">		Utilisateur utilisateur1 = utilisateurService.modifierUtilisateur(1L, &quot;employe&quot;);</span>
+
+<span class="fc" id="L173">		assertEquals(utilisateur1.getRoles().getNom(), &quot;employe&quot;);</span>
+
+<span class="fc" id="L175">	}</span>
+
+	@Test
+	public void modifierUnUtilisateurUserNotFound() throws ResultNotFoundException {
+<span class="fc" id="L179">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L180">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;,</span>
+				user);
+<span class="fc" id="L182">		Mockito.when(utilisateurRepository.findById(Mockito.any(Long.class))).thenReturn(Optional.empty());</span>
+<span class="fc" id="L183">		Mockito.when(utilisateurRepository.save(Mockito.any(Utilisateur.class))).thenReturn(utilisateur);</span>
+<span class="fc" id="L184">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L185">			utilisateurService.modifierUtilisateur(1L, &quot;employe&quot;);</span>
+<span class="nc" id="L186">		});</span>
+
+<span class="fc" id="L188">		String expectedMessage = &quot;Utilisateur introuvable&quot;;</span>
+<span class="fc" id="L189">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L191">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L193">	}</span>
+
+	@Test
+	public void supprimerUnUtilisateur() throws ResultNotFoundException {
+
+<span class="fc" id="L198">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L199">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;,</span>
+				user);
+<span class="fc" id="L201">		Livre livre = new Livre();</span>
+<span class="fc" id="L202">		Pret pret = new Pret(1L, new Date(), new Date(), &quot;en cours&quot;, 1, livre, utilisateur);</span>
+<span class="fc" id="L203">		List&lt;Pret&gt; listPret = new ArrayList&lt;Pret&gt;();</span>
+<span class="fc" id="L204">		listPret.add(pret);</span>
+<span class="fc" id="L205">		Page&lt;Pret&gt; listPrets = new PageImpl&lt;Pret&gt;(listPret);</span>
+
+<span class="fc" id="L207">		Mockito.when(utilisateurRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(utilisateur));</span>
+<span class="fc" id="L208">		Mockito.when(pretRepository.findByUtilisateur(Mockito.any(Utilisateur.class), Mockito.any(Pageable.class)))</span>
+<span class="fc" id="L209">				.thenReturn(listPrets);</span>
+<span class="fc" id="L210">		Mockito.doNothing().when(utilisateurRepository).delete(Mockito.any(Utilisateur.class));</span>
+
+<span class="fc" id="L212">		Mockito.doNothing().when(pretRepository).deleteAll(listPrets);</span>
+
+<span class="fc" id="L214">		utilisateurService.supprimerUtilisateur(1L);</span>
+
+<span class="fc" id="L216">	}</span>
+
+	@Test
+	public void voirListeUtilisateur() throws ResultNotFoundException {
+<span class="fc" id="L220">		int page = 2;</span>
+<span class="fc" id="L221">		int size = 2;</span>
+<span class="fc" id="L222">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L223">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;,</span>
+				user);
+<span class="fc" id="L225">		Livre livre = new Livre();</span>
+<span class="fc" id="L226">		Pret pret = new Pret(1L, new Date(), new Date(), &quot;en cours&quot;, 1, livre, utilisateur);</span>
+<span class="fc" id="L227">		List&lt;Utilisateur&gt; listUser = new ArrayList&lt;Utilisateur&gt;();</span>
+<span class="fc" id="L228">		listUser.add(utilisateur);</span>
+<span class="fc" id="L229">		Page&lt;Utilisateur&gt; listUsers = new PageImpl&lt;Utilisateur&gt;(listUser);</span>
+
+<span class="fc" id="L231">		Mockito.when(utilisateurRepository.findAll(Mockito.any(PageRequest.class))).thenReturn(listUsers);</span>
+
+<span class="fc" id="L233">		Page&lt;Utilisateur&gt; listUsers1 = utilisateurService.voirListeUtilisateurs(page, size);</span>
+
+<span class="fc" id="L235">		assertEquals(listUsers1.getSize(), 1);</span>
+
+<span class="fc" id="L237">	}</span>
+
+	@Test
+	public void voirListeUtilisateurSize0() throws ResultNotFoundException {
+<span class="fc" id="L241">		int page = 2;</span>
+<span class="fc" id="L242">		int size = 0;</span>
+<span class="fc" id="L243">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L244">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@laposte.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;,</span>
+				user);
+<span class="fc" id="L246">		Livre livre = new Livre();</span>
+<span class="fc" id="L247">		Pret pret = new Pret(1L, new Date(), new Date(), &quot;en cours&quot;, 1, livre, utilisateur);</span>
+<span class="fc" id="L248">		List&lt;Utilisateur&gt; listUser = new ArrayList&lt;Utilisateur&gt;();</span>
+<span class="fc" id="L249">		listUser.add(utilisateur);</span>
+<span class="fc" id="L250">		Page&lt;Utilisateur&gt; listUsers = new PageImpl&lt;Utilisateur&gt;(listUser);</span>
+
+<span class="fc" id="L252">		Mockito.when(utilisateurRepository.findAll(Mockito.any(PageRequest.class))).thenReturn(listUsers);</span>
+
+<span class="fc" id="L254">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L255">			utilisateurService.voirListeUtilisateurs(page, size);</span>
+<span class="nc" id="L256">		});</span>
+
+<span class="fc" id="L258">		String expectedMessage = &quot;le parametre size est incorrect&quot;;</span>
+<span class="fc" id="L259">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L261">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L263">	}</span>
+
+	@Test
+	public void connectionUtilisateur() throws ResultNotFoundException, MotDePasseInvalidException {
+<span class="fc" id="L267">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L268">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@gmail.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;, user);</span>
+<span class="fc" id="L269">		Sessions session = new Sessions(&quot;bob@gmail.com&quot;, &quot;bob&quot;);</span>
+
+<span class="fc" id="L271">		boolean debug = true;</span>
+
+<span class="fc" id="L273">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@gmail.com&quot;)).thenReturn(Optional.of(utilisateur));</span>
+
+<span class="fc" id="L275">		Mockito.when(passwordEncoder.matches(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(debug);</span>
+
+<span class="fc" id="L277">		Optional&lt;Utilisateur&gt; user1 = utilisateurService.connectionUtilisateur(session);</span>
+
+<span class="fc" id="L279">		assertEquals(user1.get().getMail(), &quot;bob@gmail.com&quot;);</span>
+
+<span class="fc" id="L281">	}</span>
+
+	@Test
+	public void connectionUtilisateurInvalideMotDePasse() throws ResultNotFoundException, MotDePasseInvalidException {
+<span class="fc" id="L285">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L286">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@gmail.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;, user);</span>
+<span class="fc" id="L287">		Sessions session = new Sessions(&quot;bob@gmail.com&quot;, &quot;bob&quot;);</span>
+<span class="fc" id="L288">		boolean debug = false;</span>
+
+<span class="fc" id="L290">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@gmail.com&quot;)).thenReturn(Optional.of(utilisateur));</span>
+
+<span class="fc" id="L292">		Mockito.when(passwordEncoder.matches(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(debug);</span>
+
+<span class="fc" id="L294">		MotDePasseInvalidException exception = assertThrows(MotDePasseInvalidException.class, () -&gt; {</span>
+
+<span class="nc" id="L296">			Optional&lt;Utilisateur&gt; user1 = utilisateurService.connectionUtilisateur(session);</span>
+<span class="nc" id="L297">		});</span>
+
+<span class="fc" id="L299">		String expectedMessage = &quot;mot de passe invalide&quot;;</span>
+<span class="fc" id="L300">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L302">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+		/* assertEquals(user1.get().getMail(), &quot;bob@gmail.com&quot;); */
+
+<span class="fc" id="L306">	}</span>
+
+	@Test
+	public void connectionUtilisateurUtilisateurIntrouvable()
+			throws ResultNotFoundException, MotDePasseInvalidException {
+<span class="fc" id="L311">		Roles user = new Roles(&quot;user&quot;);</span>
+<span class="fc" id="L312">		Utilisateur utilisateur = new Utilisateur(&quot;emile&quot;, &quot;bob@gmail.com&quot;, &quot;40 rue du chêne&quot;, &quot;bob&quot;, &quot;2222222&quot;, user);</span>
+<span class="fc" id="L313">		Sessions session = new Sessions(&quot;bob@gmail.com&quot;, &quot;bob&quot;);</span>
+
+<span class="fc" id="L315">		Mockito.when(utilisateurRepository.findByMail(&quot;bob@gmail.com&quot;)).thenReturn(Optional.empty());</span>
+
+<span class="fc" id="L317">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L318">			Optional&lt;Utilisateur&gt; user1 = utilisateurService.connectionUtilisateur(session);</span>
+
+<span class="nc" id="L320">		});</span>
+
+<span class="fc" id="L322">		String expectedMessage = &quot;Il n'existe aucun compte contenant cette adresse e-mail&quot;;</span>
+<span class="fc" id="L323">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L325">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L327">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Utilisateur.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.classe</a> &gt; <span class="el_source">Utilisateur.java</span></div><h1>Utilisateur.java</h1><pre class="source lang-java linenums">package sid.org.classe;
+
+import java.util.Collection;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
+
+/**
+ * 
+ * @author guali
+ *
+ */
+@Entity
+public class Utilisateur {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long codeUtilisateur;
+	private String nom;
+	@Column(unique = true)
+	private String mail;
+	private String adresse;
+	private String motDePasse;
+	@Size(min = 5, max = 5, message = &quot;le code postal doit etre a 5 chiffres&quot;)
+	private String codePostal;
+	@OneToMany(mappedBy = &quot;utilisateur&quot;, fetch = FetchType.LAZY)
+	private Collection&lt;Pret&gt; prets;
+	@ManyToOne
+	@JoinColumn(name = &quot;ID_ROLES&quot;)
+	private Roles roles;
+
+	public Utilisateur() {
+<span class="fc" id="L40">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="fc" id="L42">	}</span>
+
+	public Utilisateur(String nom, String mail, String adresse, String motDePasse, String codePostal, Roles roles) {
+<span class="fc" id="L45">		super();</span>
+<span class="fc" id="L46">		this.nom = nom;</span>
+<span class="fc" id="L47">		this.mail = mail;</span>
+<span class="fc" id="L48">		this.adresse = adresse;</span>
+<span class="fc" id="L49">		this.motDePasse = motDePasse;</span>
+<span class="fc" id="L50">		this.codePostal = codePostal;</span>
+<span class="fc" id="L51">		this.roles = roles;</span>
+<span class="fc" id="L52">	}</span>
+
+	public String getNom() {
+<span class="fc" id="L55">		return nom;</span>
+	}
+
+	public void setNom(String nom) {
+<span class="fc" id="L59">		this.nom = nom;</span>
+<span class="fc" id="L60">	}</span>
+
+	public String getMail() {
+<span class="fc" id="L63">		return mail;</span>
+	}
+
+	public void setMail(String mail) {
+<span class="fc" id="L67">		this.mail = mail;</span>
+<span class="fc" id="L68">	}</span>
+
+	public String getAdresse() {
+<span class="nc" id="L71">		return adresse;</span>
+	}
+
+	public void setAdresse(String adresse) {
+<span class="fc" id="L75">		this.adresse = adresse;</span>
+<span class="fc" id="L76">	}</span>
+
+	public String getMotDePasse() {
+<span class="fc" id="L79">		return motDePasse;</span>
+	}
+
+	public void setMotDePasse(String motDePasse) {
+<span class="fc" id="L83">		this.motDePasse = motDePasse;</span>
+<span class="fc" id="L84">	}</span>
+
+	public String getCodePostal() {
+<span class="nc" id="L87">		return codePostal;</span>
+	}
+
+	public void setCodePostal(String codePostal) {
+<span class="fc" id="L91">		this.codePostal = codePostal;</span>
+<span class="fc" id="L92">	}</span>
+
+	public Roles getRoles() {
+<span class="fc" id="L95">		return roles;</span>
+	}
+
+	public void setRoles(Roles roles) {
+<span class="fc" id="L99">		this.roles = roles;</span>
+<span class="fc" id="L100">	}</span>
+
+	public Long getCodeUtilisateur() {
+<span class="nc" id="L103">		return codeUtilisateur;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

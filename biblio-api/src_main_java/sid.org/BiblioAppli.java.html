@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BiblioAppli.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org</a> &gt; <span class="el_source">BiblioAppli.java</span></div><h1>BiblioAppli.java</h1><pre class="source lang-java linenums">package sid.org;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+<span class="fc" id="L9">public class BiblioAppli {</span>
+<span class="fc" id="L10">	private static final Logger logger = LoggerFactory.getLogger(BiblioAppli.class);</span>
+
+	public static void main(String[] args) {
+<span class="nc" id="L13">		SpringApplication.run(BiblioAppli.class, args);</span>
+<span class="nc" id="L14">		logger.info(&quot;Biblio-api Started........&quot;);</span>
+<span class="nc" id="L15">	}</span>
+
+	/*
+	 * @Autowired private RolesRepository rolesRepository;
+	 * 
+	 * @Autowired private LivreService livreService;
+	 * 
+	 * @Autowired private UtilisateurService utilisateurService;
+	 * 
+	 * @Autowired private PretService pretService;
+	 * 
+	 * @Autowired private PretRepository pretRepository;
+	 * 
+	 * @Autowired private LivreRepository livreRepository;
+	 * 
+	 * @Autowired private DateService dateService;
+	 * 
+	 * @Autowired private PasswordEncoder passwordEncoder;
+	 * 
+	 * @Autowired private UtilisateurRepository utilisateurRepository;
+	 * 
+	 * @Override public void run(String... args) throws Exception {
+	 * 
+	 * Roles role1 = rolesRepository.save(new Roles(&quot;user&quot;)); Roles role2 =
+	 * rolesRepository.save(new Roles(&quot;employe&quot;)); Roles role3 =
+	 * rolesRepository.save(new Roles(&quot;admin&quot;)); Utilisateur admin =
+	 * utilisateurService.creerUtilisateur( new UtilisateurDto(&quot;admin&quot;,
+	 * &quot;admin@gmail.com&quot;, &quot; 30 rue du Lac&quot;, &quot;admin&quot;, &quot;93450&quot;), &quot;admin&quot;); Utilisateur
+	 * employe = utilisateurService.creerUtilisateur( new UtilisateurDto(&quot;Jean&quot;,
+	 * &quot;jean@gmail.com&quot;, &quot;25 rue de la rose&quot;, &quot;employe&quot;, &quot;94520&quot;), &quot;employe&quot;);
+	 * Utilisateur user1 = utilisateurService.creerUtilisateur( new
+	 * UtilisateurDto(&quot;Michel&quot;, &quot;michel@gmail.com&quot;, &quot;34 rue de chretiente&quot;,
+	 * &quot;michel&quot;, &quot;28450&quot;), &quot;user&quot;); Utilisateur user2 =
+	 * utilisateurService.creerUtilisateur( new UtilisateurDto(&quot;Bob&quot;,
+	 * &quot;bob@laposte.com&quot;, &quot;8rue de le scandinavie&quot;, &quot;bob&quot;, &quot;85641&quot;), &quot;user&quot;);
+	 * Utilisateur user3 = utilisateurService.creerUtilisateur( new
+	 * UtilisateurDto(&quot;Marcel&quot;, &quot;marcel@gmail.com&quot;, &quot;14 avenue du chene&quot;, &quot;marcel&quot;,
+	 * &quot;65123&quot;), &quot;user&quot;); Utilisateur user4 = utilisateurService.creerUtilisateur(
+	 * new UtilisateurDto(&quot;Marcel&quot;, &quot;julien@gmail.com&quot;, &quot;14 avenue du chene&quot;,
+	 * &quot;julien&quot;, &quot;65123&quot;), &quot;user&quot;);
+	 * 
+	 * utilisateurService.creerUtilisateur(new UtilisateurDto(&quot;batch&quot;, &quot;batch&quot;,
+	 * &quot; adresse7&quot;, &quot;batch&quot;, &quot;56776&quot;), &quot;user&quot;); Livre livre1 =
+	 * livreService.createLivre( new LivreDto(&quot;les trois mousquetaires&quot;,
+	 * &quot;Alexandre DUMAS&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement1&quot;, 1)); Livre livre2 =
+	 * livreService .createLivre(new LivreDto(&quot;Bel-ami&quot;, &quot;Guy de Maupassant&quot;,
+	 * &quot;type2&quot;, &quot;section2&quot;, &quot;emplacement1&quot;, 1)); Livre livre3 =
+	 * livreService.createLivre( new LivreDto(&quot;le bossu de notre dame&quot;,
+	 * &quot;Henry Polac &quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement1&quot;, 1));
+	 * 
+	 * }
+	 */
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

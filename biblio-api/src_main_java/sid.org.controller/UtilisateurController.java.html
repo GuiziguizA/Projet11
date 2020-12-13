@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>UtilisateurController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.controller</a> &gt; <span class="el_source">UtilisateurController.java</span></div><h1>UtilisateurController.java</h1><pre class="source lang-java linenums">package sid.org.controller;
+
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import sid.org.classe.Sessions;
+import sid.org.classe.Utilisateur;
+import sid.org.dto.UtilisateurDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.MotDePasseInvalidException;
+import sid.org.exception.ResultNotFoundException;
+import sid.org.service.UtilisateurService;
+
+@RestController
+@Api(value = &quot;Api Utilisateurs&quot;, description = &quot;Api Utilisateurs&quot;)
+<span class="fc" id="L34">public class UtilisateurController {</span>
+
+	@Value(&quot;${role.default}&quot;)
+	private String roleDefault;
+	@Autowired
+	private UtilisateurService utilisateurService;
+
+	@GetMapping(&quot;/user&quot;)
+	@ApiOperation(value = &quot;affiche un utilisateur en fonction de son mail&quot;, response = UtilisateurController.class)
+	public Utilisateur afficherUtilisateurs(@RequestParam String mail) throws ResultNotFoundException {
+
+<span class="nc" id="L45">		Utilisateur user = utilisateurService.voirUtilisateur(mail);</span>
+<span class="nc" id="L46">		return user;</span>
+
+	}
+
+	@PostMapping(&quot;/users/identity&quot;)
+	@ApiOperation(value = &quot;identification de l'utilisateur&quot;, response = UtilisateurController.class)
+	public Optional&lt;Utilisateur&gt; afficherUtilisateurs(@RequestBody Sessions sessions)
+			throws ResultNotFoundException, MotDePasseInvalidException {
+
+<span class="nc" id="L55">		Optional&lt;Utilisateur&gt; user = utilisateurService.connectionUtilisateur(sessions);</span>
+<span class="nc" id="L56">		return user;</span>
+
+	}
+
+	@GetMapping(&quot;/users&quot;)
+	@ApiOperation(value = &quot;affiche une Page avec tous les utilisateurs&quot;, response = UtilisateurController.class)
+	public Page&lt;Utilisateur&gt; afficherUtilisateurs(@RequestParam int page, @RequestParam int size)
+			throws ResultNotFoundException {
+
+		Page&lt;Utilisateur&gt; users;
+
+<span class="nc" id="L67">		users = utilisateurService.voirListeUtilisateurs(page, size);</span>
+<span class="nc" id="L68">		return users;</span>
+
+	}
+
+	@PostMapping(&quot;/users&quot;)
+	@ApiOperation(value = &quot;ajouter un utilisateur &quot;, response = UtilisateurController.class)
+	public Utilisateur creerUtilisateur(
+			@ApiParam(value = &quot;Ajouter UtilisateurDto dans le body&quot;, required = true) @Valid @RequestBody UtilisateurDto utilisateurDto)
+			throws ResultNotFoundException, EntityAlreadyExistException, BadException {
+
+<span class="nc" id="L78">		Utilisateur user = utilisateurService.creerUtilisateur(utilisateurDto, roleDefault);</span>
+<span class="nc" id="L79">		return user;</span>
+
+	}
+
+	@PutMapping(&quot;/users/{id}&quot;)
+	@Secured(value = { &quot;ROLE_admin&quot; })
+	@ApiOperation(value = &quot;modifier le statut de l'utilisateur&quot;, response = UtilisateurController.class)
+	public Utilisateur modifierUtilisateur(@PathVariable Long id,
+			@ApiParam(value = &quot;statut dans le body&quot;, required = true) @Valid @RequestBody String statut)
+			throws ResultNotFoundException {
+
+<span class="nc" id="L90">		Utilisateur user = utilisateurService.modifierUtilisateur(id, statut);</span>
+<span class="nc" id="L91">		return user;</span>
+
+	}
+
+	@Secured(value = { &quot;ROLE_admin&quot; })
+	@DeleteMapping(&quot;/users/{id}&quot;)
+	@ApiOperation(value = &quot;supprimer un utilisateur&quot;, response = UtilisateurController.class)
+	public void supprimerUtilisateur(@PathVariable Long id) throws ResultNotFoundException {
+
+<span class="nc" id="L100">		utilisateurService.supprimerUtilisateur(id);</span>
+
+<span class="nc" id="L102">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CustomUserDetailService.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.config</a> &gt; <span class="el_source">CustomUserDetailService.java</span></div><h1>CustomUserDetailService.java</h1><pre class="source lang-java linenums">package sid.org.config;
+
+
+  import java.util.Optional;
+  
+  import org.springframework.beans.factory.annotation.Autowired; import
+  org.springframework.security.core.userdetails.User; import
+  org.springframework.security.core.userdetails.UserDetails; import
+  org.springframework.security.core.userdetails.UserDetailsService; import
+  org.springframework.security.core.userdetails.UsernameNotFoundException;
+  
+  import org.springframework.stereotype.Service;
+  
+  import sid.org.classe.Utilisateur; import sid.org.dao.UtilisateurRepository;
+ 
+
+  @Service
+<span class="fc" id="L18">  public class CustomUserDetailService implements UserDetailsService{</span>
+  
+  
+  
+  
+  @Autowired 
+  private UtilisateurRepository utilisateurRepository;
+  
+  
+ /**
+	 * Modification du UserDetails de spring Security
+	 * 
+	 * 
+	 * @param mail
+	 * @return User.withUsername(utilisateur.get().getMail()) .password(
+	 *         utilisateur.get().getPassword())
+	 *         .roles(utilisateur.get().getRole().getNom()).build();
+	 */
+		  @Override public UserDetails loadUserByUsername(String mail) throws
+		  UsernameNotFoundException { Optional&lt;Utilisateur&gt;
+<span class="nc" id="L38">		  utilisateur=utilisateurRepository.findByMail(mail);</span>
+		  
+<span class="nc bnc" id="L40" title="All 2 branches missed.">		  if(!utilisateur.isPresent()) { throw new</span>
+		  UsernameNotFoundException(&quot;l'utilisateurn'existe pas &quot;); }
+		  
+		  
+<span class="nc" id="L44">		  return User.withUsername(utilisateur.get().getMail()) .password(</span>
+<span class="nc" id="L45">		  utilisateur.get().getMotDePasse())</span>
+<span class="nc" id="L46">		  .roles(utilisateur.get().getRoles().getNom()).build(); }</span>
+		  
+		  }
+		 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

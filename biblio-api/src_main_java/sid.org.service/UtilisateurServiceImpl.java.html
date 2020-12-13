@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>UtilisateurServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.service</a> &gt; <span class="el_source">UtilisateurServiceImpl.java</span></div><h1>UtilisateurServiceImpl.java</h1><pre class="source lang-java linenums">package sid.org.service;
+
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import sid.org.classe.Pret;
+import sid.org.classe.Roles;
+import sid.org.classe.Sessions;
+import sid.org.classe.Utilisateur;
+import sid.org.dao.PretRepository;
+import sid.org.dao.RolesRepository;
+import sid.org.dao.UtilisateurRepository;
+import sid.org.dto.UtilisateurDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.MotDePasseInvalidException;
+import sid.org.exception.ResultNotFoundException;
+
+@Component
+<span class="fc" id="L28">public class UtilisateurServiceImpl implements UtilisateurService {</span>
+	@Autowired
+	private UtilisateurRepository utilisateurRepository;
+
+	@Autowired
+	private PretRepository pretRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private RolesRepository rolesRepository;
+
+	/**
+	 * creation d'un utilisateur
+	 * 
+	 * @param utilisateurDto
+	 * @param role
+	 * 
+	 * @return Utilisateur
+	 * @throws BadException
+	 */
+	@Override
+	public Utilisateur creerUtilisateur(UtilisateurDto utilisateurDto, String role)
+			throws EntityAlreadyExistException, BadException {
+<span class="fc" id="L51">		Optional&lt;Utilisateur&gt; user = utilisateurRepository.findByMail(utilisateurDto.getMail());</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">		if (user.isPresent()) {</span>
+<span class="fc" id="L53">			throw new EntityAlreadyExistException(&quot;le mail est deja utilise&quot;);</span>
+		}
+
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		if (utilisateurDto.getCodePostal().length() != 5) {</span>
+<span class="fc" id="L57">			throw new BadException(&quot;le code postal doit contenir 5 chiffres&quot;);</span>
+		}
+
+<span class="fc" id="L60">		utilisateurDto.setMotDePasse(passwordEncoder.encode(utilisateurDto.getMotDePasse()));</span>
+<span class="fc" id="L61">		Utilisateur utilisateur = convertToUtilisateur(utilisateurDto);</span>
+<span class="fc" id="L62">		Optional&lt;Roles&gt; roles = rolesRepository.findByNom(role);</span>
+<span class="fc" id="L63">		utilisateur.setRoles(roles.get());</span>
+<span class="fc" id="L64">		return utilisateurRepository.save(utilisateur);</span>
+	}
+
+	/**
+	 * Modifier le statut d'un utilisateur
+	 * 
+	 * @param id
+	 * @param statut
+	 * 
+	 * @return Utilisateur
+	 */
+	@Override
+	public Utilisateur modifierUtilisateur(Long id, String statut) throws ResultNotFoundException {
+<span class="fc" id="L77">		Optional&lt;Utilisateur&gt; user = utilisateurRepository.findById(id);</span>
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		if (!user.isPresent()) {</span>
+<span class="fc" id="L80">			throw new ResultNotFoundException(&quot;Utilisateur introuvable&quot;);</span>
+		}
+
+<span class="fc" id="L83">		Optional&lt;Roles&gt; roles = rolesRepository.findByNom(statut);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">		if (!roles.isPresent()) {</span>
+<span class="nc" id="L85">			throw new ResultNotFoundException(&quot;Role introuvable&quot;);</span>
+		}
+
+<span class="fc" id="L88">		user.get().setRoles(roles.get());</span>
+
+<span class="fc" id="L90">		return utilisateurRepository.save(user.get());</span>
+	}
+
+	/**
+	 * Supprimer un utilisateur
+	 * 
+	 * @param id
+	 * 
+	 * 
+	 * 
+	 */
+	@Override
+	@Transactional
+	public void supprimerUtilisateur(Long id) throws ResultNotFoundException {
+<span class="fc" id="L104">		Optional&lt;Utilisateur&gt; user = utilisateurRepository.findById(id);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">		if (!user.isPresent()) {</span>
+<span class="nc" id="L106">			throw new ResultNotFoundException(&quot;Utilisateur introuvable&quot;);</span>
+		}
+<span class="fc" id="L108">		Pageable pageable = PageRequest.of(2, 5);</span>
+<span class="fc" id="L109">		Page&lt;Pret&gt; listPretUtilisateur = pretRepository.findByUtilisateur(user.get(), pageable);</span>
+
+<span class="fc" id="L111">		utilisateurRepository.delete(user.get());</span>
+		/* pretRepository.deleteAll(listPretUtilisateur); */
+
+<span class="fc" id="L114">	}</span>
+
+	/**
+	 * afficher un utilisateur
+	 * 
+	 * @param mail
+	 * 
+	 * 
+	 * @return Utilisateur
+	 */
+	@Override
+	public Utilisateur voirUtilisateur(String mail) throws ResultNotFoundException {
+
+<span class="fc" id="L127">		Optional&lt;Utilisateur&gt; user = utilisateurRepository.findByMail(mail);</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		if (!user.isPresent()) {</span>
+<span class="fc" id="L129">			throw new ResultNotFoundException(&quot;Utilisateur introuvable&quot;);</span>
+		}
+
+<span class="fc" id="L132">		return user.get();</span>
+	}
+
+	/**
+	 * Afficher une Page d'utilisateurs
+	 * 
+	 * @param page
+	 * @param size
+	 * 
+	 * 
+	 * @return une page contenant des Utilisateurs
+	 */
+	@Override
+	public Page&lt;Utilisateur&gt; voirListeUtilisateurs(int page, int size) throws ResultNotFoundException {
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		if (size == 0) {</span>
+<span class="fc" id="L147">			throw new ResultNotFoundException(&quot;le parametre size est incorrect&quot;);</span>
+		}
+<span class="fc" id="L149">		Pageable pageable = PageRequest.of(page, size);</span>
+<span class="fc" id="L150">		Page&lt;Utilisateur&gt; utilisateurs = utilisateurRepository.findAll(pageable);</span>
+
+<span class="fc" id="L152">		return utilisateurs;</span>
+	}
+
+	/**
+	 * return un utilisateur en fonction du mail de l'objet Sessions
+	 * 
+	 * @param sessions
+	 * 
+	 * @return Utilisateur
+	 */
+
+	@Override
+	public Optional&lt;Utilisateur&gt; connectionUtilisateur(Sessions sessions)
+			throws ResultNotFoundException, MotDePasseInvalidException {
+<span class="fc" id="L166">		Optional&lt;Utilisateur&gt; user = utilisateurRepository.findByMail(sessions.getMail());</span>
+
+<span class="fc bfc" id="L168" title="All 2 branches covered.">		if (!user.isPresent()) {</span>
+<span class="fc" id="L169">			throw new ResultNotFoundException(&quot;Il n'existe aucun compte contenant cette adresse e-mail&quot;);</span>
+		}
+<span class="fc bfc" id="L171" title="All 2 branches covered.">		if (!passwordEncoder.matches(sessions.getMotDePasse(), user.get().getMotDePasse())) {</span>
+<span class="fc" id="L172">			throw new MotDePasseInvalidException(&quot;mot de passe invalide&quot;);</span>
+		}
+
+<span class="fc" id="L175">		return user;</span>
+
+	}
+
+	/**
+	 * Convertie un UtilsateurDto en Utilisateur
+	 * 
+	 * @param UtilisateurDto
+	 * 
+	 * @return Utilisateur
+	 */
+
+	private Utilisateur convertToUtilisateur(UtilisateurDto utilisateurDto) {
+<span class="fc" id="L188">		Utilisateur utilisateur = new Utilisateur();</span>
+<span class="fc" id="L189">		utilisateur.setAdresse(utilisateurDto.getAdresse());</span>
+<span class="fc" id="L190">		utilisateur.setCodePostal(utilisateurDto.getCodePostal());</span>
+<span class="fc" id="L191">		utilisateur.setMail(utilisateurDto.getMail());</span>
+<span class="fc" id="L192">		utilisateur.setMotDePasse(utilisateurDto.getMotDePasse());</span>
+<span class="fc" id="L193">		utilisateur.setNom(utilisateurDto.getNom());</span>
+<span class="fc" id="L194">		return utilisateur;</span>
+
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LivreServiceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.service</a> &gt; <span class="el_source">LivreServiceTest.java</span></div><h1>LivreServiceTest.java</h1><pre class="source lang-java linenums">package sid.org.service;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import sid.org.classe.Livre;
+import sid.org.dao.LivreRepository;
+import sid.org.dto.LivreDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.ResultNotFoundException;
+import sid.org.specification.LivreCriteria;
+import sid.org.specification.LivreSpecificationImpl;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+
+@ContextConfiguration
+<span class="fc" id="L36">public class LivreServiceTest {</span>
+
+	@MockBean
+	LivreRepository livreRepository;
+	@Autowired
+	LivreService livreService;
+
+	@Test
+	public void createLivre() throws EntityAlreadyExistException, BadException {
+<span class="fc" id="L45">		List&lt;Livre&gt; listLivre = new ArrayList&lt;Livre&gt;();</span>
+<span class="fc" id="L46">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+<span class="fc" id="L47">		LivreDto livreDto = new LivreDto(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1);</span>
+
+<span class="fc" id="L49">		Mockito.when(livreRepository.findByAuteurAndNom(Mockito.anyString(), Mockito.anyString()))</span>
+<span class="fc" id="L50">				.thenReturn(listLivre);</span>
+<span class="fc" id="L51">		Mockito.when(livreRepository.save(Mockito.any(Livre.class))).thenReturn(livre);</span>
+
+<span class="fc" id="L53">		Livre livre1 = livreService.createLivre(livreDto);</span>
+
+<span class="fc" id="L55">		assertEquals(livre1, livre);</span>
+
+<span class="fc" id="L57">	}</span>
+
+	@Test
+	public void createLivreExceptionLivreExist() throws EntityAlreadyExistException {
+<span class="fc" id="L61">		List&lt;Livre&gt; listLivre = new ArrayList&lt;Livre&gt;();</span>
+<span class="fc" id="L62">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+<span class="fc" id="L63">		LivreDto livreDto = new LivreDto(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1);</span>
+<span class="fc" id="L64">		listLivre.add(livre);</span>
+<span class="fc" id="L65">		Mockito.when(livreRepository.findByAuteurAndNom(Mockito.anyString(), Mockito.anyString()))</span>
+<span class="fc" id="L66">				.thenReturn(listLivre);</span>
+<span class="fc" id="L67">		Mockito.when(livreRepository.save(Mockito.any(Livre.class))).thenReturn(livre);</span>
+
+<span class="fc" id="L69">		EntityAlreadyExistException exception = assertThrows(EntityAlreadyExistException.class, () -&gt; {</span>
+<span class="nc" id="L70">			Livre livre1 = livreService.createLivre(livreDto);</span>
+<span class="nc" id="L71">		});</span>
+
+<span class="fc" id="L73">		String expectedMessage = &quot;Ce livre existe deja&quot;;</span>
+<span class="fc" id="L74">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L76">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L78">	}</span>
+
+	@Test
+	public void supprimerUnLivre() throws ResultNotFoundException {
+<span class="fc" id="L82">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+
+<span class="fc" id="L84">		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(livre));</span>
+<span class="fc" id="L85">		Mockito.doNothing().when(livreRepository).delete(livre);</span>
+
+<span class="fc" id="L87">		livreService.supprimerLivre(1L);</span>
+
+<span class="fc" id="L89">	}</span>
+
+	@Test
+	public void supprimerUnLivreExceptionLivreNotFound() throws ResultNotFoundException {
+<span class="fc" id="L93">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+
+<span class="fc" id="L95">		Mockito.when(livreRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());</span>
+<span class="fc" id="L96">		Mockito.doNothing().when(livreRepository).delete(livre);</span>
+
+<span class="fc" id="L98">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L99">			livreService.supprimerLivre(1L);</span>
+<span class="nc" id="L100">		});</span>
+
+<span class="fc" id="L102">		String expectedMessage = &quot;le livre existe pas&quot;;</span>
+<span class="fc" id="L103">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L105">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L107">	}</span>
+
+	@Test
+	public void afficherUnLivre() throws ResultNotFoundException {
+<span class="fc" id="L111">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+
+<span class="fc" id="L113">		Mockito.when(livreRepository.findByCodeLivre(Mockito.any())).thenReturn(Optional.of(livre));</span>
+
+<span class="fc" id="L115">		Livre livre1 = livreService.afficheUnLivre(1L);</span>
+
+<span class="fc" id="L117">		assertEquals(livre1.getAuteur(), livre.getAuteur());</span>
+<span class="fc" id="L118">		assertEquals(livre1.getNom(), livre.getNom());</span>
+<span class="fc" id="L119">	}</span>
+
+	@Test
+	public void afficherUnLivreExceptionNotFound() throws ResultNotFoundException {
+<span class="fc" id="L123">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+
+<span class="fc" id="L125">		Mockito.when(livreRepository.findByCodeLivre(Mockito.anyLong())).thenReturn(Optional.empty());</span>
+
+<span class="fc" id="L127">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L128">			Livre livre1 = livreService.afficheUnLivre(1L);</span>
+<span class="nc" id="L129">		});</span>
+
+<span class="fc" id="L131">		String expectedMessage = &quot;le livre existe pas&quot;;</span>
+<span class="fc" id="L132">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L134">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L136">	}</span>
+
+	@Test
+	public void searchLivres() throws ResultNotFoundException {
+<span class="fc" id="L140">		LivreCriteria livrecriteria = new LivreCriteria(1L, &quot;le&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, 1);</span>
+<span class="fc" id="L141">		LivreSpecificationImpl spec = Mockito.mock(LivreSpecificationImpl.class);</span>
+<span class="fc" id="L142">		int page = 1;</span>
+<span class="fc" id="L143">		int size = 3;</span>
+<span class="fc" id="L144">		Pageable pageable = Mockito.mock(Pageable.class);</span>
+<span class="fc" id="L145">		List&lt;Livre&gt; listLivre = new ArrayList&lt;Livre&gt;();</span>
+<span class="fc" id="L146">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+<span class="fc" id="L147">		listLivre.add(livre);</span>
+<span class="fc" id="L148">		Page&lt;Livre&gt; listlivres = new PageImpl&lt;Livre&gt;(listLivre);</span>
+
+<span class="fc" id="L150">		Mockito.when(livreRepository.findAll(Mockito.any(LivreSpecificationImpl.class), Mockito.any(Pageable.class)))</span>
+<span class="fc" id="L151">				.thenReturn(listlivres);</span>
+
+<span class="fc" id="L153">		Page&lt;Livre&gt; page1 = livreService.searchLivres(livrecriteria, page, size);</span>
+
+<span class="fc" id="L155">		assertEquals(page1.getSize(), 1l);</span>
+
+<span class="fc" id="L157">	}</span>
+
+	@Test
+	public void searchLivresSizePageNull() throws ResultNotFoundException {
+<span class="fc" id="L161">		LivreCriteria livrecriteria = new LivreCriteria(1L, &quot;le&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, 1);</span>
+<span class="fc" id="L162">		LivreSpecificationImpl spec = Mockito.mock(LivreSpecificationImpl.class);</span>
+<span class="fc" id="L163">		int page = 1;</span>
+<span class="fc" id="L164">		int size = 0;</span>
+<span class="fc" id="L165">		Pageable pageable = Mockito.mock(Pageable.class);</span>
+<span class="fc" id="L166">		List&lt;Livre&gt; listLivre = new ArrayList&lt;Livre&gt;();</span>
+<span class="fc" id="L167">		Livre livre = new Livre(&quot;les comptes&quot;, &quot;guiz&quot;, &quot;type1&quot;, &quot;section1&quot;, &quot;emplacement&quot;, 1, new ArrayList&lt;String&gt;());</span>
+<span class="fc" id="L168">		listLivre.add(livre);</span>
+<span class="fc" id="L169">		Page&lt;Livre&gt; listlivres = new PageImpl&lt;Livre&gt;(listLivre);</span>
+
+<span class="fc" id="L171">		Mockito.when(livreRepository.findAll(Mockito.any(LivreSpecificationImpl.class), Mockito.any(Pageable.class)))</span>
+<span class="fc" id="L172">				.thenReturn(listlivres);</span>
+
+<span class="fc" id="L174">		ResultNotFoundException exception = assertThrows(ResultNotFoundException.class, () -&gt; {</span>
+<span class="nc" id="L175">			Page&lt;Livre&gt; page1 = livreService.searchLivres(livrecriteria, page, size);</span>
+
+<span class="nc" id="L177">		});</span>
+
+<span class="fc" id="L179">		String expectedMessage = &quot;le parametre size est incorrect&quot;;</span>
+<span class="fc" id="L180">		String actualMessage = exception.getMessage();</span>
+
+<span class="fc" id="L182">		assertTrue(actualMessage.contains(expectedMessage));</span>
+
+<span class="fc" id="L184">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

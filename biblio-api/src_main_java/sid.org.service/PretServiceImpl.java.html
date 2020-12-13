@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PretServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.service</a> &gt; <span class="el_source">PretServiceImpl.java</span></div><h1>PretServiceImpl.java</h1><pre class="source lang-java linenums">package sid.org.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import sid.org.classe.Livre;
+import sid.org.classe.Pret;
+import sid.org.classe.Utilisateur;
+import sid.org.dao.LivreRepository;
+import sid.org.dao.PretRepository;
+import sid.org.dao.UtilisateurRepository;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.LivreIndisponibleException;
+import sid.org.exception.ResultNotFoundException;
+
+@Service
+<span class="fc" id="L31">public class PretServiceImpl implements PretService {</span>
+
+<span class="fc" id="L33">	private static final Logger logger = LoggerFactory.getLogger(PretServiceImpl.class);</span>
+	@Autowired
+	private PretRepository pretRepository;
+	@Autowired
+	private DateService dateService;
+	@Autowired
+	private UtilisateurRepository utilisateurRepository;
+	@Autowired
+	private LivreRepository livreRepository;
+	@Autowired
+	private EmailService emailService;
+	@Autowired
+	private HttpService httpService;
+	@Autowired
+	private ConnectionApiService connectionApiService;
+
+	@Value(&quot;${pret.statut1}&quot;)
+	private String encours;
+
+	@Value(&quot;${pret.statut2}&quot;)
+	private String prolonge;
+
+	@Value(&quot;${pret.statut3}&quot;)
+	private String depasse;
+
+	@Value(&quot;${pret.statut4}&quot;)
+	private String remis;
+
+	@Value(&quot;${pret.statut5}&quot;)
+	private String enAttente;
+
+	@Value(&quot;${pret.time}&quot;)
+	private int time;
+
+	@Value(&quot;${mail.subject}&quot;)
+	private String subject;
+	@Value(&quot;${mail.bibliotheque}&quot;)
+	private String biblioMail;
+
+	@Value(&quot;${api.url}&quot;)
+	private String apiUrl;
+	@Value(&quot;${spring.api.identifiant}&quot;)
+	private String mail;
+	@Value(&quot;${spring.api.motDePasse}&quot;)
+	private String motDePasse;
+	@Value(&quot;${livre.max.nombre.exemplaire}&quot;)
+	private int MultipleListDattente;
+
+	/*
+	 * Creation d'un Pret + decrementation nombreExemplaire pour le livre emprunté
+	 * 
+	 * @param Long idLivre
+	 * 
+	 * @param String mail
+	 *
+	 * @return Pret
+	 */
+
+	@Override
+	@Transactional
+	public void creerPret(Long idLivre, String mail)
+			throws ResultNotFoundException, LivreIndisponibleException, EntityAlreadyExistException, BadException {
+<span class="fc" id="L95">		Date date1 = new Date();</span>
+<span class="fc" id="L96">		Pret pret = new Pret();</span>
+<span class="fc" id="L97">		Optional&lt;Utilisateur&gt; utilisateur = utilisateurRepository.findByMail(mail);</span>
+<span class="fc" id="L98">		Optional&lt;Livre&gt; livre = livreRepository.findByCodeLivre(idLivre);</span>
+
+<span class="fc bfc" id="L100" title="All 2 branches covered.">		if (!utilisateur.isPresent()) {</span>
+<span class="fc" id="L101">			throw new ResultNotFoundException(&quot;l'utilisateur n'existe pas&quot;);</span>
+		}
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		if (!livre.isPresent()) {</span>
+<span class="fc" id="L104">			throw new ResultNotFoundException(&quot;le livre n'existe pas&quot;);</span>
+		}
+
+<span class="fc" id="L107">		List&lt;Pret&gt; listpret = pretRepository.findByUtilisateurAndLivre(utilisateur.get(), livre.get());</span>
+<span class="fc" id="L108">		Optional&lt;Pret&gt; pret1 = trouverPretenCours(listpret);</span>
+
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		if (!pret1.equals(Optional.empty())) {</span>
+
+<span class="pc bpc" id="L112" title="2 of 4 branches missed.">			if (pret1.isPresent() &amp;&amp; !pret1.get().getStatut().equals(remis)</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">					&amp;&amp; !pret1.get().getStatut().equals(enAttente)) {</span>
+<span class="fc" id="L114">				throw new EntityAlreadyExistException(&quot;La reservation existe deja pour ce livre&quot;);</span>
+			}
+<span class="pc bpc" id="L116" title="2 of 6 branches missed.">			if (pret1.isPresent() &amp;&amp; livre.get().getNombreExemplaire() == 0 &amp;&amp; pret1.get().getStatut().equals(enAttente)</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">					&amp;&amp; !pret1.get().getStatut().equals(remis)) {</span>
+<span class="fc" id="L118">				throw new EntityAlreadyExistException(&quot;La reservation existe deja pour ce livre &quot;);</span>
+			}
+		}
+<span class="pc bpc" id="L121" title="1 of 4 branches missed.">		if (livre.get().getNombreExemplaire() == 1 &amp;&amp; !livre.get().getListeDattente().isEmpty()) {</span>
+
+		}
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if (livre.get().getNombreListeDattente() == livre.get().getNombreExemplaireFixe() * MultipleListDattente) {</span>
+<span class="nc" id="L125">			throw new BadException(&quot;La liste d'attente est complète&quot;);</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">		} else if (livre.get().getNombreExemplaire() &lt; 1) {</span>
+
+<span class="nc" id="L128">			livre.get().getListeDattente().add(mail);</span>
+
+<span class="nc" id="L130">			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() + 1);</span>
+
+<span class="nc" id="L132">			pret.setLivre(livre.get());</span>
+<span class="nc" id="L133">			pret.setUtilisateur(utilisateur.get());</span>
+<span class="nc" id="L134">			pret.setStatut(enAttente);</span>
+<span class="nc" id="L135">			pret.setPosition(livre.get().getNombreListeDattente());</span>
+
+<span class="nc" id="L137">			pretRepository.saveAndFlush(pret);</span>
+
+<span class="fc bfc" id="L139" title="All 2 branches covered.">		} else if (pret1.equals(Optional.empty())) {</span>
+
+<span class="fc" id="L141">			pret.setLivre(livre.get());</span>
+<span class="fc" id="L142">			pret.setUtilisateur(utilisateur.get());</span>
+<span class="fc" id="L143">			pret.setDateDeDebut(date1);</span>
+<span class="fc" id="L144">			pret.setDateDeFin(dateService.modifierDate(date1, time));</span>
+<span class="fc" id="L145">			pret.setNombreLivres(1);</span>
+<span class="fc" id="L146">			pret.setStatut(encours);</span>
+<span class="fc" id="L147">			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);</span>
+<span class="fc" id="L148">			pretRepository.saveAndFlush(pret);</span>
+<span class="pc bpc" id="L149" title="2 of 4 branches missed.">		} else if (pret1.get().getStatut().equals(enAttente) &amp;&amp; livre.get().getNombreExemplaire() != 0) {</span>
+<span class="fc" id="L150">			pret1.get().setDateDeDebut(date1);</span>
+<span class="fc" id="L151">			pret1.get().setDateDeFin(dateService.modifierDate(date1, time));</span>
+<span class="fc" id="L152">			pret1.get().setNombreLivres(1);</span>
+<span class="fc" id="L153">			pret1.get().setStatut(encours);</span>
+<span class="fc" id="L154">			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);</span>
+<span class="fc" id="L155">			pretRepository.saveAndFlush(pret1.get());</span>
+
+		} else {
+
+<span class="nc" id="L159">			pret.setLivre(livre.get());</span>
+<span class="nc" id="L160">			pret.setUtilisateur(utilisateur.get());</span>
+<span class="nc" id="L161">			pret.setDateDeDebut(date1);</span>
+<span class="nc" id="L162">			pret.setDateDeFin(dateService.modifierDate(date1, time));</span>
+<span class="nc" id="L163">			pret.setNombreLivres(1);</span>
+<span class="nc" id="L164">			pret.setStatut(encours);</span>
+<span class="nc" id="L165">			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() - 1);</span>
+<span class="nc" id="L166">			pretRepository.saveAndFlush(pret);</span>
+		}
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">		if (livre.get().getDateDeRetour() == null) {</span>
+<span class="fc" id="L169">			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get(), remis));</span>
+		}
+<span class="fc" id="L171">		livreRepository.saveAndFlush(livre.get());</span>
+
+<span class="fc" id="L173">	}</span>
+
+	/*
+	 * Trouver le pret avec statut encours dans une list de pret
+	 * 
+	 * @param List&lt;Pret&gt;prets
+	 * 
+	 *
+	 * @return Optional&lt;Pret&gt;
+	 */
+	@Override
+	public Optional&lt;Pret&gt; trouverPretenCours(List&lt;Pret&gt; prets) {
+
+<span class="fc" id="L186">		List&lt;Pret&gt; listPret = new ArrayList&lt;Pret&gt;();</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">		for (Pret pret : prets) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">			if (pret.getStatut().equals(remis)) {</span>
+
+			} else {
+<span class="fc" id="L191">				listPret.add(pret);</span>
+			}
+
+<span class="fc" id="L194">		}</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		if (!listPret.isEmpty()) {</span>
+<span class="fc" id="L196">			Optional&lt;Pret&gt; pret1 = Optional.of(listPret.get(0));</span>
+<span class="fc" id="L197">			return pret1;</span>
+		} else {
+<span class="fc" id="L199">			Optional&lt;Pret&gt; pret1 = Optional.empty();</span>
+<span class="fc" id="L200">			return pret1;</span>
+		}
+
+	}
+
+	/*
+	 * SupprimerPret
+	 * 
+	 * @param Long Id
+	 * 
+	 *
+	 *
+	 */
+	@Transactional
+	@Override
+	public void supprimerPret(Long id, Optional&lt;String&gt; statutPret) throws ResultNotFoundException, BadException {
+<span class="fc" id="L216">		Optional&lt;Pret&gt; pret = pretRepository.findById(id);</span>
+
+<span class="fc" id="L218">		logger.info(statutPret.get());</span>
+<span class="fc" id="L219">		logger.info(enAttente);</span>
+
+<span class="fc bfc" id="L221" title="All 2 branches covered.">		if (!statutPret.get().equals(&quot;encours1&quot;)) {</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">			if (!pret.isPresent()) {</span>
+<span class="fc" id="L223">				throw new ResultNotFoundException(&quot;ce pret n'existe pas&quot;);</span>
+			}
+<span class="fc" id="L225">			logger.info(pret.get().getStatut());</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">			if (!pret.get().getStatut().equals(enAttente)) {</span>
+<span class="fc" id="L227">				throw new BadException(&quot;le pret ne peut pas etre supprimer&quot;);</span>
+			}
+		}
+
+<span class="fc bfc" id="L231" title="All 2 branches covered.">		if (!pret.isPresent()) {</span>
+<span class="fc" id="L232">			throw new ResultNotFoundException(&quot;ce pret n'existe pas&quot;);</span>
+		}
+
+<span class="fc" id="L235">		Optional&lt;Livre&gt; livre = livreRepository.findById(pret.get().getLivre().getCodeLivre());</span>
+<span class="fc" id="L236">		logger.info(pret.get().getStatut());</span>
+<span class="pc bpc" id="L237" title="1 of 4 branches missed.">		if (!pret.get().getStatut().equals(enAttente) &amp;&amp; !pret.get().getStatut().equals(remis)) {</span>
+<span class="fc" id="L238">			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + pret.get().getNombreLivres());</span>
+<span class="fc" id="L239">			livre.get().setNombreListeDattente(0);</span>
+<span class="fc" id="L240">			livre.get().setDateDeRetour(null);</span>
+<span class="fc" id="L241">			logger.info(String.valueOf(livre.get().getNombreListeDattente()) + &quot;pret autre que remis et attente&quot;);</span>
+		}
+
+<span class="fc bfc" id="L244" title="All 2 branches covered.">		if (pret.get().getStatut().equals(enAttente)) {</span>
+<span class="fc" id="L245">			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());</span>
+<span class="fc" id="L246">			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() - 1);</span>
+<span class="fc" id="L247">			ArrayList&lt;String&gt; listmail = new ArrayList&lt;String&gt;(livre.get().getListeDattente());</span>
+<span class="fc" id="L248">			listmail.remove(pret.get().getUtilisateur().getMail());</span>
+<span class="fc" id="L249">			livre.get().setListeDattente(listmail);</span>
+<span class="fc" id="L250">			logger.info(String.valueOf(livre.get().getNombreListeDattente()) + &quot;pret en attente &quot;);</span>
+		}
+<span class="fc" id="L252">		livreRepository.saveAndFlush(livre.get());</span>
+<span class="fc" id="L253">		pretRepository.delete(pret.get());</span>
+
+<span class="fc" id="L255">	}</span>
+
+	/*
+	 * Afficher Page de prets en fonction d'un e-mail
+	 * 
+	 * @param String mail
+	 * 
+	 * @param int page
+	 * 
+	 * @param int size
+	 *
+	 * @return Page&lt;Pret&gt;
+	 */
+
+	@Override
+	public Page&lt;Pret&gt; afficherPrets(String mail, int page, int size) throws ResultNotFoundException {
+<span class="fc bfc" id="L271" title="All 2 branches covered.">		if (size == 0) {</span>
+<span class="fc" id="L272">			throw new ResultNotFoundException(&quot;le parametre size est incorrect&quot;);</span>
+		}
+<span class="fc" id="L274">		Optional&lt;Utilisateur&gt; utilisateur = utilisateurRepository.findByMail(mail);</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">		if (!utilisateur.isPresent()) {</span>
+<span class="fc" id="L276">			throw new ResultNotFoundException(&quot;l'utilisateur est introuvable&quot;);</span>
+		}
+
+<span class="fc" id="L279">		Pageable pageable = PageRequest.of(page, size);</span>
+<span class="fc" id="L280">		Page&lt;Pret&gt; listPretUtilisateur = pretRepository.findByUtilisateur(utilisateur.get(), pageable);</span>
+
+<span class="fc" id="L282">		return listPretUtilisateur;</span>
+	}
+
+	/*
+	 * Afficher la Liste de tous lesPrets
+	 * 
+	 * @param Long id
+	 * 
+	 *
+	 * @return List&lt;Pret&gt;prets
+	 */
+	@Override
+	public List&lt;Pret&gt; afficherPrets() throws ResultNotFoundException {
+<span class="fc" id="L295">		List&lt;Pret&gt; prets = pretRepository.findAll();</span>
+
+<span class="fc" id="L297">		return prets;</span>
+
+	}
+
+	/*
+	 * Afficher une liste de Prets en fonction d'un statut
+	 * 
+	 * @param Long id
+	 * 
+	 *
+	 * @return List&lt;Pret&gt;prets
+	 */
+	@Override
+	public List&lt;Pret&gt; afficherPrets(String statut) throws ResultNotFoundException {
+<span class="fc" id="L311">		List&lt;Pret&gt; prets = pretRepository.findByStatut(statut);</span>
+
+<span class="fc" id="L313">		return prets;</span>
+
+	}
+
+	/*
+	 * Afficher Un pret
+	 * 
+	 * @param Long id
+	 * 
+	 *
+	 * @return Pret
+	 */
+	@Override
+	public Pret afficherUnPret(Long id) throws ResultNotFoundException {
+<span class="fc" id="L327">		Optional&lt;Pret&gt; pret = pretRepository.findById(id);</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">		if (!pret.isPresent()) {</span>
+<span class="fc" id="L329">			throw new ResultNotFoundException(&quot;ce pret n'existe pas&quot;);</span>
+		}
+<span class="fc" id="L331">		return pret.get();</span>
+	}
+
+	/*
+	 * Modifier le statut d'un Pret en statut3 uniquement si le pret a un statut1 ou
+	 * statut2
+	 * 
+	 * @param Long id
+	 * 
+	 *
+	 *
+	 */
+
+	@Override
+	public void modifierStatut(Long id) throws ResultNotFoundException {
+<span class="fc" id="L346">		Date aujourdhui = new Date();</span>
+<span class="fc" id="L347">		Optional&lt;Pret&gt; pret = pretRepository.findById(id);</span>
+<span class="fc bfc" id="L348" title="All 2 branches covered.">		if (!pret.isPresent()) {</span>
+<span class="fc" id="L349">			throw new ResultNotFoundException(&quot;le pret n'existe pas&quot;);</span>
+		}
+<span class="pc bpc" id="L351" title="3 of 4 branches missed.">		if (pret.get().getDateDeFin().compareTo(aujourdhui) &gt; 0 &amp;&amp; pret.get().getStatut().equals(prolonge)) {</span>
+<span class="nc" id="L352">			pret.get().setStatut(depasse);</span>
+<span class="nc" id="L353">			pretRepository.saveAndFlush(pret.get());</span>
+<span class="pc bpc" id="L354" title="3 of 4 branches missed.">		} else if (pret.get().getDateDeFin().compareTo(aujourdhui) &gt; 0 &amp;&amp; pret.get().getStatut().equals(encours)) {</span>
+<span class="nc" id="L355">			pret.get().setStatut(depasse);</span>
+<span class="nc" id="L356">			pretRepository.saveAndFlush(pret.get());</span>
+		}
+<span class="fc" id="L358">	}</span>
+
+	/*
+	 * Appliquer la methode modifier Statut sur tout les pret si la da de fin de
+	 * pret est depassé
+	 * 
+	 * 
+	 *
+	 *
+	 */
+	@Override
+	public void modifierStatutsPrets() throws ResultNotFoundException {
+
+<span class="nc" id="L371">		ArrayList&lt;Pret&gt; prets = (ArrayList&lt;Pret&gt;) afficherPrets();</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">		if (!prets.isEmpty()) {</span>
+<span class="nc bnc" id="L373" title="All 2 branches missed.">			for (int i = 0; i &lt; prets.size(); i++) {</span>
+<span class="nc" id="L374">				modifierStatut(prets.get(i).getId());</span>
+			}
+		}
+<span class="nc" id="L377">	}</span>
+
+	/*
+	 * Modifier le statut d'un Pret en statut remis ou statut prolonge en fonction
+	 * du String methode
+	 * 
+	 * @param id du pret
+	 * 
+	 * @param String methode equals a remise on
+	 *
+	 *
+	 */
+	@Override
+	@Transactional
+	public void modifierPret(Long idPret, String methode) throws ResultNotFoundException, EntityAlreadyExistException {
+<span class="fc" id="L392">		Optional&lt;Pret&gt; pret = pretRepository.findById(idPret);</span>
+
+<span class="fc bfc" id="L394" title="All 2 branches covered.">		if (!pret.isPresent()) {</span>
+<span class="fc" id="L395">			throw new ResultNotFoundException(&quot;Ce pret n'existe pas&quot;);</span>
+		}
+<span class="fc" id="L397">		Optional&lt;Livre&gt; livre = livreRepository.findByCodeLivre(pret.get().getLivre().getCodeLivre());</span>
+<span class="fc bfc" id="L398" title="All 2 branches covered.">		if (!livre.isPresent()) {</span>
+<span class="fc" id="L399">			throw new ResultNotFoundException(&quot;Ce livre n'existe pas&quot;);</span>
+		}
+
+<span class="pc bpc" id="L402" title="1 of 4 branches missed.">		if (pret.get().getStatut().equals(remis) || pret.get().getStatut().equals(depasse)) {</span>
+<span class="fc" id="L403">			throw new EntityAlreadyExistException(&quot;Le pret ne peut pas etre prolongé&quot;);</span>
+		}
+<span class="pc bpc" id="L405" title="1 of 4 branches missed.">		if (methode.equals(&quot;remise&quot;) &amp;&amp; !pret.get().getStatut().equals(enAttente)) {</span>
+<span class="fc" id="L406">			pret.get().setStatut(remis);</span>
+<span class="fc" id="L407">			pret.get().setDateDeRendu(new Date());</span>
+<span class="pc bpc" id="L408" title="3 of 4 branches missed.">			if (livre.get().getNombreExemplaire() &lt; 1 &amp;&amp; livre.get().getListeDattente().size() &gt; 0) {</span>
+
+<span class="nc" id="L410">				emailService.envoyerLeMail(livre);</span>
+
+<span class="nc" id="L412">				Pret pretenAttente = trouverPretEnAttente(livre.get());</span>
+
+<span class="nc" id="L414">				connectionApiService.connectApiTimer(pretenAttente.getId());</span>
+			}
+<span class="fc" id="L416">			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);</span>
+<span class="fc" id="L417">			livre.get().setDateDeRetour(null);</span>
+<span class="fc" id="L418">			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());</span>
+<span class="fc" id="L419">			pretRepository.saveAndFlush(pret.get());</span>
+
+<span class="fc bfc" id="L421" title="All 2 branches covered.">		} else if (!pret.get().getStatut().equals(enAttente)) {</span>
+<span class="fc" id="L422">			pret.get().setStatut(prolonge);</span>
+<span class="fc" id="L423">			pret.get().setDateDeFin(dateService.modifierDate(pret.get().getDateDeFin(), time));</span>
+<span class="fc" id="L424">			pretRepository.saveAndFlush(pret.get());</span>
+<span class="fc" id="L425">			livre.get().setDateDeRetour(modifierLaDateDeRetour(livre.get(), remis));</span>
+		} else {
+<span class="fc" id="L427">			throw new EntityAlreadyExistException(&quot;Ce pret ne peu pas etre modifier par le méthode modifier pret&quot;);</span>
+		}
+
+<span class="fc" id="L430">		livreRepository.saveAndFlush(livre.get());</span>
+<span class="fc" id="L431">	}</span>
+
+	@Override
+	public void verifierPrêt(Long idPret) throws ResultNotFoundException, EntityAlreadyExistException, BadException {
+<span class="fc" id="L435">		Optional&lt;Pret&gt; pret = pretRepository.findById(idPret);</span>
+
+<span class="fc bfc" id="L437" title="All 2 branches covered.">		if (!pret.isPresent()) {</span>
+<span class="fc" id="L438">			throw new ResultNotFoundException(&quot;le pret n'existe pas&quot;);</span>
+		}
+<span class="fc" id="L440">		Optional&lt;Livre&gt; livre = livreRepository.findByNom(pret.get().getLivre().getNom());</span>
+
+<span class="fc bfc" id="L442" title="All 2 branches covered.">		if (!livre.isPresent()) {</span>
+<span class="fc" id="L443">			throw new ResultNotFoundException(&quot;le livre n'existe pas&quot;);</span>
+		}
+
+<span class="fc bfc" id="L446" title="All 2 branches covered.">		if (pret.get().getStatut().equals(enAttente)) {</span>
+<span class="fc" id="L447">			this.supprimerPret(idPret, Optional.of(enAttente));</span>
+
+<span class="fc" id="L449">			livre.get().getListeDattente().remove(0);</span>
+
+<span class="fc" id="L451">			livreRepository.saveAndFlush(livre.get());</span>
+<span class="fc" id="L452">			logger.info(&quot;le pret a ete supprime &quot;);</span>
+<span class="pc bpc" id="L453" title="1 of 2 branches missed.">			if (livre.get().getListeDattente().size() &gt;= 1) {</span>
+<span class="nc" id="L454">				emailService.envoyerLeMail(livre);</span>
+<span class="nc" id="L455">				Pret pretenAttente = trouverPretEnAttente(livre.get());</span>
+
+<span class="nc" id="L457">				connectionApiService.connectApiTimer(pretenAttente.getId());</span>
+
+<span class="nc" id="L459">				logger.info(&quot; envoie mail personne suivante&quot;);</span>
+
+<span class="nc" id="L461">			}</span>
+
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">		} else if (livre.get().getListeDattente().size() != 0) {</span>
+<span class="pc bpc" id="L464" title="1 of 2 branches missed.">			if (pret.get().getUtilisateur().getMail() == livre.get().getListeDattente().get(0)) {</span>
+<span class="nc" id="L465">				livre.get().getListeDattente().remove(0);</span>
+<span class="nc" id="L466">				logger.info(&quot;le pret a ete complété&quot;);</span>
+			} else {
+<span class="fc" id="L468">				logger.info(&quot;ce pret n'est pas en rapport avec un pret en attente&quot;);</span>
+
+			}
+<span class="fc" id="L471">			livreRepository.saveAndFlush(livre.get());</span>
+
+		} else {
+<span class="nc" id="L474">			throw new EntityAlreadyExistException(&quot;le pret n'a pas e étre complété&quot;);</span>
+		}
+
+<span class="fc" id="L477">	}</span>
+
+	public Pret trouverPretEnAttente(Livre livre) throws ResultNotFoundException {
+<span class="nc" id="L480">		List&lt;Pret&gt; pretsEnAttente = pretRepository.findByStatutAndLivre(enAttente, livre);</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">		if (pretsEnAttente.isEmpty()) {</span>
+<span class="nc" id="L482">			throw new ResultNotFoundException(&quot;il n'y a pas de livre en attente&quot;);</span>
+		}
+<span class="nc" id="L484">		Pret pret = pretsEnAttente.get(0);</span>
+
+<span class="nc" id="L486">		return pret;</span>
+	}
+
+	private Date modifierLaDateDeRetour(Livre livre, String statut) throws ResultNotFoundException {
+
+<span class="fc" id="L491">		List&lt;Pret&gt; listPret = pretRepository.findLivreandStatutNotByOrderByDateDeFinAsc(livre, statut);</span>
+
+<span class="fc" id="L493">		Date date = listPret.get(0).getDateDeFin();</span>
+<span class="fc" id="L494">		return date;</span>
+
+	}
+
+	@Override
+	public void modifierLesPositionsDesPretsEnListeDattentes(Long idLivre, int positionLivreSupprime)
+			throws ResultNotFoundException {
+
+<span class="fc" id="L502">		Optional&lt;Livre&gt; livre = livreRepository.findById(idLivre);</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">		if (!livre.isPresent()) {</span>
+<span class="fc" id="L504">			throw new ResultNotFoundException(&quot;le livre est introuvable&quot;);</span>
+		}
+<span class="fc" id="L506">		List&lt;String&gt; listMail = livre.get().getListeDattente();</span>
+<span class="fc bfc" id="L507" title="All 2 branches covered.">		if (livre.get().getNombreListeDattente() &gt; 1) {</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">			for (int i = 0; i &lt; listMail.size(); i++) {</span>
+<span class="fc" id="L509">				Optional&lt;Utilisateur&gt; utilisateur = utilisateurRepository.findByMail(listMail.get(i));</span>
+<span class="pc bpc" id="L510" title="1 of 2 branches missed.">				if (!utilisateur.isPresent()) {</span>
+<span class="fc" id="L511">					throw new ResultNotFoundException(&quot;l'utilisateur est introuvable&quot;);</span>
+				}
+<span class="nc" id="L513">				Optional&lt;Pret&gt; pret = pretRepository.findByUtilisateurAndLivreAndStatut(utilisateur.get(), livre.get(),</span>
+						enAttente);
+<span class="nc bnc" id="L515" title="All 2 branches missed.">				if (positionLivreSupprime &lt; pret.get().getPosition()) {</span>
+<span class="nc" id="L516">					pret.get().setPosition(pret.get().getPosition() - 1);</span>
+				}
+<span class="nc" id="L518">				pretRepository.saveAndFlush(pret.get());</span>
+<span class="nc" id="L519">				livreRepository.saveAndFlush(livre.get());</span>
+			}
+		}
+
+<span class="fc" id="L523">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

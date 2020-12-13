@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LivreServiceImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.service</a> &gt; <span class="el_source">LivreServiceImpl.java</span></div><h1>LivreServiceImpl.java</h1><pre class="source lang-java linenums">package sid.org.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+
+import sid.org.classe.Livre;
+import sid.org.dao.LivreRepository;
+import sid.org.dto.LivreDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.ResultNotFoundException;
+import sid.org.specification.LivreCriteria;
+import sid.org.specification.LivreSpecificationImpl;
+
+@Component
+<span class="fc" id="L25">public class LivreServiceImpl implements LivreService {</span>
+	@Autowired
+	private LivreRepository livreRepository;
+	@Value(&quot;${livre.max.nombre.exemplaire}&quot;)
+	private int MaxExemplaire;
+<span class="fc" id="L30">	private static final Logger logger = LoggerFactory.getLogger(LivreServiceImpl.class);</span>
+
+	/*
+	 * Creation d'un Livre
+	 * 
+	 * @param livreDto
+	 * 
+	 * @return Livre
+	 */
+
+	@Override
+	public Livre createLivre(LivreDto livreDto) throws EntityAlreadyExistException, BadException {
+
+<span class="fc" id="L43">		List&lt;Livre&gt; livreAuteurAndNom = livreRepository.findByAuteurAndNom(livreDto.getAuteur(), livreDto.getNom());</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">		if (!livreAuteurAndNom.isEmpty()) {</span>
+<span class="fc" id="L45">			throw new EntityAlreadyExistException(&quot;Ce livre existe deja&quot;);</span>
+
+		}
+
+<span class="fc" id="L49">		Livre livre = convertoToEntity(livreDto);</span>
+<span class="fc" id="L50">		logger.info(&quot;le livre a ete ajouté&quot;);</span>
+<span class="fc" id="L51">		return livreRepository.save(livre);</span>
+
+	}
+
+	/*
+	 * Suppression d'un Livre
+	 * 
+	 * @param Long id
+	 * 
+	 * 
+	 */
+	@Override
+	public void supprimerLivre(Long id) throws ResultNotFoundException {
+
+<span class="fc" id="L65">		Optional&lt;Livre&gt; livre = livreRepository.findById(id);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if (!livre.isPresent()) {</span>
+<span class="fc" id="L67">			throw new ResultNotFoundException(&quot;le livre existe pas&quot;);</span>
+		}
+<span class="fc" id="L69">		livreRepository.delete(livre.get());</span>
+<span class="fc" id="L70">	}</span>
+
+	/*
+	 * Affichage d'un Livre
+	 * 
+	 * @param L
+	 * 
+	 * @return Livre
+	 */
+
+	@Override
+	public Livre afficheUnLivre(Long id) throws ResultNotFoundException {
+<span class="fc" id="L82">		Optional&lt;Livre&gt; book = livreRepository.findByCodeLivre(id);</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		if (!book.isPresent()) {</span>
+<span class="fc" id="L84">			throw new ResultNotFoundException(&quot;le livre existe pas&quot;);</span>
+		}
+
+<span class="fc" id="L87">		return book.get();</span>
+	}
+
+	/*
+	 * Rechercher des livre en fonction d'un critere
+	 * 
+	 * @param livreCriteria
+	 * 
+	 * @param page
+	 * 
+	 * @param size
+	 * 
+	 * @return une page contenant des livres en fonction du livreCriteria
+	 */
+
+	@Override
+	public Page&lt;Livre&gt; searchLivres(LivreCriteria livreCriteria, int page, int size) throws ResultNotFoundException {
+<span class="fc" id="L104">		LivreSpecificationImpl spec = new LivreSpecificationImpl(livreCriteria);</span>
+
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		if (size == 0) {</span>
+<span class="fc" id="L107">			throw new ResultNotFoundException(&quot;le parametre size est incorrect&quot;);</span>
+		}
+
+<span class="fc" id="L110">		Pageable pageable = PageRequest.of(page, size);</span>
+
+<span class="fc" id="L112">		Page&lt;Livre&gt; results = livreRepository.findAll(spec, pageable);</span>
+
+<span class="fc" id="L114">		return results;</span>
+	}
+
+	/*
+	 * Convertir un LivreDto en Livre
+	 * 
+	 * @param livreDto
+	 * 
+	 * 
+	 * @return Livre
+	 */
+
+	private Livre convertoToEntity(LivreDto livreDto) {
+
+<span class="fc" id="L128">		Livre livre = new Livre();</span>
+
+<span class="fc" id="L130">		livre.setAuteur(livreDto.getAuteur());</span>
+<span class="fc" id="L131">		livre.setEmplacement(livreDto.getEmplacement());</span>
+<span class="fc" id="L132">		livre.setNom(livreDto.getNom());</span>
+<span class="fc" id="L133">		livre.setNombreExemplaire(livreDto.getNombreExemplaire());</span>
+<span class="fc" id="L134">		livre.setNombreExemplaireFixe(livreDto.getNombreExemplaireFixe());</span>
+<span class="fc" id="L135">		livre.setSection(livreDto.getSection());</span>
+<span class="fc" id="L136">		livre.setType(livreDto.getType());</span>
+<span class="fc" id="L137">		livre.setListeDattente(null);</span>
+<span class="fc" id="L138">		return livre;</span>
+
+	}
+
+	@Override
+	public LivreCriteria renvoieUnLivreCriteria() {
+<span class="nc" id="L144">		LivreCriteria livre = new LivreCriteria();</span>
+
+<span class="nc" id="L146">		return livre;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

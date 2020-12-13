@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LivreSpecificationImpl.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.specification</a> &gt; <span class="el_source">LivreSpecificationImpl.java</span></div><h1>LivreSpecificationImpl.java</h1><pre class="source lang-java linenums">package sid.org.specification;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+
+import sid.org.classe.Livre;
+
+public class LivreSpecificationImpl implements Specification&lt;Livre&gt; {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@Autowired
+	private LivreCriteria criteria;
+	
+	
+	public LivreSpecificationImpl(LivreCriteria criteria) {
+<span class="fc" id="L24">		super();</span>
+<span class="fc" id="L25">		this.criteria = criteria;</span>
+<span class="fc" id="L26">	}</span>
+	public LivreSpecificationImpl() {
+<span class="nc" id="L28">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="nc" id="L30">	}</span>
+	/*
+	 * Modification de l'objet predicate
+	 *@param Root&lt;Livre&gt; root
+	 *@param CriteriaQuery&lt;?&gt; query
+	 *@param CriteriaBuilder builder
+	 *@return Predicate
+	 */
+	@Override
+	public Predicate toPredicate(Root&lt;Livre&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder builder) {
+<span class="nc" id="L40">		Predicate predicate = builder.conjunction();</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">		if (criteria.getCodeLivre()!=null) {</span>
+<span class="nc" id="L42">			predicate.getExpressions().add(builder.equal(root.get(&quot;codeLivre&quot;),criteria.getCodeLivre()));</span>
+		}
+<span class="nc bnc" id="L44" title="All 2 branches missed.">		if (criteria.getNom()!=null) {</span>
+<span class="nc" id="L45">			predicate.getExpressions().add(builder.like(root.get(&quot;nom&quot;),&quot;%&quot;+criteria.getNom()+&quot;%&quot;));</span>
+		}
+<span class="nc bnc" id="L47" title="All 2 branches missed.">		if (criteria.getAuteur()!=null) {</span>
+<span class="nc" id="L48">			predicate.getExpressions().add(builder.like(root.get(&quot;auteur&quot;),&quot;%&quot;+criteria.getAuteur()+&quot;%&quot;));</span>
+		}
+<span class="nc bnc" id="L50" title="All 2 branches missed.">		if (criteria.getType()!=null) {</span>
+<span class="nc" id="L51">			predicate.getExpressions().add(builder.like(root.get(&quot;type&quot;),&quot;%&quot;+criteria.getType()+&quot;%&quot;));</span>
+		}
+<span class="nc" id="L53">		return builder.and(predicate);</span>
+		
+	           
+		 
+	
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>

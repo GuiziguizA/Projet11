@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>LivreController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">java (4) (13 déc. 2020 16:32:05)</a> &gt; <a href="../../index.html" class="el_group">biblio-api</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">sid.org.controller</a> &gt; <span class="el_source">LivreController.java</span></div><h1>LivreController.java</h1><pre class="source lang-java linenums">package sid.org.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import sid.org.classe.Livre;
+import sid.org.dto.LivreDto;
+import sid.org.exception.BadException;
+import sid.org.exception.EntityAlreadyExistException;
+import sid.org.exception.ResultNotFoundException;
+import sid.org.service.LivreService;
+import sid.org.specification.LivreCriteria;
+
+@RestController
+@Api(value = &quot;Api Livres&quot;, description = &quot;Api Livres&quot;)
+<span class="fc" id="L31">public class LivreController {</span>
+	@Autowired
+	private LivreService livreService;
+
+	@GetMapping(value = &quot;/books&quot;, consumes = &quot;application/json&quot;, produces = &quot;application/json&quot;)
+	@ApiOperation(value = &quot;afficher une page contenant les différent livre de la recherche&quot;, response = LivreController.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = &quot;affichage de la recherche&quot;) })
+	public Page&lt;Livre&gt; afficherLivres(
+			@ApiParam(value = &quot;Ajouter un LivreCriteria dans le body&quot;, required = true) @RequestBody LivreCriteria livreSearch,
+			@ApiParam(value = &quot;noter la page&quot;, required = true) @RequestParam int page,
+			@ApiParam(value = &quot;noter la size&quot;, required = true) @RequestParam int size) throws ResultNotFoundException {
+
+		Page&lt;Livre&gt; livres;
+
+<span class="nc" id="L45">		livres = livreService.searchLivres(livreSearch, page, size);</span>
+<span class="nc" id="L46">		return livres;</span>
+
+	}
+
+	@GetMapping(&quot;/books/{id}&quot;)
+	@ApiOperation(value = &quot;afficher un livre en fonction de son id&quot;, response = LivreController.class)
+	public Livre afficheUnLivre(@PathVariable Long id) throws ResultNotFoundException {
+
+<span class="nc" id="L54">		Livre livre = livreService.afficheUnLivre(id);</span>
+<span class="nc" id="L55">		return livre;</span>
+
+	}
+
+	@PostMapping(&quot;/books&quot;)
+	@Secured(value = { &quot;ROLE_admin&quot;, &quot;ROLE_employe&quot; })
+	@ApiOperation(value = &quot;ajout d'un nouveau livre&quot;, response = LivreController.class)
+	public Livre ajouterLivre(
+			@ApiParam(value = &quot;LivreDto dans le body&quot;, required = true) @Valid @RequestBody LivreDto livre)
+			throws EntityAlreadyExistException, BadException {
+
+<span class="nc" id="L66">		return livreService.createLivre(livre);</span>
+
+	}
+
+	@Secured(value = { &quot;ROLE_admin&quot; })
+	@DeleteMapping(&quot;/books&quot;)
+	@ApiOperation(value = &quot;supprimer un livre&quot;, response = LivreController.class)
+	public void supprimerUnLivre(@RequestParam Long id) throws ResultNotFoundException {
+
+<span class="nc" id="L75">		livreService.supprimerLivre(id);</span>
+
+<span class="nc" id="L77">	}</span>
+
+	@GetMapping(&quot;/livreCriteria&quot;)
+	@ApiOperation(value = &quot;afficher un livre en fonction de son id&quot;, response = LivreController.class)
+	public LivreCriteria afficheUnLivreCriteria() throws ResultNotFoundException {
+
+<span class="nc" id="L83">		LivreCriteria livre = livreService.renvoieUnLivreCriteria();</span>
+<span class="nc" id="L84">		return livre;</span>
+
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>java (4) (13 déc. 2020 16:32:05)</div></body></html>
