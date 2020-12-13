@@ -354,6 +354,8 @@ public class PretServiceImpl implements PretService {
 		} else if (pret.get().getDateDeFin().compareTo(aujourdhui) > 0 && pret.get().getStatut().equals(encours)) {
 			pret.get().setStatut(depasse);
 			pretRepository.saveAndFlush(pret.get());
+		} else {
+
 		}
 	}
 
