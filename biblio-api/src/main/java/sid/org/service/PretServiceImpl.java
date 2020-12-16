@@ -243,14 +243,27 @@ public class PretServiceImpl implements PretService {
 
 		if (pret.get().getStatut().equals(enAttente)) {
 			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());
-			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() - 1);
 			ArrayList<String> listmail = new ArrayList<String>(livre.get().getListeDattente());
 			listmail.remove(pret.get().getUtilisateur().getMail());
 			livre.get().setListeDattente(listmail);
+			if (livre.get().getNombreListeDattente() > 1 && pret.get().getPosition() == 1
+					&& livre.get().getNombreExemplaire() > 0) {
+
+				emailService.envoyerLeMail(livre);
+				Pret pretenAttente = trouverPretEnAttente(livre.get());
+				logger.info(" envoie mail personne suivante " + pretenAttente.getId());
+
+				connectionApiService.connectApiTimer(pretenAttente.getId() + 1);
+
+			}
+
+			livre.get().setNombreListeDattente(livre.get().getNombreListeDattente() - 1);
+
 			logger.info(String.valueOf(livre.get().getNombreListeDattente()) + "pret en attente ");
+
 		}
-		livreRepository.saveAndFlush(livre.get());
 		pretRepository.delete(pret.get());
+		livreRepository.saveAndFlush(livre.get());
 
 	}
 
@@ -417,7 +430,10 @@ public class PretServiceImpl implements PretService {
 			}
 			livre.get().setNombreExemplaire(livre.get().getNombreExemplaire() + 1);
 			livre.get().setDateDeRetour(null);
-			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());
+			/*
+			 * modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(),
+			 * pret.get().getPosition());
+			 */
 			pretRepository.saveAndFlush(pret.get());
 
 		} else if (!pret.get().getStatut().equals(enAttente)) {
@@ -446,21 +462,13 @@ public class PretServiceImpl implements PretService {
 		}
 
 		if (pret.get().getStatut().equals(enAttente)) {
-			this.supprimerPret(idPret, Optional.of(enAttente));
-
-			livre.get().getListeDattente().remove(0);
-
-			livreRepository.saveAndFlush(livre.get());
 			logger.info("le pret a ete supprime ");
-			if (livre.get().getListeDattente().size() >= 1) {
-				emailService.envoyerLeMail(livre);
-				Pret pretenAttente = trouverPretEnAttente(livre.get());
-
-				connectionApiService.connectApiTimer(pretenAttente.getId());
-
-				logger.info(" envoie mail personne suivante");
-
-			}
+			this.supprimerPret(idPret, Optional.of(enAttente));
+			/*
+			 * if (!livre.get().getListeDattente().isEmpty()) {
+			 * livre.get().getListeDattente().remove(0); }
+			 */
+			livreRepository.saveAndFlush(livre.get());
 
 		} else if (livre.get().getListeDattente().size() != 0) {
 			if (pret.get().getUtilisateur().getMail() == livre.get().getListeDattente().get(0)) {
