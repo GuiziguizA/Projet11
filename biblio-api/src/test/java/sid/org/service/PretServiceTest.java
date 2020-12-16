@@ -55,7 +55,7 @@ public class PretServiceTest {
 	private DateService dateService;
 	@MockBean
 	private UtilisateurRepository utilisateurRepository;
-	@Autowired
+	@MockBean
 	private EmailService emailService;
 	@Autowired
 	private HttpService httpService;
@@ -577,6 +577,11 @@ public class PretServiceTest {
 		Utilisateur utilisateur1 = new Utilisateur("bob", "bob@gmail.com", "40 rue du chêne", "bob", "2222222", user);
 		Livre livre = new Livre("les comptes", "guiz", "type1", "section1", "emplacement", 1, new ArrayList<String>());
 		Pret pret = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
+		List<Pret> listPrets = new ArrayList<Pret>();
+		Pret pret1 = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
+		Pret pret2 = new Pret(1L, new Date(), new Date(), "enattente", 1, livre, utilisateur);
+		listPrets.add(pret1);
+		listPrets.add(pret2);
 
 		Mockito.when(livreRepository.findById(Mockito.any())).thenReturn(Optional.of(livre));
 		Mockito.when(pretRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(pret));
@@ -584,6 +589,12 @@ public class PretServiceTest {
 		Mockito.when(utilisateurRepository.findByMail(Mockito.any())).thenReturn(Optional.of(utilisateur));
 		Mockito.when(pretRepository.findByUtilisateurAndLivreAndStatut(Mockito.any(Utilisateur.class),
 				Mockito.any(Livre.class), Mockito.anyString())).thenReturn(Optional.of(pret));
+		Mockito.doNothing().when(emailService).envoyerLeMail(Optional.of(livre));
+
+		Mockito.when(pretRepository.findByStatutAndLivre(Mockito.anyString(), Mockito.any(Livre.class)))
+				.thenReturn(listPrets);
+
+		Mockito.doNothing().when(connectionApiService).connectApiTimer(1L);
 
 		Mockito.when(pretRepository.saveAndFlush(pret)).thenReturn(pret);
 		Mockito.when(livreRepository.saveAndFlush(livre)).thenReturn(livre);

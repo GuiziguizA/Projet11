@@ -242,14 +242,14 @@ public class PretServiceImpl implements PretService {
 		}
 
 		if (pret.get().getStatut().equals(enAttente)) {
-			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());
+
 			ArrayList<String> listmail = new ArrayList<String>(livre.get().getListeDattente());
 			listmail.remove(pret.get().getUtilisateur().getMail());
 			livre.get().setListeDattente(listmail);
+			modifierLesPositionsDesPretsEnListeDattentes(livre.get().getCodeLivre(), pret.get().getPosition());
 			if (livre.get().getNombreListeDattente() > 1 && pret.get().getPosition() == 1
 					&& livre.get().getNombreExemplaire() > 0) {
 
-				emailService.envoyerLeMail(livre);
 				Pret pretenAttente = trouverPretEnAttente(livre.get());
 				logger.info(" envoie mail personne suivante " + pretenAttente.getId());
 
@@ -264,7 +264,9 @@ public class PretServiceImpl implements PretService {
 		}
 		pretRepository.delete(pret.get());
 		livreRepository.saveAndFlush(livre.get());
-
+		if (pret.get().getStatut().equals(enAttente)) {
+			emailService.envoyerLeMail(livre);
+		}
 	}
 
 	/*
@@ -525,6 +527,7 @@ public class PretServiceImpl implements PretService {
 				if (positionLivreSupprime < pret.get().getPosition()) {
 					pret.get().setPosition(pret.get().getPosition() - 1);
 				}
+
 				pretRepository.saveAndFlush(pret.get());
 				livreRepository.saveAndFlush(livre.get());
 			}
