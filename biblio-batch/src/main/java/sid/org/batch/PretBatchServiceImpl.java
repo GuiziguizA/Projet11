@@ -52,6 +52,8 @@ public class PretBatchServiceImpl implements PretBatchService {
 	private String subject;
 	@Value("${pret.statut3}")
 	private String statut3;
+	@Value("${time.pret}")
+	private int time;
 
 	/*
 	 * creation des différentes variables concernant la singularité du pret
@@ -176,7 +178,7 @@ public class PretBatchServiceImpl implements PretBatchService {
 		};
 		Timer timer = new Timer("Timer");
 
-		long delay = 5;
+		long delay = time;
 		timer.schedule(task, delay);
 
 	}

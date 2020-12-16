@@ -46,8 +46,9 @@ public class MaTask extends TimerTask {
 			logger.info("task est fonctionnel");
 
 		} catch (Exception e) {
-			logger.info("task n'a pas reussi a ce connecter a l'api :" + e);
 			logger.info(getIdPret().toString());
+			logger.info("task n'a pas reussi a ce connecter a l'api :" + e);
+
 		}
 	}
 

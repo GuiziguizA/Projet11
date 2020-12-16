@@ -37,10 +37,13 @@ creer une table biblio
 	- Deploiement:
 
 		se placer a la racine du projet et executer : 
-		java -jar biblio-api\target\biblio-api-0.0.1-SNAPSHOT.jar
-		java -jar biblio-front\target\biblio-front-0.0.1-SNAPSHOT.jar
-		java -jar biblio-batch\target\biblio-batch-0.0.1-SNAPSHOT.jar
+		java -jar biblio-api\target\biblio-api-1.2.4-SNAPSHOT.jar
+		java -jar biblio-front\target\biblio-front-1.2.4-SNAPSHOT.jar
+		java -jar biblio-batch\target\biblio-batch-1.2.4-SNAPSHOT.jar
 
+
+-base de donnée
+baseDeDonnees.sql
 - Execution:
 
 http://localhost:8084
